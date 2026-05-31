@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Farmacia Cicala - Descuentos y ofertas de la semana en medicamentos, perfumería y herboristería">
+    <meta name="keywords" content="farmacia, descuentos, ofertas, Tandil">
+    <meta name="author" content="Farmacia Cicala">
+    <title>Farmacia Cicala - Descuentos y Ofertas</title>
+    
+    <!-- Enlazar CSS (será creado en la siguiente etapa) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- ============================================
+         HEADER FIJO
+         ============================================ -->
+    <header class="header">
+        <div class="header-container">
+            <!-- Logo y nombre -->
+            <div class="header-logo-section">
+                <img id="logo" src="images/logo.png" alt="Farmacia Cicala" class="header-logo">
+                <h1 class="header-title">Farmacia Cicala</h1>
+            </div>
+            
+            <!-- Menú de navegación -->
+            <nav class="header-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <button class="nav-button">Horarios</button>
+                        <div class="nav-dropdown">
+                            <div class="dropdown-item">
+                                <span class="dropdown-label">Lunes a Viernes</span>
+                                <span class="dropdown-value">8:00–13:00 | 16:00–21:00</span>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <div class="dropdown-item">
+                                <span class="dropdown-label">Sábados</span>
+                                <span class="dropdown-value">9:00–13:00 | 17:00–21:00</span>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <div class="dropdown-item">
+                                <span class="dropdown-label">Domingos</span>
+                                <span class="dropdown-value">Cerrado</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-separator">|</li>
+                    <li class="nav-item">
+                        <button class="nav-button">Ubicación</button>
+                        <div class="nav-dropdown nav-dropdown-wide">
+                            <div class="dropdown-location-text">
+                                <span class="dropdown-label">Quintana 658</span>
+                                <span class="dropdown-value">Tandil, Buenos Aires</span>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <iframe class="dropdown-map"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.5234567890!2d-59.13!3d-37.31!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcc1234567890%3A0x1234567890abcdef!2sQuintana%20658%2C%20Tandil!5e0!3m2!1ses!2sar!4v1234567890"
+                                width="100%" height="200" style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </li>
+                    <li class="nav-separator">|</li>
+                    <li class="nav-item">
+                        <button class="nav-button">Contacto</button>
+                        <div class="nav-dropdown">
+                            <div class="dropdown-item">
+                                <span class="dropdown-label">Teléfono</span>
+                                <a href="tel:+542293453202" class="dropdown-link">(02293) 45-3202</a>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <div class="dropdown-item">
+                                <span class="dropdown-label">WhatsApp</span>
+                                <a href="https://wa.me/542494360437" target="_blank" class="dropdown-link">2494360437</a>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <div class="dropdown-item">
+                                <span class="dropdown-label">Email</span>
+                                <a href="mailto:farmaciacicalatandil@gmail.com" class="dropdown-link">farmaciacicalatandil@gmail.com</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <!-- ============================================
+         SECCIÓN PRINCIPAL DE OFERTAS
+         ============================================ -->
+    <main class="main-content">
+        
+        <section id="ofertas" class="ofertas-section">
+            <div class="ofertas-header">
+                <h2 class="ofertas-title">Nuestras Ofertas</h2>
+                <p class="ofertas-subtitle">Productos con descuento especial esta semana</p>
+            </div>
+
+            <!-- Contenedor donde se cargarán las tarjetas de productos desde JavaScript -->
+            <!-- Los productos se definen en un array en script.js y se inyectan dinámicamente aquí -->
+            <div id="productos-container" class="productos-grid">
+                <!-- Las tarjetas de productos se insertarán aquí mediante JavaScript -->
+                <!-- Estructura de cada tarjeta:
+                     <div class="producto-card">
+                         <img class="producto-img" src="..." alt="...">
+                         <h3 class="producto-nombre">Nombre del Producto</h3>
+                         <p class="producto-descripcion">Descripción breve</p>
+                         <div class="producto-precios">
+                             <span class="precio-original">$XX.XX</span>
+                             <span class="precio-descuento">$XX.XX</span>
+                         </div>
+                         <button class="btn-agregar-carrito">Agregar al carrito</button>
+                     </div>
+                -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="footer">
+        <div class="footer-copyright">
+            <p>&copy; 2026 Farmacia Cicala. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+         BOTONES FLOTANTES
+         ============================================ -->
+    <div class="floating-buttons">
+        
+        <!-- Botón del carrito -->
+        <button id="cart-button" class="floating-btn cart-btn" title="Ver carrito">
+            🛒
+            <span id="cart-count" class="cart-badge">0</span>
+        </button>
+
+    </div>
+
+    <!-- ============================================
+         PANEL DEL CARRITO (DRAWER LATERAL)
+         ============================================ -->
+    <aside id="cart-panel" class="cart-panel">
+        
+        <!-- Encabezado del panel -->
+        <div class="cart-panel-header">
+            <h3 class="cart-panel-title">Mi Carrito</h3>
+            <button id="close-cart-btn" class="close-cart-btn" title="Cerrar carrito">✕</button>
+        </div>
+
+        <!-- Divider -->
+        <hr class="cart-divider">
+
+        <!-- Lista de productos en el carrito -->
+        <div id="cart-items" class="cart-items-list">
+            <!-- Los productos del carrito se insertarán aquí mediante JavaScript -->
+            <!-- Mensaje por defecto si el carrito está vacío -->
+            <p class="cart-empty-message">Tu carrito está vacío</p>
+        </div>
+
+        <!-- Divider -->
+        <hr class="cart-divider">
+
+        <!-- Total del carrito -->
+        <div class="cart-total-section">
+            <p class="cart-total-label">Total:</p>
+            <p id="cart-total" class="cart-total-amount">$0.00</p>
+        </div>
+
+        <!-- Divider -->
+        <hr class="cart-divider">
+
+        <!-- Botones de acción -->
+        <div class="cart-actions">
+            <button id="consult-whatsapp-btn" class="btn-consult-whatsapp">
+                📱 Consultar por WhatsApp
+            </button>
+            <button id="clear-cart-btn" class="btn-clear-cart">
+                🗑️ Vaciar carrito
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Overlay oscuro para el panel del carrito (opcional, para mejorar UX) -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+
+    <!-- ============================================
+         JAVASCRIPT
+         ============================================ -->
+    <!-- Enlazar JS (será creado en la etapa 3) -->
+    <script src="script.js"></script>
+
+</body>
+</html>
