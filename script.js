@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    FARMACIA CICALA - SCRIPT.JS
    Funcionalidad de carrito, ofertas, novedades y combos
    ============================================ */
@@ -10,7 +10,7 @@
 const novedades = [
     {
         id: "N1",
-        nombre: "Colágeno Hidrolizado",
+        nombre: "ColÃ¡geno Hidrolizado",
         descripcion: "Suplemento - Frasco x300g",
         imagen: "images/novedad1.jpg",
         precio: 4200,
@@ -19,7 +19,7 @@ const novedades = [
     {
         id: "N2",
         nombre: "Vitamina D3 2000 UI",
-        descripcion: "Suplemento vitamínico - Frasco x60 comprimidos",
+        descripcion: "Suplemento vitamÃ­nico - Frasco x60 comprimidos",
         imagen: "images/novedad2.jpg",
         precio: 3800,
         enStock: true
@@ -30,7 +30,7 @@ const promociones = [
     {
         id: "P1",
         nombre: "Vitamina C 500mg",
-        descripcion: "Suplemento vitamínico - Frasco x60 comprimidos",
+        descripcion: "Suplemento vitamÃ­nico - Frasco x60 comprimidos",
         imagen: "images/producto1.jpg",
         precioOriginal: 5500,
         precioDescuento: 3850,
@@ -40,7 +40,7 @@ const promociones = [
     {
         id: "P2",
         nombre: "Protector Solar FPS 50",
-        descripcion: "Protección total - Envase 200ml",
+        descripcion: "ProtecciÃ³n total - Envase 200ml",
         imagen: "images/producto2.jpg",
         precioOriginal: 6200,
         precioDescuento: 4650,
@@ -110,7 +110,7 @@ const cartButton = document.getElementById('cart-button');
 const cartCount = document.getElementById('cart-count');
 const closeCartBtn = document.getElementById('close-cart-btn');
 
-// Botones de acción del carrito
+// Botones de acciÃ³n del carrito
 const enviarWhatsappBtn = document.getElementById('enviar-whatsapp-btn');
 const clearCartBtn = document.getElementById('clear-cart-btn');
 
@@ -120,11 +120,11 @@ const btnEnvio = document.getElementById('btn-envio');
 const direccionSection = document.getElementById('direccion-section');
 const direccionInput = document.getElementById('direccion-input');
 
-// Tabs de navegación
+// Tabs de navegaciÃ³n
 const navTabs = document.querySelectorAll('.nav-tab');
 
 /* ============================================
-   4. FUNCIÓN: FORMATEAR PRECIO EN PESOS
+   4. FUNCIÃ“N: FORMATEAR PRECIO EN PESOS
    ============================================ */
 
 function formatearPrecio(precio) {
@@ -257,11 +257,11 @@ function crearTarjetaCombo(combo) {
 }
 
 /* ============================================
-   6. FUNCIÓN: AGREGAR PRODUCTO AL CARRITO
+   6. FUNCIÃ“N: AGREGAR PRODUCTO AL CARRITO
    ============================================ */
 
 function agregarAlCarrito(producto) {
-    // Buscar si el producto ya está en el carrito
+    // Buscar si el producto ya estÃ¡ en el carrito
     const itemExistente = carrito.find(item => item.id === producto.id);
 
     if (itemExistente) {
@@ -281,16 +281,16 @@ function agregarAlCarrito(producto) {
     // Actualizar UI
     actualizarCarritoUI();
 
-    // Mostrar confirmación visual
-    mostrarConfirmacion('¡Agregado al carrito!');
+    // Mostrar confirmaciÃ³n visual
+    mostrarConfirmacion('Â¡Agregado al carrito!');
 }
 
 /* ============================================
-   7. FUNCIÓN: MOSTRAR CONFIRMACIÓN VISUAL
+   7. FUNCIÃ“N: MOSTRAR CONFIRMACIÃ“N VISUAL
    ============================================ */
 
 function mostrarConfirmacion(mensaje) {
-    // Crear elemento de notificación
+    // Crear elemento de notificaciÃ³n
     const notificacion = document.createElement('div');
     notificacion.className = 'notificacion';
     notificacion.textContent = mensaje;
@@ -312,7 +312,7 @@ function mostrarConfirmacion(mensaje) {
 
     document.body.appendChild(notificacion);
 
-    // Remover después de 2 segundos
+    // Remover despuÃ©s de 2 segundos
     setTimeout(() => {
         notificacion.style.animation = 'slideUp 0.3s ease';
         setTimeout(() => notificacion.remove(), 300);
@@ -320,7 +320,7 @@ function mostrarConfirmacion(mensaje) {
 }
 
 /* ============================================
-   8. FUNCIÓN: ACTUALIZAR UI DEL CARRITO
+   8. FUNCIÃ“N: ACTUALIZAR UI DEL CARRITO
    ============================================ */
 
 function actualizarCarritoUI() {
@@ -336,14 +336,14 @@ function actualizarCarritoUI() {
 }
 
 /* ============================================
-   9. FUNCIÓN: RENDERIZAR ITEMS DEL CARRITO
+   9. FUNCIÃ“N: RENDERIZAR ITEMS DEL CARRITO
    ============================================ */
 
 function renderizarCartItems() {
     cartItemsList.innerHTML = '';
 
     if (carrito.length === 0) {
-        cartItemsList.innerHTML = '<p class="cart-empty-message">Tu carrito está vacío</p>';
+        cartItemsList.innerHTML = '<p class="cart-empty-message">Tu carrito estÃ¡ vacÃ­o</p>';
         return;
     }
 
@@ -356,13 +356,15 @@ function renderizarCartItems() {
             <div class="cart-item-info">
                 <div class="cart-item-name">${item.nombre}</div>
                 <div class="cart-item-price">${formatearPrecio(subtotal)}</div>
+            </div>
+            <div class="cart-item-controls">
                 <div class="quantity-controls">
-                    <button class="btn-quantity btn-minus" data-id="${item.id}">−</button>
+                    <button class="btn-quantity btn-minus" data-id="${item.id}">âˆ’</button>
                     <span class="quantity-display">${item.cantidad}</span>
                     <button class="btn-quantity btn-plus" data-id="${item.id}">+</button>
                 </div>
+                <button class="cart-item-remove" data-id="${item.id}" title="Eliminar producto">Ã—</button>
             </div>
-            <button class="cart-item-remove" data-id="${item.id}" title="Eliminar producto">×</button>
         `;
 
         // Evento para aumentar cantidad
@@ -382,7 +384,7 @@ function renderizarCartItems() {
 }
 
 /* ============================================
-   10. FUNCIÓN: ACTUALIZAR CANTIDAD DE PRODUCTO EN CARRITO
+   10. FUNCIÃ“N: ACTUALIZAR CANTIDAD DE PRODUCTO EN CARRITO
    ============================================ */
 
 function actualizarCantidad(productoId, delta) {
@@ -401,7 +403,7 @@ function actualizarCantidad(productoId, delta) {
 }
 
 /* ============================================
-   11. FUNCIÓN: CALCULAR TOTAL DEL CARRITO
+   11. FUNCIÃ“N: CALCULAR TOTAL DEL CARRITO
    ============================================ */
 
 function calcularTotal() {
@@ -413,7 +415,7 @@ function calcularTotal() {
 }
 
 /* ============================================
-   11. FUNCIÓN: ELIMINAR PRODUCTO DEL CARRITO
+   11. FUNCIÃ“N: ELIMINAR PRODUCTO DEL CARRITO
    ============================================ */
 
 function eliminarDelCarrito(productoId) {
@@ -423,7 +425,7 @@ function eliminarDelCarrito(productoId) {
 }
 
 /* ============================================
-   12. FUNCIÓN: VACIAR CARRITO
+   12. FUNCIÃ“N: VACIAR CARRITO
    ============================================ */
 
 function vaciarCarrito() {
@@ -433,27 +435,27 @@ function vaciarCarrito() {
 }
 
 /* ============================================
-   13. FUNCIÓN: GENERAR MENSAJE WHATSAPP
+   13. FUNCIÃ“N: GENERAR MENSAJE WHATSAPP
    ============================================ */
 
 function generarMensajeWhatsApp() {
     if (carrito.length === 0) {
-        mostrarConfirmacion('El carrito está vacío');
+        mostrarConfirmacion('El carrito estÃ¡ vacÃ­o');
         return;
     }
 
-    // Validar que si elige envío, tenga dirección
+    // Validar que si elige envÃ­o, tenga direcciÃ³n
     if (modalidadSeleccionada === 'envio' && !direccionInput.value.trim()) {
-        mostrarConfirmacion('Por favor, escribí tu dirección');
+        mostrarConfirmacion('Por favor, escribÃ­ tu direcciÃ³n');
         return;
     }
 
-    let mensaje = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
+    let mensaje = 'Â¡Hola! Quisiera hacer el siguiente pedido:\n\n';
 
     // Agregar cada producto
     carrito.forEach(item => {
         const subtotal = item.precio * item.cantidad;
-        mensaje += `• ${item.nombre} x${item.cantidad} - ${formatearPrecio(subtotal)}\n`;
+        mensaje += `â€¢ ${item.nombre} x${item.cantidad} - ${formatearPrecio(subtotal)}\n`;
     });
 
     // Calcular total
@@ -465,15 +467,15 @@ function generarMensajeWhatsApp() {
 
     // Agregar modalidad
     if (modalidadSeleccionada === 'retiro') {
-        mensaje += `Modalidad: Retiro en farmacia 🏪\n\n`;
+        mensaje += `Modalidad: Retiro en farmacia ðŸª\n\n`;
     } else {
-        mensaje += `Modalidad: Envío a domicilio 🚚\n`;
-        mensaje += `Dirección: ${direccionInput.value.trim()}\n\n`;
+        mensaje += `Modalidad: EnvÃ­o a domicilio ðŸšš\n`;
+        mensaje += `DirecciÃ³n: ${direccionInput.value.trim()}\n\n`;
     }
 
-    // Agregar aclaración
-    mensaje += `⚠️ Tu pedido está pendiente de confirmación.\n`;
-    mensaje += `Un integrante de Farmacia Cicala te confirmará\n`;
+    // Agregar aclaraciÃ³n
+    mensaje += `âš ï¸ Tu pedido estÃ¡ pendiente de confirmaciÃ³n.\n`;
+    mensaje += `Un integrante de Farmacia Cicala te confirmarÃ¡\n`;
     mensaje += `la disponibilidad antes de realizar el pago.`;
 
     // Codificar mensaje para URL
@@ -485,24 +487,26 @@ function generarMensajeWhatsApp() {
 }
 
 /* ============================================
-   14. FUNCIÓN: ABRIR/CERRAR PANEL CARRITO
+   14. FUNCIÃ“N: ABRIR/CERRAR PANEL CARRITO
    ============================================ */
 
 function abrirCarrito() {
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function cerrarCarrito() {
     cartPanel.classList.remove('active');
     cartOverlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
 }
 
 /* ============================================
    15. EVENT LISTENERS
    ============================================ */
 
-// Botón flotante del carrito
+// BotÃ³n flotante del carrito
 cartButton.addEventListener('click', () => {
     if (cartPanel.classList.contains('active')) {
         cerrarCarrito();
@@ -511,18 +515,18 @@ cartButton.addEventListener('click', () => {
     }
 });
 
-// Botón de cerrar carrito
+// BotÃ³n de cerrar carrito
 closeCartBtn.addEventListener('click', cerrarCarrito);
 
 // Click en el overlay cierra el carrito
 cartOverlay.addEventListener('click', cerrarCarrito);
 
-// Botón enviar por WhatsApp
+// BotÃ³n enviar por WhatsApp
 enviarWhatsappBtn.addEventListener('click', generarMensajeWhatsApp);
 
-// Botón vaciar carrito
+// BotÃ³n vaciar carrito
 clearCartBtn.addEventListener('click', () => {
-    if (confirm('¿Estás seguro de que deseas vaciar el carrito?')) {
+    if (confirm('Â¿EstÃ¡s seguro de que deseas vaciar el carrito?')) {
         vaciarCarrito();
     }
 });
@@ -532,7 +536,7 @@ cartPanel.addEventListener('click', (event) => {
     event.stopPropagation();
 });
 
-// Selector de modalidad (Retiro vs Envío)
+// Selector de modalidad (Retiro vs EnvÃ­o)
 btnRetiro.addEventListener('click', () => {
     modalidadSeleccionada = 'retiro';
     btnRetiro.classList.add('active');
@@ -548,12 +552,12 @@ btnEnvio.addEventListener('click', () => {
     direccionInput.focus();
 });
 
-// Actualizar dirección mientras se escribe
+// Actualizar direcciÃ³n mientras se escribe
 direccionInput.addEventListener('input', (e) => {
     direccionEnvio = e.target.value;
 });
 
-// Navegación por tabs
+// NavegaciÃ³n por tabs
 navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
         const section = tab.getAttribute('data-section');
@@ -565,24 +569,73 @@ navTabs.forEach(tab => {
         // Scroll suave con offset correcto
         const targetSection = document.getElementById(section);
         if (targetSection) {
-            // Calcular offset: altura del header (100px) + altura de barra secundaria (40px aprox) + margen (20px)
-            const headerHeight = 100;
-            const secondaryNavHeight = 40;
-            const extraMargin = 20;
-            const totalOffset = headerHeight + secondaryNavHeight + extraMargin;
-            
-            const targetPosition = targetSection.offsetTop - totalOffset;
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
+                // Calcular offset: altura del header (100px) + altura de barra secundaria (40px) + margen extra (40px)
+                const headerHeight = 100;
+                const secondaryNavHeight = 40;
+                const extraMargin = 40;
+   16. INICIALIZACIÃ“N
+   ============================================ */
+
+
+/* ============================================
+   14B. GESTIÓN DE DROPDOWNS EN MÓVIL
+   ============================================ */
+
+let navDropdownOverlay = null;
+let currentOpenDropdown = null;
+
+function initializeMobileDropdowns() {
+    navDropdownOverlay = document.createElement('div');
+    navDropdownOverlay.className = 'nav-dropdown-overlay';
+    document.body.appendChild(navDropdownOverlay);
+
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    navItems.forEach(item => {
+        const button = item.querySelector('.nav-button');
+        const dropdown = item.querySelector('.nav-dropdown');
+        
+        if (button && dropdown) {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isMobile = window.innerWidth <= 768;
+                
+                if (isMobile) {
+                    if (currentOpenDropdown && currentOpenDropdown !== dropdown) {
+                        currentOpenDropdown.style.display = 'none';
+                    }
+                    
+                    if (dropdown.style.display === 'block') {
+                        dropdown.style.display = 'none';
+                        navDropdownOverlay.classList.remove('active');
+                        currentOpenDropdown = null;
+                    } else {
+                        dropdown.style.display = 'block';
+                        navDropdownOverlay.classList.add('active');
+                        currentOpenDropdown = dropdown;
+                        
+                        dropdown.style.position = 'fixed';
+                        dropdown.style.top = '50%';
+                        dropdown.style.left = '50%';
+                        dropdown.style.transform = 'translate(-50%, -50%)';
+                        dropdown.style.margin = '0';
+                        dropdown.style.zIndex = '2001';
+                    }
+                }
             });
         }
     });
-});
-
-/* ============================================
-   16. INICIALIZACIÓN
-   ============================================ */
+    
+    navDropdownOverlay.addEventListener('click', () => {
+        if (currentOpenDropdown) {
+            currentOpenDropdown.style.display = 'none';
+            navDropdownOverlay.classList.remove('active');
+            currentOpenDropdown = null;
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     // Renderizar todas las secciones
@@ -590,20 +643,23 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPromociones();
     renderCombos();
 
-    // Inicializar carrito vacío
+    // Inicializar carrito vacÃ­o
     actualizarCarritoUI();
 
     // Establecer la primera tab como activa
     navTabs[0].classList.add('active');
 
-    console.log('✅ Farmacia Cicala - Página cargada correctamente');
+    // Inicializar dropdowns en móvil
+    initializeMobileDropdowns();
+
+    console.log('âœ… Farmacia Cicala - PÃ¡gina cargada correctamente');
 });
 
 /* ============================================
    17. ANIMACIONES CSS (inyectadas con JavaScript)
    ============================================ */
 
-// Crear estilos para las animaciones de confirmación
+// Crear estilos para las animaciones de confirmaciÃ³n
 const style = document.createElement('style');
 style.innerHTML = `
     @keyframes slideDown {
@@ -647,3 +703,6 @@ document.head.appendChild(style);
 /* ============================================
    FIN DEL SCRIPT
    ============================================ */
+
+
+
