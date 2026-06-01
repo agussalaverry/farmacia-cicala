@@ -562,10 +562,20 @@ navTabs.forEach(tab => {
         navTabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         
-        // Scroll suave a la sección
+        // Scroll suave con offset correcto
         const targetSection = document.getElementById(section);
         if (targetSection) {
-            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Calcular offset: altura del header (100px) + altura de barra secundaria (40px aprox) + margen (20px)
+            const headerHeight = 100;
+            const secondaryNavHeight = 40;
+            const extraMargin = 20;
+            const totalOffset = headerHeight + secondaryNavHeight + extraMargin;
+            
+            const targetPosition = targetSection.offsetTop - totalOffset;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
         }
     });
 });
