@@ -86,35 +86,52 @@
         </div>
     </header>
 
-
+    <!-- ============================================
+         BARRA DE NAVEGACIÓN SECUNDARIA (tabs)
+         ============================================ -->
+    <nav class="secondary-nav">
+        <div class="secondary-nav-container">
+            <button class="nav-tab active" data-section="novedades">Novedades</button>
+            <button class="nav-tab" data-section="promociones">Promociones</button>
+            <button class="nav-tab" data-section="combos">Combos</button>
+        </div>
+    </nav>
 
     <!-- ============================================
-         SECCIÓN PRINCIPAL DE OFERTAS
+         SECCIÓN PRINCIPAL (CONTENIDO)
          ============================================ -->
     <main class="main-content">
         
-        <section id="ofertas" class="ofertas-section">
-            <div class="ofertas-header">
-                <h2 class="ofertas-title">Nuestras Ofertas</h2>
-                <p class="ofertas-subtitle">Productos con descuento especial esta semana</p>
+        <!-- NOVEDADES -->
+        <section id="novedades" class="productos-section">
+            <div class="section-header">
+                <h2 class="section-title">Novedades</h2>
+                <p class="section-subtitle">Productos nuevos que acaban de llegar a la farmacia</p>
             </div>
+            <div id="novedades-container" class="productos-grid">
+                <!-- Las tarjetas se insertarán aquí mediante JavaScript -->
+            </div>
+        </section>
 
-            <!-- Contenedor donde se cargarán las tarjetas de productos desde JavaScript -->
-            <!-- Los productos se definen en un array en script.js y se inyectan dinámicamente aquí -->
-            <div id="productos-container" class="productos-grid">
-                <!-- Las tarjetas de productos se insertarán aquí mediante JavaScript -->
-                <!-- Estructura de cada tarjeta:
-                     <div class="producto-card">
-                         <img class="producto-img" src="..." alt="...">
-                         <h3 class="producto-nombre">Nombre del Producto</h3>
-                         <p class="producto-descripcion">Descripción breve</p>
-                         <div class="producto-precios">
-                             <span class="precio-original">$XX.XX</span>
-                             <span class="precio-descuento">$XX.XX</span>
-                         </div>
-                         <button class="btn-agregar-carrito">Agregar al carrito</button>
-                     </div>
-                -->
+        <!-- PROMOCIONES -->
+        <section id="promociones" class="productos-section">
+            <div class="section-header">
+                <h2 class="section-title">Promociones</h2>
+                <p class="section-subtitle">Productos con descuento especial esta semana</p>
+            </div>
+            <div id="promociones-container" class="productos-grid">
+                <!-- Las tarjetas se insertarán aquí mediante JavaScript -->
+            </div>
+        </section>
+
+        <!-- COMBOS -->
+        <section id="combos" class="productos-section">
+            <div class="section-header">
+                <h2 class="section-title">Combos</h2>
+                <p class="section-subtitle">Ofertas especiales con múltiples productos</p>
+            </div>
+            <div id="combos-container" class="productos-grid">
+                <!-- Las tarjetas de combos se insertarán aquí mediante JavaScript -->
             </div>
         </section>
 
@@ -169,7 +186,33 @@
         <!-- Total del carrito -->
         <div class="cart-total-section">
             <p class="cart-total-label">Total:</p>
-            <p id="cart-total" class="cart-total-amount">$0.00</p>
+            <p id="cart-total" class="cart-total-amount">$0</p>
+        </div>
+
+        <!-- Divider -->
+        <hr class="cart-divider">
+
+        <!-- Selector de modalidad de compra -->
+        <div class="cart-modalidad-section">
+            <p class="modalidad-label">¿Cómo recibís tu pedido?</p>
+            <div class="modalidad-buttons">
+                <button id="btn-retiro" class="btn-modalidad active" data-modalidad="retiro">
+                    🏪 Retiro en farmacia
+                </button>
+                <button id="btn-envio" class="btn-modalidad" data-modalidad="envio">
+                    🚚 Envío a domicilio
+                </button>
+            </div>
+        </div>
+
+        <!-- Campo de dirección (mostrar solo si elige envío) -->
+        <div id="direccion-section" class="direccion-section" style="display: none;">
+            <input 
+                id="direccion-input" 
+                type="text" 
+                class="direccion-input" 
+                placeholder="Escribí tu dirección acá"
+                maxlength="200">
         </div>
 
         <!-- Divider -->
@@ -177,8 +220,8 @@
 
         <!-- Botones de acción -->
         <div class="cart-actions">
-            <button id="consult-whatsapp-btn" class="btn-consult-whatsapp">
-                📱 Consultar por WhatsApp
+            <button id="enviar-whatsapp-btn" class="btn-enviar-whatsapp">
+                📱 Enviar pedido por WhatsApp
             </button>
             <button id="clear-cart-btn" class="btn-clear-cart">
                 🗑️ Vaciar carrito

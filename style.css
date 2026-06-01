@@ -160,6 +160,54 @@ body {
     justify-content: flex-end;
 }
 
+/* ============================================
+   3C. BARRA DE NAVEGACIÓN SECUNDARIA (TABS)
+   ============================================ */
+
+.secondary-nav {
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
+    background-color: var(--color-white);
+    border-bottom: 2px solid var(--color-primary);
+    z-index: 999;
+    box-shadow: var(--shadow-sm);
+}
+
+.secondary-nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    padding: 0;
+}
+
+.nav-tab {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-large);
+    font-weight: 700;
+    border: none;
+    background-color: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    font-family: var(--font-family);
+    text-align: center;
+    border-bottom: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-tab:hover {
+    background-color: var(--color-bg);
+}
+
+.nav-tab.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-bottom: 4px solid var(--color-primary-dark);
+}
+
 .nav-list {
     display: flex;
     align-items: center;
@@ -288,31 +336,32 @@ body {
     padding: var(--spacing-xl) var(--spacing-lg);
     max-width: 1200px;
     margin: 0 auto;
-    margin-top: 100px;
+    margin-top: 140px;
     width: 100%;
 }
 
 /* ============================================
-   6. SECCIÓN DE OFERTAS
+   5B. SECCIONES DE PRODUCTOS
    ============================================ */
 
-.ofertas-section {
+.productos-section {
     width: 100%;
+    margin-bottom: var(--spacing-xxl);
 }
 
-.ofertas-header {
+.section-header {
     text-align: center;
     margin-bottom: var(--spacing-xl);
 }
 
-.ofertas-title {
+.section-title {
     font-size: var(--font-size-heading);
     font-weight: 800;
     color: var(--color-primary);
     margin-bottom: var(--spacing-sm);
 }
 
-.ofertas-subtitle {
+.section-subtitle {
     font-size: var(--font-size-large);
     color: var(--color-text-light);
     font-weight: 600;
@@ -342,11 +391,33 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
 }
 
 .producto-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
+}
+
+.producto-card.sin-stock {
+    background-color: #f5f5f5;
+    opacity: 0.7;
+}
+
+.producto-card.sin-stock::after {
+    content: 'Sin stock';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-gray);
+    color: var(--color-white);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: var(--font-size-large);
+    z-index: 5;
+    text-align: center;
 }
 
 .producto-img {
@@ -355,6 +426,19 @@ body {
     object-fit: cover;
     border-radius: var(--radius-md);
     margin-bottom: var(--spacing-md);
+}
+
+.producto-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background-color: #FF6B35;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 10;
 }
 
 .producto-nombre {
@@ -393,6 +477,12 @@ body {
     color: var(--color-primary);
 }
 
+.precio-unico {
+    font-size: var(--font-size-xxl);
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
 /* ============================================
    9. BOTONES
    ============================================ */
@@ -418,6 +508,18 @@ body {
 
 .btn-agregar-carrito:active {
     transform: scale(0.98);
+}
+
+.btn-agregar-carrito:disabled {
+    background-color: var(--color-gray);
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.btn-agregar-carrito:disabled:hover {
+    background-color: var(--color-gray);
+    transform: none;
 }
 
 /* ============================================
@@ -577,10 +679,12 @@ body {
     background-color: var(--color-bg);
     border-radius: var(--radius-md);
     gap: var(--spacing-md);
+    flex-wrap: wrap;
 }
 
 .cart-item-info {
     flex: 1;
+    min-width: 150px;
 }
 
 .cart-item-name {
@@ -590,25 +694,69 @@ body {
     margin-bottom: var(--spacing-xs);
 }
 
-.cart-item-quantity {
-    font-size: var(--font-size-small);
-    color: var(--color-text-light);
-}
-
 .cart-item-price {
     font-size: var(--font-size-base);
     font-weight: 700;
     color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Controles de cantidad */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background-color: var(--color-white);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
+
+.btn-quantity {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--color-primary);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    font-size: var(--font-size-large);
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-family);
+}
+
+.btn-quantity:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    transform: scale(1.05);
+}
+
+.btn-quantity:active {
+    transform: scale(0.95);
+}
+
+.quantity-display {
+    min-width: 40px;
+    text-align: center;
+    font-weight: 700;
+    font-size: var(--font-size-large);
+    color: var(--color-text);
 }
 
 .cart-item-remove {
     background: none;
     border: none;
-    font-size: var(--font-size-large);
+    font-size: 24px;
     cursor: pointer;
     color: #FF6B35;
     padding: 0;
     transition: transform 0.2s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .cart-item-remove:hover {
@@ -616,8 +764,76 @@ body {
 }
 
 /* ============================================
-   13. TOTAL DEL CARRITO
+   13. MODALIDAD DE COMPRA Y DIRECCIÓN
    ============================================ */
+
+.cart-modalidad-section {
+    padding: var(--spacing-md) 0;
+}
+
+.modalidad-label {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
+}
+
+.modalidad-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.btn-modalidad {
+    width: 100%;
+    padding: var(--spacing-lg) var(--spacing-md);
+    font-size: var(--font-size-large);
+    font-weight: 700;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-family);
+}
+
+.btn-modalidad:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-bg);
+}
+
+.btn-modalidad.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+
+.direccion-section {
+    padding: var(--spacing-md) 0;
+}
+
+.direccion-input {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-base);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-family);
+    color: var(--color-text);
+    background-color: var(--color-white);
+    transition: border-color 0.3s ease;
+}
+
+.direccion-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(213, 0, 109, 0.1);
+}
+
+.direccion-input::placeholder {
+    color: var(--color-text-light);
+}
 
 .cart-total-section {
     display: flex;
@@ -660,6 +876,20 @@ body {
     font-family: var(--font-family);
 }
 
+.btn-enviar-whatsapp {
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
+.btn-enviar-whatsapp:hover {
+    background-color: #1eaa4f;
+    transform: scale(1.02);
+}
+
+.btn-enviar-whatsapp:active {
+    transform: scale(0.98);
+}
+
 .btn-consult-whatsapp {
     background-color: var(--color-success);
     color: var(--color-white);
@@ -676,6 +906,11 @@ body {
 
 .btn-clear-cart:hover {
     background-color: #E55A1F;
+    transform: scale(1.02);
+}
+
+.btn-clear-cart:active {
+    transform: scale(0.98);
 }
 
 /* ============================================

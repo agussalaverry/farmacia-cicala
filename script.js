@@ -1,66 +1,86 @@
 /* ============================================
    FARMACIA CICALA - SCRIPT.JS
-   Funcionalidad de carrito, ofertas y WhatsApp
+   Funcionalidad de carrito, ofertas, novedades y combos
    ============================================ */
 
 /* ============================================
-   1. ARRAY DE PRODUCTOS
+   1. ARRAYS DE PRODUCTOS
    ============================================ */
 
-const productos = [
+const novedades = [
     {
-        id: 1,
+        id: "N1",
+        nombre: "Colágeno Hidrolizado",
+        descripcion: "Suplemento - Frasco x300g",
+        imagen: "images/novedad1.jpg",
+        precio: 4200,
+        enStock: true
+    },
+    {
+        id: "N2",
+        nombre: "Vitamina D3 2000 UI",
+        descripcion: "Suplemento vitamínico - Frasco x60 comprimidos",
+        imagen: "images/novedad2.jpg",
+        precio: 3800,
+        enStock: true
+    }
+];
+
+const promociones = [
+    {
+        id: "P1",
         nombre: "Vitamina C 500mg",
         descripcion: "Suplemento vitamínico - Frasco x60 comprimidos",
         imagen: "images/producto1.jpg",
         precioOriginal: 5500,
         precioDescuento: 3850,
-        descuentoPorcentaje: 30
+        descuentoPorcentaje: 30,
+        enStock: true
     },
     {
-        id: 2,
+        id: "P2",
         nombre: "Protector Solar FPS 50",
         descripcion: "Protección total - Envase 200ml",
         imagen: "images/producto2.jpg",
         precioOriginal: 6200,
         precioDescuento: 4650,
-        descuentoPorcentaje: 25
+        descuentoPorcentaje: 25,
+        enStock: true
+    }
+];
+
+const combos = [
+    {
+        id: "C1",
+        nombre: "Combo Salud & Bienestar",
+        precio: 8500,
+        enStock: true,
+        productos: [
+            {
+                nombre: "Vitamina C 500mg",
+                imagen: "images/producto1.jpg"
+            },
+            {
+                nombre: "Complejo B",
+                imagen: "images/producto6.jpg"
+            }
+        ]
     },
     {
-        id: 3,
-        nombre: "Ibuprofeno 400mg",
-        descripcion: "Antiinflamatorio - Caja x10 comprimidos",
-        imagen: "images/producto3.jpg",
-        precioOriginal: 2800,
-        precioDescuento: 1960,
-        descuentoPorcentaje: 30
-    },
-    {
-        id: 4,
-        nombre: "Crema Hidratante",
-        descripcion: "Perfumería - Tarro 50ml",
-        imagen: "images/producto4.jpg",
-        precioOriginal: 4500,
-        precioDescuento: 3150,
-        descuentoPorcentaje: 30
-    },
-    {
-        id: 5,
-        nombre: "Té de Jengibre y Miel",
-        descripcion: "Herboristería - Caja x20 bolsitas",
-        imagen: "images/producto5.jpg",
-        precioOriginal: 3200,
-        precioDescuento: 2240,
-        descuentoPorcentaje: 30
-    },
-    {
-        id: 6,
-        nombre: "Complejo B Stress",
-        descripcion: "Suplemento vitamínico - Frasco x30 comprimidos",
-        imagen: "images/producto6.jpg",
-        precioOriginal: 4800,
-        precioDescuento: 3360,
-        descuentoPorcentaje: 30
+        id: "C2",
+        nombre: "Combo Cuidado de Piel",
+        precio: 9200,
+        enStock: false,
+        productos: [
+            {
+                nombre: "Protector Solar FPS 50",
+                imagen: "images/producto2.jpg"
+            },
+            {
+                nombre: "Crema Hidratante",
+                imagen: "images/producto4.jpg"
+            }
+        ]
     }
 ];
 
@@ -69,13 +89,17 @@ const productos = [
    ============================================ */
 
 let carrito = [];
+let modalidadSeleccionada = 'retiro'; // 'retiro' o 'envio'
+let direccionEnvio = '';
 
 /* ============================================
    3. REFERENCIAS A ELEMENTOS DEL DOM
    ============================================ */
 
 // Contenedores principales
-const productosContainer = document.getElementById('productos-container');
+const novedadesContainer = document.getElementById('novedades-container');
+const promocionesContainer = document.getElementById('promociones-container');
+const combosContainer = document.getElementById('combos-container');
 const cartPanel = document.getElementById('cart-panel');
 const cartOverlay = document.getElementById('cart-overlay');
 const cartItemsList = document.getElementById('cart-items');
@@ -86,9 +110,18 @@ const cartButton = document.getElementById('cart-button');
 const cartCount = document.getElementById('cart-count');
 const closeCartBtn = document.getElementById('close-cart-btn');
 
-// Botones del carrito
-const consultWhatsappBtn = document.getElementById('consult-whatsapp-btn');
+// Botones de acción del carrito
+const enviarWhatsappBtn = document.getElementById('enviar-whatsapp-btn');
 const clearCartBtn = document.getElementById('clear-cart-btn');
+
+// Modalidad
+const btnRetiro = document.getElementById('btn-retiro');
+const btnEnvio = document.getElementById('btn-envio');
+const direccionSection = document.getElementById('direccion-section');
+const direccionInput = document.getElementById('direccion-input');
+
+// Tabs de navegación
+const navTabs = document.querySelectorAll('.nav-tab');
 
 /* ============================================
    4. FUNCIÓN: FORMATEAR PRECIO EN PESOS
@@ -104,39 +137,123 @@ function formatearPrecio(precio) {
 }
 
 /* ============================================
-   5. FUNCIÓN: RENDERIZAR PRODUCTOS
+   5. FUNCIONES: RENDERIZAR PRODUCTOS
    ============================================ */
 
-function renderProductos() {
-    // Limpiar el contenedor
-    productosContainer.innerHTML = '';
-
-    // Iterar sobre el array de productos
-    productos.forEach(producto => {
-        // Crear elemento de tarjeta
-        const tarjeta = document.createElement('div');
-        tarjeta.className = 'producto-card';
-        tarjeta.innerHTML = `
-            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-img">
-            <div class="producto-badge">${producto.descuentoPorcentaje}% OFF</div>
-            <h3 class="producto-nombre">${producto.nombre}</h3>
-            <p class="producto-descripcion">${producto.descripcion}</p>
-            <div class="producto-precios">
-                <span class="precio-original">${formatearPrecio(producto.precioOriginal)}</span>
-                <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
-            </div>
-            <button class="btn-agregar-carrito" data-id="${producto.id}">
-                Agregar al carrito
-            </button>
-        `;
-
-        // Agregar evento al botón
-        const btnAgregar = tarjeta.querySelector('.btn-agregar-carrito');
-        btnAgregar.addEventListener('click', () => agregarAlCarrito(producto));
-
-        // Insertar en el DOM
-        productosContainer.appendChild(tarjeta);
+function renderNovedades() {
+    novedadesContainer.innerHTML = '';
+    
+    novedades.forEach(producto => {
+        const tarjeta = crearTarjetaProducto(producto, 'novedad');
+        novedadesContainer.appendChild(tarjeta);
     });
+}
+
+function renderPromociones() {
+    promocionesContainer.innerHTML = '';
+    
+    promociones.forEach(producto => {
+        const tarjeta = crearTarjetaProducto(producto, 'promocion');
+        promocionesContainer.appendChild(tarjeta);
+    });
+}
+
+function renderCombos() {
+    combosContainer.innerHTML = '';
+    
+    combos.forEach(combo => {
+        const tarjeta = crearTarjetaCombo(combo);
+        combosContainer.appendChild(tarjeta);
+    });
+}
+
+function crearTarjetaProducto(producto, tipo) {
+    const tarjeta = document.createElement('div');
+    tarjeta.className = 'producto-card';
+    if (!producto.enStock) {
+        tarjeta.classList.add('sin-stock');
+    }
+    
+    let badgeHTML = '';
+    let precioHTML = '';
+    
+    if (tipo === 'novedad') {
+        badgeHTML = `<div class="producto-badge">NUEVO</div>`;
+        precioHTML = `<div class="producto-precios">
+                        <span class="precio-unico">${formatearPrecio(producto.precio)}</span>
+                      </div>`;
+    } else if (tipo === 'promocion') {
+        badgeHTML = `<div class="producto-badge">${producto.descuentoPorcentaje}% OFF</div>`;
+        precioHTML = `<div class="producto-precios">
+                        <span class="precio-original">${formatearPrecio(producto.precioOriginal)}</span>
+                        <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
+                      </div>`;
+    }
+    
+    const precioFinal = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
+    
+    tarjeta.innerHTML = `
+        <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-img">
+        ${badgeHTML}
+        <h3 class="producto-nombre">${producto.nombre}</h3>
+        <p class="producto-descripcion">${producto.descripcion}</p>
+        ${precioHTML}
+        <button class="btn-agregar-carrito" data-id="${producto.id}" data-tipo="${tipo}" 
+                ${producto.enStock ? '' : 'disabled'}>
+            Agregar al carrito
+        </button>
+    `;
+    
+    const btnAgregar = tarjeta.querySelector('.btn-agregar-carrito');
+    btnAgregar.addEventListener('click', () => {
+        if (tipo === 'novedad') {
+            agregarAlCarrito({ ...producto, tipo: 'novedad', precioCarrito: producto.precio });
+        } else if (tipo === 'promocion') {
+            agregarAlCarrito({ ...producto, tipo: 'promocion', precioCarrito: producto.precioDescuento });
+        }
+    });
+    
+    return tarjeta;
+}
+
+function crearTarjetaCombo(combo) {
+    const tarjeta = document.createElement('div');
+    tarjeta.className = 'producto-card';
+    if (!combo.enStock) {
+        tarjeta.classList.add('sin-stock');
+    }
+    
+    let productosHTML = combo.productos.map(prod => `
+        <div style="margin-bottom: 8px;">
+            <img src="${prod.imagen}" alt="${prod.nombre}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 6px; margin-bottom: 4px;">
+            <p style="font-size: 14px; color: var(--color-text); margin: 0;">${prod.nombre}</p>
+        </div>
+    `).join('');
+    
+    tarjeta.innerHTML = `
+        <div style="position: relative;">
+            ${combo.productos[0] ? `<img src="${combo.productos[0].imagen}" alt="${combo.nombre}" class="producto-img">` : ''}
+            <div class="producto-badge">COMBO</div>
+        </div>
+        <h3 class="producto-nombre">${combo.nombre}</h3>
+        <div style="margin-bottom: var(--spacing-md);">
+            ${productosHTML}
+        </div>
+        <div class="producto-precios">
+            <span class="precio-unico">${formatearPrecio(combo.precio)}</span>
+        </div>
+        <button class="btn-agregar-carrito" data-id="${combo.id}" data-tipo="combo" 
+                ${combo.enStock ? '' : 'disabled'}>
+            Agregar al carrito
+        </button>
+    `;
+    
+    const btnAgregar = tarjeta.querySelector('.btn-agregar-carrito');
+    btnAgregar.addEventListener('click', () => {
+        agregarAlCarrito({ ...combo, tipo: 'combo', precioCarrito: combo.precio });
+    });
+    
+    return tarjeta;
 }
 
 /* ============================================
@@ -155,8 +272,9 @@ function agregarAlCarrito(producto) {
         carrito.push({
             id: producto.id,
             nombre: producto.nombre,
-            precioDescuento: producto.precioDescuento,
-            cantidad: 1
+            precio: producto.precioCarrito || producto.precio,
+            cantidad: 1,
+            tipo: producto.tipo
         });
     }
 
@@ -230,18 +348,30 @@ function renderizarCartItems() {
     }
 
     carrito.forEach(item => {
-        const subtotal = item.precioDescuento * item.cantidad;
+        const subtotal = item.precio * item.cantidad;
 
         const itemElement = document.createElement('div');
         itemElement.className = 'cart-item';
         itemElement.innerHTML = `
             <div class="cart-item-info">
                 <div class="cart-item-name">${item.nombre}</div>
-                <div class="cart-item-quantity">Cantidad: ${item.cantidad}</div>
+                <div class="cart-item-price">${formatearPrecio(subtotal)}</div>
+                <div class="quantity-controls">
+                    <button class="btn-quantity btn-minus" data-id="${item.id}">−</button>
+                    <span class="quantity-display">${item.cantidad}</span>
+                    <button class="btn-quantity btn-plus" data-id="${item.id}">+</button>
+                </div>
             </div>
-            <div class="cart-item-price">${formatearPrecio(subtotal)}</div>
             <button class="cart-item-remove" data-id="${item.id}" title="Eliminar producto">×</button>
         `;
+
+        // Evento para aumentar cantidad
+        const btnPlus = itemElement.querySelector('.btn-plus');
+        btnPlus.addEventListener('click', () => actualizarCantidad(item.id, 1));
+
+        // Evento para disminuir cantidad
+        const btnMinus = itemElement.querySelector('.btn-minus');
+        btnMinus.addEventListener('click', () => actualizarCantidad(item.id, -1));
 
         // Evento para eliminar
         const btnRemove = itemElement.querySelector('.cart-item-remove');
@@ -252,12 +382,31 @@ function renderizarCartItems() {
 }
 
 /* ============================================
-   10. FUNCIÓN: CALCULAR TOTAL DEL CARRITO
+   10. FUNCIÓN: ACTUALIZAR CANTIDAD DE PRODUCTO EN CARRITO
+   ============================================ */
+
+function actualizarCantidad(productoId, delta) {
+    const item = carrito.find(i => i.id === productoId);
+    
+    if (item) {
+        item.cantidad += delta;
+        
+        // Si la cantidad llega a 0, eliminar del carrito
+        if (item.cantidad <= 0) {
+            eliminarDelCarrito(productoId);
+        } else {
+            actualizarCarritoUI();
+        }
+    }
+}
+
+/* ============================================
+   11. FUNCIÓN: CALCULAR TOTAL DEL CARRITO
    ============================================ */
 
 function calcularTotal() {
     const total = carrito.reduce((sum, item) => {
-        return sum + (item.precioDescuento * item.cantidad);
+        return sum + (item.precio * item.cantidad);
     }, 0);
 
     cartTotal.textContent = formatearPrecio(total);
@@ -293,20 +442,39 @@ function generarMensajeWhatsApp() {
         return;
     }
 
-    let mensaje = '¡Hola! Me interesan los siguientes productos con descuento:\n\n';
+    // Validar que si elige envío, tenga dirección
+    if (modalidadSeleccionada === 'envio' && !direccionInput.value.trim()) {
+        mostrarConfirmacion('Por favor, escribí tu dirección');
+        return;
+    }
+
+    let mensaje = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
 
     // Agregar cada producto
     carrito.forEach(item => {
-        const subtotal = item.precioDescuento * item.cantidad;
+        const subtotal = item.precio * item.cantidad;
         mensaje += `• ${item.nombre} x${item.cantidad} - ${formatearPrecio(subtotal)}\n`;
     });
 
     // Calcular total
     const total = carrito.reduce((sum, item) => {
-        return sum + (item.precioDescuento * item.cantidad);
+        return sum + (item.precio * item.cantidad);
     }, 0);
 
-    mensaje += `\nTotal: ${formatearPrecio(total)}\n\n¿Están disponibles? 😊`;
+    mensaje += `\nTotal: ${formatearPrecio(total)}\n\n`;
+
+    // Agregar modalidad
+    if (modalidadSeleccionada === 'retiro') {
+        mensaje += `Modalidad: Retiro en farmacia 🏪\n\n`;
+    } else {
+        mensaje += `Modalidad: Envío a domicilio 🚚\n`;
+        mensaje += `Dirección: ${direccionInput.value.trim()}\n\n`;
+    }
+
+    // Agregar aclaración
+    mensaje += `⚠️ Tu pedido está pendiente de confirmación.\n`;
+    mensaje += `Un integrante de Farmacia Cicala te confirmará\n`;
+    mensaje += `la disponibilidad antes de realizar el pago.`;
 
     // Codificar mensaje para URL
     const mensajeEncodificado = encodeURIComponent(mensaje);
@@ -349,8 +517,8 @@ closeCartBtn.addEventListener('click', cerrarCarrito);
 // Click en el overlay cierra el carrito
 cartOverlay.addEventListener('click', cerrarCarrito);
 
-// Botón consultar por WhatsApp
-consultWhatsappBtn.addEventListener('click', generarMensajeWhatsApp);
+// Botón enviar por WhatsApp
+enviarWhatsappBtn.addEventListener('click', generarMensajeWhatsApp);
 
 // Botón vaciar carrito
 clearCartBtn.addEventListener('click', () => {
@@ -364,16 +532,59 @@ cartPanel.addEventListener('click', (event) => {
     event.stopPropagation();
 });
 
+// Selector de modalidad (Retiro vs Envío)
+btnRetiro.addEventListener('click', () => {
+    modalidadSeleccionada = 'retiro';
+    btnRetiro.classList.add('active');
+    btnEnvio.classList.remove('active');
+    direccionSection.style.display = 'none';
+});
+
+btnEnvio.addEventListener('click', () => {
+    modalidadSeleccionada = 'envio';
+    btnEnvio.classList.add('active');
+    btnRetiro.classList.remove('active');
+    direccionSection.style.display = 'block';
+    direccionInput.focus();
+});
+
+// Actualizar dirección mientras se escribe
+direccionInput.addEventListener('input', (e) => {
+    direccionEnvio = e.target.value;
+});
+
+// Navegación por tabs
+navTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const section = tab.getAttribute('data-section');
+        
+        // Actualizar tabs activos
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Scroll suave a la sección
+        const targetSection = document.getElementById(section);
+        if (targetSection) {
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+
 /* ============================================
    16. INICIALIZACIÓN
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Renderizar productos al cargar la página
-    renderProductos();
+    // Renderizar todas las secciones
+    renderNovedades();
+    renderPromociones();
+    renderCombos();
 
     // Inicializar carrito vacío
     actualizarCarritoUI();
+
+    // Establecer la primera tab como activa
+    navTabs[0].classList.add('active');
 
     console.log('✅ Farmacia Cicala - Página cargada correctamente');
 });
