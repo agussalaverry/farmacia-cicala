@@ -1,77 +1,26 @@
 /* ============================================
    FARMACIA CICALA - SCRIPT.JS
-   Funcionalidad de carrito, productos, novedades, combos y WhatsApp
+   Versión con Firebase Firestore
    ============================================ */
 
 /* ============================================
-   1. ARRAYS DE PRODUCTOS
-   Editar estos arrays para agregar, modificar o eliminar productos.
+   1. CONFIGURACIÓN DE FIREBASE
    ============================================ */
 
-const novedades = [
-    {
-        id: "N1",
-        nombre: "Colageno Hidrolizado",
-        descripcion: "Suplemento - Frasco x300g",
-        imagen: "images/novedad1.jpg",
-        precio: 4200,
-        enStock: true
-    },
-    {
-        id: "N2",
-        nombre: "Vitamina D3 2000 UI",
-        descripcion: "Suplemento vitaminico - Frasco x60 comprimidos",
-        imagen: "images/novedad2.jpg",
-        precio: 3800,
-        enStock: true
-    }
-];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
-const promociones = [
-    {
-        id: "P1",
-        nombre: "Vitamina C 500mg",
-        descripcion: "Suplemento vitaminico - Frasco x60 comprimidos",
-        imagen: "images/producto1.jpg",
-        precioOriginal: 5500,
-        precioDescuento: 3850,
-        descuentoPorcentaje: 30,
-        enStock: true
-    },
-    {
-        id: "P2",
-        nombre: "Protector Solar FPS 50",
-        descripcion: "Proteccion total - Envase 200ml",
-        imagen: "images/producto2.jpg",
-        precioOriginal: 6200,
-        precioDescuento: 4650,
-        descuentoPorcentaje: 25,
-        enStock: true
-    }
-];
+const firebaseConfig = {
+    apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
+    authDomain: "farmacia-cicala.firebaseapp.com",
+    projectId: "farmacia-cicala",
+    storageBucket: "farmacia-cicala.firebasestorage.app",
+    messagingSenderId: "299138749267",
+    appId: "1:299138749267:web:c716a4f57e6e8957a987a6"
+};
 
-const combos = [
-    {
-        id: "C1",
-        nombre: "Combo Salud & Bienestar",
-        precio: 8500,
-        enStock: true,
-        productos: [
-            { nombre: "Vitamina C 500mg", imagen: "images/producto1.jpg" },
-            { nombre: "Complejo B", imagen: "images/producto6.jpg" }
-        ]
-    },
-    {
-        id: "C2",
-        nombre: "Combo Cuidado de Piel",
-        precio: 9200,
-        enStock: false,
-        productos: [
-            { nombre: "Protector Solar FPS 50", imagen: "images/producto2.jpg" },
-            { nombre: "Crema Hidratante", imagen: "images/producto4.jpg" }
-        ]
-    }
-];
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 /* ============================================
    2. ESTADO DE LA APLICACION
@@ -116,21 +65,76 @@ function formatearPrecio(precio) {
 }
 
 /* ============================================
-   5. RENDERIZAR PRODUCTOS
+   5. CARGAR PRODUCTOS DESDE FIRESTORE
    ============================================ */
 
-function renderNovedades() {
+async function cargarProductos() {
+    mostrarCargando();
+
+    try {
+        // Cargar novedades
+        const novedadesSnap = await getDocs(collection(db, 'novedades'));
+        const novedades = novedadesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderNovedades(novedades);
+
+        // Cargar promociones
+        const promocionesSnap = await getDocs(collection(db, 'promociones'));
+        const promociones = promocionesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderPromociones(promociones);
+
+        // Cargar combos
+        const combosSnap = await getDocs(collection(db, 'combos'));
+        const combos = combosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderCombos(combos);
+
+    } catch (error) {
+        console.error('Error cargando productos:', error);
+        mostrarErrorCarga();
+    }
+}
+
+function mostrarCargando() {
+    const mensaje = '<p style="text-align:center;color:#666;font-size:18px;padding:40px 0;">Cargando productos...</p>';
+    novedadesContainer.innerHTML = mensaje;
+    promocionesContainer.innerHTML = mensaje;
+    combosContainer.innerHTML = mensaje;
+}
+
+function mostrarErrorCarga() {
+    const mensaje = '<p style="text-align:center;color:#999;font-size:18px;padding:40px 0;">No hay productos disponibles en este momento.</p>';
+    novedadesContainer.innerHTML = mensaje;
+    promocionesContainer.innerHTML = mensaje;
+    combosContainer.innerHTML = mensaje;
+}
+
+/* ============================================
+   6. RENDERIZAR PRODUCTOS
+   ============================================ */
+
+function renderNovedades(novedades) {
     novedadesContainer.innerHTML = '';
+    if (novedades.length === 0) {
+        novedadesContainer.innerHTML = '<p style="text-align:center;color:#999;font-size:18px;padding:40px 0;">Sin novedades por el momento.</p>';
+        return;
+    }
     novedades.forEach(p => novedadesContainer.appendChild(crearTarjetaProducto(p, 'novedad')));
 }
 
-function renderPromociones() {
+function renderPromociones(promociones) {
     promocionesContainer.innerHTML = '';
+    if (promociones.length === 0) {
+        promocionesContainer.innerHTML = '<p style="text-align:center;color:#999;font-size:18px;padding:40px 0;">Sin promociones por el momento.</p>';
+        return;
+    }
     promociones.forEach(p => promocionesContainer.appendChild(crearTarjetaProducto(p, 'promocion')));
 }
 
-function renderCombos() {
+function renderCombos(combos) {
     combosContainer.innerHTML = '';
+    if (combos.length === 0) {
+        combosContainer.innerHTML = '<p style="text-align:center;color:#999;font-size:18px;padding:40px 0;">Sin combos por el momento.</p>';
+        return;
+    }
     combos.forEach(c => combosContainer.appendChild(crearTarjetaCombo(c)));
 }
 
@@ -184,7 +188,7 @@ function crearTarjetaCombo(combo) {
     const tarjeta = document.createElement('div');
     tarjeta.className = 'producto-card combo-card' + (!combo.enStock ? ' sin-stock' : '');
 
-    const productosHTML = combo.productos.map(p => `
+    const productosHTML = (combo.productos || []).map(p => `
         <div class="combo-producto-item">
             <img src="${p.imagen}" alt="${p.nombre}" class="combo-producto-img">
             <p class="combo-producto-nombre">${p.nombre}</p>
@@ -195,7 +199,7 @@ function crearTarjetaCombo(combo) {
 
     tarjeta.innerHTML = `
         <div class="producto-img-container">
-            <img src="${combo.productos[0]?.imagen || ''}" alt="${combo.nombre}" class="producto-img">
+            <img src="${combo.productos?.[0]?.imagen || ''}" alt="${combo.nombre}" class="producto-img">
             <div class="producto-badge badge-combo">COMBO</div>
         </div>
         ${sinStockHTML}
@@ -224,7 +228,7 @@ function crearTarjetaCombo(combo) {
 }
 
 /* ============================================
-   6. LOGICA DEL CARRITO
+   7. LOGICA DEL CARRITO
    ============================================ */
 
 function agregarAlCarrito(item) {
@@ -301,7 +305,7 @@ function renderizarCartItems() {
 }
 
 /* ============================================
-   7. MENSAJE DE WHATSAPP
+   8. MENSAJE DE WHATSAPP
    ============================================ */
 
 function generarMensajeWhatsApp() {
@@ -342,7 +346,7 @@ function generarMensajeWhatsApp() {
 }
 
 /* ============================================
-   8. ABRIR / CERRAR CARRITO
+   9. ABRIR / CERRAR CARRITO
    ============================================ */
 
 function abrirCarrito() {
@@ -358,7 +362,7 @@ function cerrarCarrito() {
 }
 
 /* ============================================
-   9. NOTIFICACION VISUAL
+   10. NOTIFICACION VISUAL
    ============================================ */
 
 function mostrarConfirmacion(mensaje) {
@@ -375,7 +379,7 @@ function mostrarConfirmacion(mensaje) {
 }
 
 /* ============================================
-   10. DROPDOWNS EN MOVIL (centrados en pantalla)
+   11. DROPDOWNS EN MOVIL
    ============================================ */
 
 let overlayDropdown = null;
@@ -396,7 +400,7 @@ function initDropdownsMobile() {
             e.stopPropagation();
 
             const isMobile = window.innerWidth <= 768;
-            if (!isMobile) return; // en desktop se maneja por CSS hover
+            if (!isMobile) return;
 
             if (dropdownAbierto && dropdownAbierto !== dropdown) {
                 cerrarDropdown(dropdownAbierto);
@@ -428,7 +432,7 @@ function cerrarDropdown(dropdown) {
 }
 
 /* ============================================
-   11. NAVEGACION POR TABS (scroll con offset)
+   12. NAVEGACION POR TABS
    ============================================ */
 
 function scrollToSection(sectionId) {
@@ -446,26 +450,21 @@ function scrollToSection(sectionId) {
 }
 
 /* ============================================
-   12. EVENT LISTENERS
+   13. EVENT LISTENERS
    ============================================ */
 
-// Carrito: abrir/cerrar
 cartButton.addEventListener('click', () => {
     cartPanel.classList.contains('active') ? cerrarCarrito() : abrirCarrito();
 });
 closeCartBtn.addEventListener('click', cerrarCarrito);
 cartOverlay.addEventListener('click', cerrarCarrito);
-
-// Evitar que click dentro del panel cierre el carrito
 cartPanel.addEventListener('click', e => e.stopPropagation());
 
-// WhatsApp y vaciar
 enviarWhatsappBtn.addEventListener('click', generarMensajeWhatsApp);
 clearCartBtn.addEventListener('click', () => {
     if (confirm('¿Estas seguro de que deseas vaciar el carrito?')) vaciarCarrito();
 });
 
-// Modalidad retiro / envio
 btnRetiro.addEventListener('click', () => {
     modalidadSeleccionada = 'retiro';
     btnRetiro.classList.add('active');
@@ -481,7 +480,6 @@ btnEnvio.addEventListener('click', () => {
     direccionInput.focus();
 });
 
-// Tabs de navegacion
 navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
         navTabs.forEach(t => t.classList.remove('active'));
@@ -491,17 +489,14 @@ navTabs.forEach(tab => {
 });
 
 /* ============================================
-   13. INICIALIZACION
+   14. INICIALIZACION
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderNovedades();
-    renderPromociones();
-    renderCombos();
+    cargarProductos();
     actualizarCarritoUI();
     initDropdownsMobile();
 
-    // Recalcular dropdown mobile al rotar pantalla
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && dropdownAbierto) {
             cerrarDropdown(dropdownAbierto);
@@ -512,12 +507,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ============================================
-   14. ESTILOS DINAMICOS (animaciones y badges)
+   15. ESTILOS DINAMICOS
    ============================================ */
 
 const estilosDinamicos = document.createElement('style');
 estilosDinamicos.innerHTML = `
-    /* Notificacion toast */
     .notificacion-toast {
         position: fixed;
         top: 120px;
@@ -539,8 +533,6 @@ estilosDinamicos.innerHTML = `
         opacity: 1;
         transform: translateX(-50%) translateY(0);
     }
-
-    /* Badges de productos */
     .producto-img-container {
         position: relative;
         width: 100%;
@@ -559,8 +551,6 @@ estilosDinamicos.innerHTML = `
     .badge-nuevo  { background-color: #2196F3; }
     .badge-off    { background-color: #FF6B35; }
     .badge-combo  { background-color: #9C27B0; }
-
-    /* Sin stock */
     .sin-stock-label {
         background-color: #CCCCCC;
         color: #555;
@@ -575,8 +565,6 @@ estilosDinamicos.innerHTML = `
         opacity: 0.65;
         filter: grayscale(40%);
     }
-
-    /* Items del carrito con controles de cantidad a la derecha */
     .cart-item {
         display: flex;
         flex-direction: column;
@@ -644,8 +632,6 @@ estilosDinamicos.innerHTML = `
         background: #CC0000;
         color: white;
     }
-
-    /* Combos */
     .combo-productos-lista {
         display: flex;
         gap: 8px;
@@ -669,8 +655,6 @@ estilosDinamicos.innerHTML = `
         color: #2D2D2D;
         font-weight: 600;
     }
-
-    /* Dropdown mobile centrado */
     .nav-dropdown.dropdown-mobile-open {
         display: block !important;
         position: fixed !important;
