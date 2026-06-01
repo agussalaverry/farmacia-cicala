@@ -166,7 +166,7 @@ body {
 
 .secondary-nav {
     position: fixed;
-    top: 100px;
+    top: 102px;
     left: 0;
     right: 0;
     background-color: #F48FB1;
@@ -596,11 +596,11 @@ body {
     right: 0;
     top: 0;
     height: 100vh;
-    width: 320px;
+    width: 380px;
     background-color: var(--color-white);
     box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
     border-left: 4px solid var(--color-primary);
-    z-index: 2000;
+    z-index: 3000;
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
@@ -668,6 +668,17 @@ body {
     gap: var(--spacing-md);
     padding: var(--spacing-lg);
     flex: 1;
+}
+
+.cart-modalidad-section {
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-xl);
 }
 
 .cart-empty-message {
@@ -852,6 +863,10 @@ body {
     padding: var(--spacing-lg);
     background-color: var(--color-bg);
     border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: var(--spacing-md) var(--spacing-lg);
 }
 
 .cart-total-label {
@@ -939,7 +954,7 @@ body {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 997;
+    z-index: 2999;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -1053,7 +1068,7 @@ footer {
 
     /* Barra secundaria */
     .secondary-nav {
-        top: 100px;
+        top: 140px;
     }
 
     .nav-tab {
@@ -1064,7 +1079,7 @@ footer {
     /* Contenido principal */
     .main-content {
         padding: var(--spacing-md);
-        margin-top: 140px;
+        margin-top: 190px;
     }
 
     .section-title {
@@ -1130,20 +1145,6 @@ footer {
         width: 100%;
     }
 
-    .cart-panel-title {
-        font-size: var(--font-size-base);
-    }
-
-    .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .quantity-controls {
-        width: 100%;
-        margin-top: var(--spacing-sm);
-    }
-
     .btn-modalidad {
         font-size: var(--font-size-base);
         padding: var(--spacing-md);
@@ -1157,20 +1158,16 @@ footer {
 }
 
 @media (max-width: 768px) {
-    /* Dropdowns en móvil - posición fija centrada */.
-    .nav-item:hover .nav-dropdown {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) !important;
-        opacity: 1;
-        visibility: visible;
-        z-index: 2001;
+    /* Dropdowns en movil: ocultos por CSS, se muestran por JS con clase dropdown-mobile-open */
+    .nav-dropdown {
+        display: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 }
 
-(/\* ============================================
-   TABLET \(min-width: 481px y max-width: 768px\))
+/* ============================================
+   TABLET (min-width: 481px y max-width: 768px)
    ============================================ */
 
 @media (min-width: 481px) and (max-width: 768px) {
@@ -1193,7 +1190,7 @@ footer {
         font-size: var(--font-size-xl);
     }
 
-    /* NavegaciÃ³n */
+    /* Navegacion */
     .header-nav {
         width: 100%;
     }
@@ -1217,10 +1214,15 @@ footer {
         min-width: 350px;
     }
 
+    /* Barra secundaria */
+    .secondary-nav {
+        top: 120px;
+    }
+
     /* Contenido principal */
     .main-content {
         padding: var(--spacing-lg);
-        margin-top: 135px;
+        margin-top: 175px;
     }
 
     /* Grid de productos */
@@ -1250,7 +1252,7 @@ footer {
 
     /* Carrito */
     .cart-panel {
-        width: 360px;
+        width: 100%;
     }
 
     .btn-modalidad {
@@ -1344,7 +1346,7 @@ html {
 
 
 /* ============================================
-   ESTILOS PARA DROPDOWNS EN MÓVIL
+   ESTILOS PARA DROPDOWNS EN MOVIL
    ============================================ */
 
 .nav-dropdown-overlay {
@@ -1357,7 +1359,7 @@ html {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 1500;
+    z-index: 2000;
     pointer-events: none;
 }
 
@@ -1365,14 +1367,5 @@ html {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-}
-
-
-
-/* Dropdowns ocultos por defecto en móvil */
-@media (max-width: 768px) {
-    .nav-dropdown {
-        display: none !important;
-    }
 }
 
