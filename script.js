@@ -254,7 +254,7 @@ function eliminarDelCarrito(id) {
 function vaciarCarrito() {
     carrito = [];
     actualizarCarritoUI();
-    mostrarConfirmacion('Carrito vaciado');
+    mostrarConfirmacion('Carrito vaciado', 'rojo');
 }
 
 function actualizarCarritoUI() {
@@ -367,9 +367,9 @@ function cerrarCarrito() {
    10. NOTIFICACION VISUAL
    ============================================ */
 
-function mostrarConfirmacion(mensaje) {
+function mostrarConfirmacion(mensaje, color = 'verde') {
     const notif = document.createElement('div');
-    notif.className = 'notificacion-toast';
+    notif.className = 'notificacion-toast notificacion-toast--' + color;
     notif.textContent = mensaje;
     document.body.appendChild(notif);
 
@@ -378,6 +378,40 @@ function mostrarConfirmacion(mensaje) {
         notif.classList.remove('visible');
         setTimeout(() => notif.remove(), 300);
     }, 2000);
+}
+
+function mostrarModalConfirmacion(mensaje, onAceptar) {
+    // Evitar duplicados
+    const existente = document.getElementById('modal-confirmacion-custom');
+    if (existente) existente.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'modal-confirmacion-custom';
+    overlay.className = 'modal-confirmacion-overlay';
+
+    overlay.innerHTML = `
+        <div class="modal-confirmacion-box">
+            <p class="modal-confirmacion-mensaje">${mensaje}</p>
+            <div class="modal-confirmacion-botones">
+                <button class="modal-btn-cancelar">Cancelar</button>
+                <button class="modal-btn-aceptar">Vaciar</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    // Forzar reflow para animación
+    requestAnimationFrame(() => overlay.classList.add('visible'));
+
+    overlay.querySelector('.modal-btn-aceptar').addEventListener('click', () => {
+        overlay.classList.remove('visible');
+        setTimeout(() => overlay.remove(), 300);
+        onAceptar();
+    });
+    overlay.querySelector('.modal-btn-cancelar').addEventListener('click', () => {
+        overlay.classList.remove('visible');
+        setTimeout(() => overlay.remove(), 300);
+    });
 }
 
 /* ============================================
@@ -464,7 +498,10 @@ cartPanel.addEventListener('click', e => e.stopPropagation());
 
 enviarWhatsappBtn.addEventListener('click', generarMensajeWhatsApp);
 clearCartBtn.addEventListener('click', () => {
-    if (confirm('¿Estas seguro de que deseas vaciar el carrito?')) vaciarCarrito();
+    mostrarModalConfirmacion(
+        '¿Querés vaciar el carrito?',
+        vaciarCarrito
+    );
 });
 
 btnRetiro.addEventListener('click', () => {
@@ -514,12 +551,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const estilosDinamicos = document.createElement('style');
 estilosDinamicos.innerHTML = `
+    /* ---- Toast de notificación ---- */
     .notificacion-toast {
         position: fixed;
         top: 120px;
         left: 50%;
         transform: translateX(-50%) translateY(-10px);
-        background-color: #25D366;
         color: white;
         padding: 14px 28px;
         border-radius: 12px;
@@ -535,6 +572,15 @@ estilosDinamicos.innerHTML = `
         opacity: 1;
         transform: translateX(-50%) translateY(0);
     }
+    .notificacion-toast--verde { background-color: #25D366; }
+    .notificacion-toast--rojo  { background-color: #CC0000; }
+
+    /* ---- Badge del carrito ---- */
+    .cart-badge {
+        background-color: #25D366 !important;
+    }
+
+    /* ---- Imagen de producto en carrito ---- */
     .producto-img-container {
         position: relative;
         width: 100%;
@@ -670,6 +716,76 @@ estilosDinamicos.innerHTML = `
         max-height: 85vh;
         overflow-y: auto;
     }
+
+    /* ---- Modal de confirmación personalizado ---- */
+    .modal-confirmacion-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 5000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .modal-confirmacion-overlay.visible {
+        opacity: 1;
+    }
+    .modal-confirmacion-box {
+        background: #FFFFFF;
+        border-radius: 20px;
+        padding: 40px 32px 32px;
+        max-width: 380px;
+        width: 100%;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+        text-align: center;
+        transform: translateY(16px);
+        transition: transform 0.3s ease;
+    }
+    .modal-confirmacion-overlay.visible .modal-confirmacion-box {
+        transform: translateY(0);
+    }
+    .modal-confirmacion-mensaje {
+        font-size: 22px;
+        font-weight: 800;
+        color: #2D2D2D;
+        margin-bottom: 32px;
+        line-height: 1.4;
+    }
+    .modal-confirmacion-botones {
+        display: flex;
+        gap: 12px;
+    }
+    .modal-btn-cancelar {
+        flex: 1;
+        padding: 16px;
+        background: #F0F0F0;
+        color: #555;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: background 0.2s;
+    }
+    .modal-btn-cancelar:hover { background: #E0E0E0; }
+    .modal-btn-aceptar {
+        flex: 1;
+        padding: 16px;
+        background: #CC0000;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: background 0.2s;
+    }
+    .modal-btn-aceptar:hover { background: #AA0000; }
 `;
 document.head.appendChild(estilosDinamicos);
 
