@@ -524,7 +524,8 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
 
 /* ====== RECORTADOR DE IMÁGENES ====== */
 let cropperInstance = null;
-let cropperCallback = null; // función a llamar con el File resultante
+let cropperCallback = null;
+let cropperOriginalFile = null;   // ← guardamos el File original ANTES de que Cropper lo toque
 
 const cropperModal  = document.getElementById('cropper-modal');
 const cropperImg    = document.getElementById('cropper-img');
@@ -533,27 +534,30 @@ const btnCropOriginal  = document.getElementById('btn-crop-original');
 const btnCropCancel    = document.getElementById('btn-crop-cancel');
 
 function abrirRecortador(file, onResult) {
+    cropperOriginalFile = file;   // ← guardamos referencia al File original
     const reader = new FileReader();
     reader.onload = e => {
+        // Destruir instancia previa ANTES de cambiar el src
+        if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
         cropperImg.src = e.target.result;
         cropperModal.classList.add('active');
-        // Destruir instancia previa
-        if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-        // Inicializar Cropper
-        cropperInstance = new Cropper(cropperImg, {
-            aspectRatio: NaN,          // libre
-            viewMode: 1,
-            dragMode: 'move',
-            autoCropArea: 0.85,
-            responsive: true,
-            restore: false,
-            guides: true,
-            center: true,
-            highlight: false,
-            cropBoxMovable: true,
-            cropBoxResizable: true,
-            toggleDragModeOnDblclick: false,
-        });
+        // Esperar a que la imagen cargue para inicializar Cropper
+        cropperImg.onload = () => {
+            cropperInstance = new Cropper(cropperImg, {
+                aspectRatio: NaN,
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 0.85,
+                responsive: true,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+            });
+        };
         cropperCallback = onResult;
     };
     reader.readAsDataURL(file);
@@ -561,23 +565,24 @@ function abrirRecortador(file, onResult) {
 
 btnCropConfirm.addEventListener('click', () => {
     if (!cropperInstance) return;
+    // Deshabilitar botón para evitar doble click
+    btnCropConfirm.disabled = true;
     cropperInstance.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200, fillColor: '#fff' })
         .toBlob(blob => {
             const croppedFile = new File([blob], 'recortada.jpg', { type: 'image/jpeg' });
+            const cb = cropperCallback;
             cerrarRecortador();
-            if (cropperCallback) cropperCallback(croppedFile);
+            btnCropConfirm.disabled = false;
+            if (cb) cb(croppedFile);
         }, 'image/jpeg', 0.92);
 });
 
 btnCropOriginal.addEventListener('click', () => {
-    // Usar el archivo original sin recortar
-    const originalSrc = cropperImg.src;
-    // Convertimos la dataURL de vuelta a File
-    fetch(originalSrc).then(r => r.blob()).then(blob => {
-        const originalFile = new File([blob], 'original.jpg', { type: blob.type });
-        cerrarRecortador();
-        if (cropperCallback) cropperCallback(originalFile);
-    });
+    // Usamos el File original guardado — no tocamos cropperImg.src (que Cropper modifica)
+    const originalFile = cropperOriginalFile;
+    const cb = cropperCallback;
+    cerrarRecortador();
+    if (cb && originalFile) cb(originalFile);
 });
 
 btnCropCancel.addEventListener('click', cerrarRecortador);
@@ -586,6 +591,7 @@ function cerrarRecortador() {
     cropperModal.classList.remove('active');
     if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
     cropperCallback = null;
+    cropperOriginalFile = null;
 }
 
 /* ====== CLOUDINARY UPLOAD ====== */
@@ -619,19 +625,19 @@ function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, pr
     const quitarBtn = document.getElementById(quitarBtnId);
 
     function procesarFile(file) {
-        // Abrir recortador; cuando el usuario confirme, guardar el file resultante
         abrirRecortador(file, (fileResultante) => {
+            // Guardar referencia ANTES del reader async para evitar race condition
+            input._fileSeleccionado = fileResultante;
+            urlInput.value = '';
             const reader = new FileReader();
             reader.onload = e => {
                 previewImg.src = e.target.result;
-                previewNombre.textContent = file.name;
+                previewNombre.textContent = fileResultante.name || file.name;
                 previewEstado.textContent = 'Lista para guardar';
                 previewEstado.className = 'imagen-preview-estado';
                 container.classList.add('visible');
             };
             reader.readAsDataURL(fileResultante);
-            input._fileSeleccionado = fileResultante;
-            urlInput.value = '';
         });
     }
 
