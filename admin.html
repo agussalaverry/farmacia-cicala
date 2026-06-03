@@ -24,463 +24,141 @@
             --shadow: 0 2px 12px rgba(0,0,0,0.08);
         }
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            font-size: 16px;
-            min-height: 100vh;
-        }
+        body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; min-height: 100vh; }
 
-        /* ====== LOGIN ====== */
-        #login-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4EF 100%);
-        }
+        /* LOGIN */
+        #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #FFF0F5 0%, #FFE4EF 100%); }
+        .login-card { background: var(--white); border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 400px; box-shadow: 0 8px 40px rgba(213,0,109,0.12); }
+        .login-logo { text-align: center; margin-bottom: 32px; }
+        .login-logo h1 { font-size: 24px; font-weight: 800; color: var(--pink); }
+        .login-logo p { font-size: 14px; color: var(--text-light); margin-top: 4px; }
+        .login-error { color: var(--red); font-size: 14px; text-align: center; margin-top: 12px; min-height: 20px; }
 
-        .login-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 48px 40px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 8px 40px rgba(213,0,109,0.12);
-        }
-
-        .login-logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .login-logo h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--pink);
-        }
-
-        .login-logo p {
-            font-size: 14px;
-            color: var(--text-light);
-            margin-top: 4px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
+        /* FORM */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--pink-border);
-            border-radius: var(--radius);
-            font-family: 'Nunito', sans-serif;
-            font-size: 16px;
-            color: var(--text);
-            background: var(--white);
-            transition: border-color 0.2s;
-            outline: none;
+            width: 100%; padding: 14px 16px; border: 2px solid var(--pink-border); border-radius: var(--radius);
+            font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--text); background: var(--white);
+            transition: border-color 0.2s; outline: none;
         }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--pink); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            border-color: var(--pink);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: var(--pink);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-family: 'Nunito', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
+        /* BOTONES */
+        .btn-primary { width: 100%; padding: 16px; background: var(--pink); color: white; border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-primary:hover { background: var(--pink-dark); }
-
-        .login-error {
-            color: var(--red);
-            font-size: 14px;
-            text-align: center;
-            margin-top: 12px;
-            min-height: 20px;
-        }
-
-        /* ====== ADMIN PANEL ====== */
-        #admin-panel { display: none; min-height: 100vh; }
-
-        .admin-header {
-            background: var(--pink);
-            color: white;
-            padding: 0 32px;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 12px rgba(213,0,109,0.3);
-        }
-
-        .admin-header h1 {
-            font-size: 20px;
-            font-weight: 800;
-        }
-
-        .admin-header span {
-            font-size: 14px;
-            opacity: 0.85;
-        }
-
-        .btn-logout {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.4);
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-logout:hover { background: rgba(255,255,255,0.3); }
-
-        .admin-body {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 32px 24px;
-        }
-
-        /* ====== TABS ====== */
-        .admin-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 28px;
-            background: var(--white);
-            padding: 6px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            width: fit-content;
-        }
-
-        .admin-tab {
-            padding: 10px 24px;
-            border: none;
-            background: transparent;
-            font-family: 'Nunito', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-light);
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-
-        .admin-tab.active {
-            background: var(--pink);
-            color: white;
-        }
-
-        /* ====== SECCIÓN ====== */
-        .admin-section { display: none; }
-        .admin-section.active { display: block; }
-
-        .section-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .section-toolbar h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-        }
-
-        .btn-add {
-            background: var(--pink);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            font-family: 'Nunito', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
+        .btn-save { flex: 1; padding: 16px; background: var(--pink); color: white; border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .btn-save:hover { background: var(--pink-dark); }
+        .btn-cancel { padding: 16px 24px; background: #F5F5F5; color: var(--text-light); border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .btn-cancel:hover { background: #EEEEEE; }
+        .btn-add { background: var(--pink); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-add:hover { background: var(--pink-dark); }
-
-        /* ====== TABLA DE PRODUCTOS ====== */
-        .productos-table {
-            background: var(--white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .table-header {
-            display: grid;
-            padding: 14px 20px;
-            background: var(--pink-light);
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--pink-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--pink-border);
-        }
-
-        .th-novedad   { grid-template-columns: 2fr 1.5fr 1fr 1fr 100px; }
-        .th-promocion { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 100px; }
-        .th-combo     { grid-template-columns: 2fr 1fr 1fr 100px; }
-
-        .producto-row {
-            display: grid;
-            padding: 16px 20px;
-            align-items: center;
-            border-bottom: 1px solid #F5F5F5;
-            transition: background 0.15s;
-            font-size: 15px;
-        }
-
-        .producto-row:last-child { border-bottom: none; }
-        .producto-row:hover { background: #FAFAFA; }
-
-        .producto-row.th-novedad   { grid-template-columns: 2fr 1.5fr 1fr 1fr 100px; }
-        .producto-row.th-promocion { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 100px; }
-        .producto-row.th-combo     { grid-template-columns: 2fr 1fr 1fr 100px; }
-
-        .producto-nombre-cell { font-weight: 700; }
-        .producto-desc-cell   { font-size: 13px; color: var(--text-light); }
-
-        .stock-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .stock-badge.en-stock   { background: #E8F5E9; color: #2E7D32; }
-        .stock-badge.sin-stock  { background: #EEEEEE; color: #757575; }
-
-        .row-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .btn-edit, .btn-delete, .btn-toggle-stock {
-            padding: 7px 14px;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn-edit         { background: #E3F2FD; color: #1565C0; }
-        .btn-delete       { background: #FFEBEE; color: var(--red); }
+        .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 20px; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+        .btn-edit { background: #E3F2FD; color: #1565C0; }
+        .btn-delete { background: #FFEBEE; color: var(--red); }
         .btn-toggle-stock { background: #FFF3E0; color: var(--orange); }
-
+        .btn-edit, .btn-delete, .btn-toggle-stock { padding: 7px 14px; border: none; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
         .btn-edit:hover, .btn-delete:hover, .btn-toggle-stock:hover { opacity: 0.75; }
 
-        .empty-state {
-            text-align: center;
-            padding: 48px 24px;
-            color: var(--text-light);
-            font-size: 18px;
-        }
+        /* ADMIN PANEL */
+        #admin-panel { display: none; min-height: 100vh; }
+        .admin-header { background: var(--pink); color: white; padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(213,0,109,0.3); }
+        .admin-header h1 { font-size: 20px; font-weight: 800; }
+        .admin-header span { font-size: 14px; opacity: 0.85; }
+        .admin-body { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
 
-        /* ====== MODAL ====== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+        /* TABS */
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 28px; background: var(--white); padding: 6px; border-radius: var(--radius); box-shadow: var(--shadow); width: fit-content; }
+        .admin-tab { padding: 10px 24px; border: none; background: transparent; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-light); cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+        .admin-tab.active { background: var(--pink); color: white; }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+        .section-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .section-toolbar h2 { font-size: 22px; font-weight: 800; }
 
+        /* TABLA */
+        .productos-table { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+        .table-header { display: grid; padding: 14px 20px; background: var(--pink-light); font-size: 13px; font-weight: 800; color: var(--pink-dark); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--pink-border); }
+        .th-novedad   { grid-template-columns: 60px 2fr 1.5fr 1fr 1fr 120px; }
+        .th-promocion { grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 120px; }
+        .th-combo     { grid-template-columns: 60px 2fr 1fr 1fr 120px; }
+        .producto-row { display: grid; padding: 12px 20px; align-items: center; border-bottom: 1px solid #F5F5F5; transition: background 0.15s; font-size: 15px; }
+        .producto-row:last-child { border-bottom: none; }
+        .producto-row:hover { background: #FAFAFA; }
+        .producto-row.th-novedad   { grid-template-columns: 60px 2fr 1.5fr 1fr 1fr 120px; }
+        .producto-row.th-promocion { grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 120px; }
+        .producto-row.th-combo     { grid-template-columns: 60px 2fr 1fr 1fr 120px; }
+        .producto-nombre-cell { font-weight: 700; }
+        .producto-desc-cell { font-size: 13px; color: var(--text-light); }
+        .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #F0F0F0; }
+        .thumb-placeholder { width: 48px; height: 48px; border-radius: 8px; background: #F0F0F0; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .stock-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+        .stock-badge.en-stock  { background: #E8F5E9; color: #2E7D32; }
+        .stock-badge.sin-stock { background: #EEEEEE; color: #757575; }
+        .row-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+        .empty-state { text-align: center; padding: 48px 24px; color: var(--text-light); font-size: 18px; }
+        .loading { text-align: center; padding: 48px; color: var(--text-light); font-size: 18px; }
+
+        /* SUBIDA DE IMAGEN */
+        .imagen-upload-area {
+            border: 2px dashed var(--pink-border); border-radius: var(--radius); padding: 20px;
+            text-align: center; cursor: pointer; transition: all 0.2s; background: var(--pink-light);
+            position: relative;
+        }
+        .imagen-upload-area:hover { border-color: var(--pink); background: #FFE8F2; }
+        .imagen-upload-area.dragover { border-color: var(--pink); background: #FFE8F2; transform: scale(1.01); }
+        .imagen-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+        .imagen-upload-icon { font-size: 32px; margin-bottom: 8px; }
+        .imagen-upload-text { font-size: 15px; font-weight: 700; color: var(--pink); }
+        .imagen-upload-sub { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+        .imagen-preview-container { margin-top: 12px; display: none; align-items: center; gap: 12px; background: white; border-radius: 8px; padding: 10px; border: 1px solid var(--pink-border); }
+        .imagen-preview-container.visible { display: flex; }
+        .imagen-preview { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
+        .imagen-preview-info { flex: 1; }
+        .imagen-preview-nombre { font-size: 14px; font-weight: 700; color: var(--text); }
+        .imagen-preview-estado { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+        .imagen-preview-estado.subiendo { color: var(--orange); }
+        .imagen-preview-estado.listo { color: #2E7D32; }
+        .imagen-preview-estado.error { color: var(--red); }
+        .btn-quitar-imagen { background: #FFEBEE; color: var(--red); border: none; border-radius: 6px; padding: 6px 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
+        .modal { background: var(--white); border-radius: 20px; padding: 36px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .modal h3 { font-size: 22px; font-weight: 800; color: var(--pink); margin-bottom: 24px; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 28px; }
 
-        .modal {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 36px;
-            width: 100%;
-            max-width: 540px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        }
-
-        .modal h3 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--pink);
-            margin-bottom: 24px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 28px;
-        }
-
-        .btn-save {
-            flex: 1;
-            padding: 16px;
-            background: var(--pink);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-family: 'Nunito', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-save:hover { background: var(--pink-dark); }
-
-        .btn-cancel {
-            padding: 16px 24px;
-            background: #F5F5F5;
-            color: var(--text-light);
-            border: none;
-            border-radius: var(--radius);
-            font-family: 'Nunito', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-cancel:hover { background: #EEEEEE; }
-
-        /* Combo: lista de productos internos */
+        /* COMBO ITEMS */
         .combo-items-editor { margin-top: 8px; }
+        .combo-item-row { display: grid; grid-template-columns: 1fr 36px; gap: 8px; margin-bottom: 12px; align-items: start; }
+        .combo-item-fields { display: flex; flex-direction: column; gap: 8px; }
+        .btn-remove-combo-item { width: 36px; height: 36px; background: #FFEBEE; color: var(--red); border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 4px; }
+        .btn-add-combo-item { background: var(--pink-light); color: var(--pink); border: 2px dashed var(--pink-border); padding: 10px; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px; }
 
-        .combo-item-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 36px;
-            gap: 8px;
-            margin-bottom: 8px;
-            align-items: center;
-        }
-
-        .btn-remove-combo-item {
-            width: 36px;
-            height: 36px;
-            background: #FFEBEE;
-            color: var(--red);
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-add-combo-item {
-            background: var(--pink-light);
-            color: var(--pink);
-            border: 2px dashed var(--pink-border);
-            padding: 10px;
-            border-radius: 8px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 4px;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--text);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            z-index: 9999;
-            opacity: 0;
-            transition: all 0.3s;
-            pointer-events: none;
-        }
-
-        .toast.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
+        /* TOAST */
+        .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: white; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 700; z-index: 9999; opacity: 0; transition: all 0.3s; pointer-events: none; }
+        .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast.success { background: var(--green); }
         .toast.error   { background: var(--red); }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 48px;
-            color: var(--text-light);
-            font-size: 18px;
-        }
 
         @media (max-width: 768px) {
             .admin-header { padding: 0 16px; }
             .admin-body { padding: 20px 16px; }
-            .admin-tabs { width: 100%; overflow-x: auto; }
+            .admin-tabs { width: 100%; }
             .form-row { grid-template-columns: 1fr; }
-            .table-header, .producto-row { font-size: 13px; padding: 12px 14px; }
-            .th-promocion { grid-template-columns: 2fr 1fr 80px; }
-            .producto-row.th-promocion { grid-template-columns: 2fr 1fr 80px; }
+            .th-novedad, .producto-row.th-novedad { grid-template-columns: 48px 1fr 80px 100px; }
+            .th-promocion, .producto-row.th-promocion { grid-template-columns: 48px 1fr 80px 100px; }
+            .th-combo, .producto-row.th-combo { grid-template-columns: 48px 1fr 80px 100px; }
         }
     </style>
 </head>
 <body>
 
-<!-- ====== LOGIN ====== -->
+<!-- LOGIN -->
 <div id="login-screen">
     <div class="login-card">
         <div class="login-logo">
@@ -500,13 +178,10 @@
     </div>
 </div>
 
-<!-- ====== ADMIN PANEL ====== -->
+<!-- ADMIN PANEL -->
 <div id="admin-panel">
-
     <header class="admin-header">
-        <div>
-            <h1>💊 Panel Admin</h1>
-        </div>
+        <h1>💊 Panel Admin</h1>
         <div style="display:flex;align-items:center;gap:16px;">
             <span id="admin-user-email"></span>
             <button class="btn-logout" id="logout-btn">Salir</button>
@@ -514,8 +189,6 @@
     </header>
 
     <div class="admin-body">
-
-        <!-- Tabs -->
         <div class="admin-tabs">
             <button class="admin-tab active" data-tab="novedades">Novedades</button>
             <button class="admin-tab" data-tab="promociones">Promociones</button>
@@ -526,15 +199,11 @@
         <div class="admin-section active" id="tab-novedades">
             <div class="section-toolbar">
                 <h2>Novedades</h2>
-                <button class="btn-add" onclick="abrirModalNovedad()">+ Agregar novedad</button>
+                <button class="btn-add" id="btn-nueva-novedad">+ Agregar novedad</button>
             </div>
             <div class="productos-table">
                 <div class="table-header th-novedad">
-                    <span>Nombre</span>
-                    <span>Descripción</span>
-                    <span>Precio</span>
-                    <span>Stock</span>
-                    <span></span>
+                    <span></span><span>Nombre</span><span>Descripción</span><span>Precio</span><span>Stock</span><span></span>
                 </div>
                 <div id="lista-novedades"><div class="loading">Cargando...</div></div>
             </div>
@@ -544,16 +213,11 @@
         <div class="admin-section" id="tab-promociones">
             <div class="section-toolbar">
                 <h2>Promociones</h2>
-                <button class="btn-add" onclick="abrirModalPromocion()">+ Agregar promoción</button>
+                <button class="btn-add" id="btn-nueva-promocion">+ Agregar promoción</button>
             </div>
             <div class="productos-table">
                 <div class="table-header th-promocion">
-                    <span>Nombre</span>
-                    <span>Precio original</span>
-                    <span>Precio descuento</span>
-                    <span>% OFF</span>
-                    <span>Stock</span>
-                    <span></span>
+                    <span></span><span>Nombre</span><span>Precio original</span><span>Con descuento</span><span>% OFF</span><span>Stock</span><span></span>
                 </div>
                 <div id="lista-promociones"><div class="loading">Cargando...</div></div>
             </div>
@@ -563,23 +227,19 @@
         <div class="admin-section" id="tab-combos">
             <div class="section-toolbar">
                 <h2>Combos</h2>
-                <button class="btn-add" onclick="abrirModalCombo()">+ Agregar combo</button>
+                <button class="btn-add" id="btn-nuevo-combo">+ Agregar combo</button>
             </div>
             <div class="productos-table">
                 <div class="table-header th-combo">
-                    <span>Nombre del combo</span>
-                    <span>Productos incluidos</span>
-                    <span>Stock</span>
-                    <span></span>
+                    <span></span><span>Nombre del combo</span><span>Productos</span><span>Stock</span><span></span>
                 </div>
                 <div id="lista-combos"><div class="loading">Cargando...</div></div>
             </div>
         </div>
-
     </div>
 </div>
 
-<!-- ====== MODAL NOVEDAD ====== -->
+<!-- MODAL NOVEDAD -->
 <div class="modal-overlay" id="modal-novedad">
     <div class="modal">
         <h3 id="modal-novedad-titulo">Agregar novedad</h3>
@@ -606,17 +266,31 @@
             </div>
         </div>
         <div class="form-group">
-            <label>Ruta de imagen</label>
-            <input type="text" id="novedad-imagen" placeholder="images/novedad1.jpg">
+            <label>Imagen del producto</label>
+            <div class="imagen-upload-area" id="upload-area-novedad">
+                <input type="file" id="novedad-imagen-file" accept="image/*">
+                <div class="imagen-upload-icon">📷</div>
+                <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
+                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
+            </div>
+            <div class="imagen-preview-container" id="preview-novedad">
+                <img class="imagen-preview" id="preview-img-novedad" src="" alt="">
+                <div class="imagen-preview-info">
+                    <div class="imagen-preview-nombre" id="preview-nombre-novedad"></div>
+                    <div class="imagen-preview-estado" id="preview-estado-novedad">Lista para guardar</div>
+                </div>
+                <button class="btn-quitar-imagen" id="btn-quitar-novedad">Quitar</button>
+            </div>
+            <input type="hidden" id="novedad-imagen-url">
         </div>
         <div class="modal-actions">
-            <button class="btn-cancel" onclick="cerrarModal('modal-novedad')">Cancelar</button>
-            <button class="btn-save" onclick="guardarNovedad()">Guardar</button>
+            <button class="btn-cancel" id="btn-cancelar-novedad">Cancelar</button>
+            <button class="btn-save" id="btn-guardar-novedad">Guardar</button>
         </div>
     </div>
 </div>
 
-<!-- ====== MODAL PROMOCION ====== -->
+<!-- MODAL PROMOCION -->
 <div class="modal-overlay" id="modal-promocion">
     <div class="modal">
         <h3 id="modal-promocion-titulo">Agregar promoción</h3>
@@ -632,11 +306,11 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Precio original ($)</label>
-                <input type="number" id="promocion-precio-original" placeholder="5500" oninput="calcularDescuento()">
+                <input type="number" id="promocion-precio-original" placeholder="5500">
             </div>
             <div class="form-group">
                 <label>Precio con descuento ($)</label>
-                <input type="number" id="promocion-precio-descuento" placeholder="3850" oninput="calcularDescuento()">
+                <input type="number" id="promocion-precio-descuento" placeholder="3850">
             </div>
         </div>
         <div class="form-row">
@@ -653,17 +327,31 @@
             </div>
         </div>
         <div class="form-group">
-            <label>Ruta de imagen</label>
-            <input type="text" id="promocion-imagen" placeholder="images/producto1.jpg">
+            <label>Imagen del producto</label>
+            <div class="imagen-upload-area" id="upload-area-promocion">
+                <input type="file" id="promocion-imagen-file" accept="image/*">
+                <div class="imagen-upload-icon">📷</div>
+                <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
+                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
+            </div>
+            <div class="imagen-preview-container" id="preview-promocion">
+                <img class="imagen-preview" id="preview-img-promocion" src="" alt="">
+                <div class="imagen-preview-info">
+                    <div class="imagen-preview-nombre" id="preview-nombre-promocion"></div>
+                    <div class="imagen-preview-estado" id="preview-estado-promocion">Lista para guardar</div>
+                </div>
+                <button class="btn-quitar-imagen" id="btn-quitar-promocion">Quitar</button>
+            </div>
+            <input type="hidden" id="promocion-imagen-url">
         </div>
         <div class="modal-actions">
-            <button class="btn-cancel" onclick="cerrarModal('modal-promocion')">Cancelar</button>
-            <button class="btn-save" onclick="guardarPromocion()">Guardar</button>
+            <button class="btn-cancel" id="btn-cancelar-promocion">Cancelar</button>
+            <button class="btn-save" id="btn-guardar-promocion">Guardar</button>
         </div>
     </div>
 </div>
 
-<!-- ====== MODAL COMBO ====== -->
+<!-- MODAL COMBO -->
 <div class="modal-overlay" id="modal-combo">
     <div class="modal">
         <h3 id="modal-combo-titulo">Agregar combo</h3>
@@ -686,18 +374,35 @@
             </div>
         </div>
         <div class="form-group">
+            <label>Imagen principal del combo</label>
+            <div class="imagen-upload-area" id="upload-area-combo">
+                <input type="file" id="combo-imagen-file" accept="image/*">
+                <div class="imagen-upload-icon">📷</div>
+                <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
+                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
+            </div>
+            <div class="imagen-preview-container" id="preview-combo">
+                <img class="imagen-preview" id="preview-img-combo" src="" alt="">
+                <div class="imagen-preview-info">
+                    <div class="imagen-preview-nombre" id="preview-nombre-combo"></div>
+                    <div class="imagen-preview-estado" id="preview-estado-combo">Lista para guardar</div>
+                </div>
+                <button class="btn-quitar-imagen" id="btn-quitar-combo">Quitar</button>
+            </div>
+            <input type="hidden" id="combo-imagen-url">
+        </div>
+        <div class="form-group">
             <label>Productos incluidos en el combo</label>
             <div class="combo-items-editor" id="combo-items-editor"></div>
-            <button class="btn-add-combo-item" onclick="agregarFilaCombo()">+ Agregar producto al combo</button>
+            <button class="btn-add-combo-item" id="btn-agregar-item-combo">+ Agregar producto al combo</button>
         </div>
         <div class="modal-actions">
-            <button class="btn-cancel" onclick="cerrarModal('modal-combo')">Cancelar</button>
-            <button class="btn-save" onclick="guardarCombo()">Guardar</button>
+            <button class="btn-cancel" id="btn-cancelar-combo">Cancelar</button>
+            <button class="btn-save" id="btn-guardar-combo">Guardar</button>
         </div>
     </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -705,6 +410,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebas
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
 
+/* ====== CONFIG ====== */
 const firebaseConfig = {
     apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
     authDomain: "farmacia-cicala.firebaseapp.com",
@@ -713,6 +419,8 @@ const firebaseConfig = {
     messagingSenderId: "299138749267",
     appId: "1:299138749267:web:c716a4f57e6e8957a987a6"
 };
+const CLOUDINARY_CLOUD = 'dhzkuqo5s';
+const CLOUDINARY_PRESET = 'farmacia_cicala';
 
 const app  = initializeApp(firebaseConfig);
 const db   = getFirestore(app);
@@ -734,19 +442,16 @@ onAuthStateChanged(auth, user => {
 document.getElementById('login-btn').addEventListener('click', async () => {
     const email = document.getElementById('login-email').value.trim();
     const pass  = document.getElementById('login-password').value;
-    const errEl = document.getElementById('login-error');
-    errEl.textContent = '';
+    document.getElementById('login-error').textContent = '';
     try {
         await signInWithEmailAndPassword(auth, email, pass);
     } catch (e) {
-        errEl.textContent = 'Email o contraseña incorrectos.';
+        document.getElementById('login-error').textContent = 'Email o contraseña incorrectos.';
     }
 });
-
 document.getElementById('login-password').addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('login-btn').click();
 });
-
 document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
 /* ====== TABS ====== */
@@ -759,18 +464,120 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
     });
 });
 
-/* ====== CARGAR TODO ====== */
-async function cargarTodo() {
-    cargarNovedades();
-    cargarPromociones();
-    cargarCombos();
+/* ====== CLOUDINARY UPLOAD ====== */
+async function subirImagenCloudinary(file, prefijo, setEstado) {
+    setEstado('Subiendo imagen...', 'subiendo');
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+    formData.append('folder', `farmacia-cicala/${prefijo}`);
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!res.ok) throw new Error('Error al subir imagen');
+    const data = await res.json();
+    setEstado('✓ Imagen subida correctamente', 'listo');
+    return data.secure_url;
 }
+
+function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, previewNombreId, previewEstadoId, urlInputId, quitarBtnId) {
+    const input = document.getElementById(inputId);
+    const area  = document.getElementById(areaId);
+    const container = document.getElementById(previewContainerId);
+    const previewImg = document.getElementById(previewImgId);
+    const previewNombre = document.getElementById(previewNombreId);
+    const previewEstado = document.getElementById(previewEstadoId);
+    const urlInput = document.getElementById(urlInputId);
+    const quitarBtn = document.getElementById(quitarBtnId);
+
+    function mostrarPreview(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImg.src = e.target.result;
+            previewNombre.textContent = file.name;
+            previewEstado.textContent = 'Lista para guardar';
+            previewEstado.className = 'imagen-preview-estado';
+            container.classList.add('visible');
+        };
+        reader.readAsDataURL(file);
+        // Guardamos el file en el input para usarlo al guardar
+        input._fileSeleccionado = file;
+        urlInput.value = ''; // se llenará al guardar
+    }
+
+    input.addEventListener('change', e => {
+        if (e.target.files[0]) mostrarPreview(e.target.files[0]);
+    });
+
+    area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+    area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+    area.addEventListener('drop', e => {
+        e.preventDefault();
+        area.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) {
+            input.files = e.dataTransfer.files;
+            mostrarPreview(e.dataTransfer.files[0]);
+        }
+    });
+
+    quitarBtn.addEventListener('click', () => {
+        input.value = '';
+        input._fileSeleccionado = null;
+        urlInput.value = '';
+        previewImg.src = '';
+        container.classList.remove('visible');
+    });
+
+    return {
+        getFile: () => input._fileSeleccionado,
+        getUrl: () => urlInput.value,
+        setUrl: (url) => {
+            urlInput.value = url;
+            previewImg.src = url;
+            previewNombre.textContent = 'Imagen actual';
+            previewEstado.textContent = '✓ Guardada en la nube';
+            previewEstado.className = 'imagen-preview-estado listo';
+            container.classList.add('visible');
+            input._fileSeleccionado = null;
+        },
+        setEstado: (msg, cls) => {
+            previewEstado.textContent = msg;
+            previewEstado.className = 'imagen-preview-estado ' + cls;
+        },
+        reset: () => {
+            input.value = '';
+            input._fileSeleccionado = null;
+            urlInput.value = '';
+            previewImg.src = '';
+            container.classList.remove('visible');
+        }
+    };
+}
+
+/* ====== SETUP UPLOADERS ====== */
+const uploaderNovedad = setupImagenUpload(
+    'novedad-imagen-file', 'upload-area-novedad', 'preview-novedad',
+    'preview-img-novedad', 'preview-nombre-novedad', 'preview-estado-novedad',
+    'novedad-imagen-url', 'btn-quitar-novedad'
+);
+const uploaderPromocion = setupImagenUpload(
+    'promocion-imagen-file', 'upload-area-promocion', 'preview-promocion',
+    'preview-img-promocion', 'preview-nombre-promocion', 'preview-estado-promocion',
+    'promocion-imagen-url', 'btn-quitar-promocion'
+);
+const uploaderCombo = setupImagenUpload(
+    'combo-imagen-file', 'upload-area-combo', 'preview-combo',
+    'preview-img-combo', 'preview-nombre-combo', 'preview-estado-combo',
+    'combo-imagen-url', 'btn-quitar-combo'
+);
 
 /* ====== UTILIDADES ====== */
 function fmt(n) {
     return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n);
 }
-
 function toast(msg, tipo = '') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -778,12 +585,17 @@ function toast(msg, tipo = '') {
     setTimeout(() => t.classList.add('visible'), 10);
     setTimeout(() => t.classList.remove('visible'), 2500);
 }
-
 function cerrarModal(id) {
     document.getElementById(id).classList.remove('active');
 }
+function thumbHTML(url) {
+    return url
+        ? `<img class="thumb" src="${url}" alt="" onerror="this.style.display='none'">`
+        : `<div class="thumb-placeholder">📦</div>`;
+}
 
-window.cerrarModal = cerrarModal;
+/* ====== CARGAR TODO ====== */
+function cargarTodo() { cargarNovedades(); cargarPromociones(); cargarCombos(); }
 
 /* ====== NOVEDADES ====== */
 async function cargarNovedades() {
@@ -797,70 +609,67 @@ async function cargarNovedades() {
         const row = document.createElement('div');
         row.className = 'producto-row th-novedad';
         row.innerHTML = `
+            ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
             <span class="producto-desc-cell">${p.descripcion || ''}</span>
             <span>${fmt(p.precio)}</span>
             <span><span class="stock-badge ${p.enStock ? 'en-stock' : 'sin-stock'}">${p.enStock ? 'Con stock' : 'Sin stock'}</span></span>
             <div class="row-actions">
-                <button class="btn-toggle-stock" data-id="${d.id}" data-col="novedades" data-stock="${p.enStock}">📦</button>
-                <button class="btn-edit" onclick="editarNovedad('${d.id}', ${JSON.stringify(p).replace(/'/g, "\\'")} )">✏️</button>
-                <button class="btn-delete" onclick="eliminar('novedades', '${d.id}', cargarNovedades)">🗑️</button>
+                <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${p.enStock}">📦</button>
+                <button class="btn-edit">✏️</button>
+                <button class="btn-delete">🗑️</button>
             </div>`;
-        row.querySelector('.btn-toggle-stock').addEventListener('click', async (e) => {
+        row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
             const btn = e.currentTarget;
             await toggleStock('novedades', btn.dataset.id, btn.dataset.stock === 'true');
             cargarNovedades();
         });
+        row.querySelector('.btn-edit').addEventListener('click', () => {
+            abrirModalNovedad(d.id, p);
+        });
+        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, cargarNovedades));
         lista.appendChild(row);
     });
 }
 
-window.abrirModalNovedad = function() {
-    document.getElementById('modal-novedad-titulo').textContent = 'Agregar novedad';
-    document.getElementById('novedad-id').value = '';
-    document.getElementById('novedad-nombre').value = '';
-    document.getElementById('novedad-descripcion').value = '';
-    document.getElementById('novedad-precio').value = '';
-    document.getElementById('novedad-stock').value = 'true';
-    document.getElementById('novedad-imagen').value = '';
-    document.getElementById('modal-novedad').classList.add('active');
-};
-
-window.editarNovedad = function(id, p) {
-    document.getElementById('modal-novedad-titulo').textContent = 'Editar novedad';
+function abrirModalNovedad(id = '', p = {}) {
+    document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
     document.getElementById('novedad-id').value = id;
     document.getElementById('novedad-nombre').value = p.nombre || '';
     document.getElementById('novedad-descripcion').value = p.descripcion || '';
     document.getElementById('novedad-precio').value = p.precio || '';
-    document.getElementById('novedad-stock').value = p.enStock ? 'true' : 'false';
-    document.getElementById('novedad-imagen').value = p.imagen || '';
+    document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
+    uploaderNovedad.reset();
+    if (p.imagen) uploaderNovedad.setUrl(p.imagen);
     document.getElementById('modal-novedad').classList.add('active');
-};
+}
 
-window.guardarNovedad = async function() {
-    const id     = document.getElementById('novedad-id').value;
+document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
+document.getElementById('btn-cancelar-novedad').addEventListener('click', () => cerrarModal('modal-novedad'));
+
+document.getElementById('btn-guardar-novedad').addEventListener('click', async () => {
+    const id = document.getElementById('novedad-id').value;
     const nombre = document.getElementById('novedad-nombre').value.trim();
     const descripcion = document.getElementById('novedad-descripcion').value.trim();
     const precio = parseInt(document.getElementById('novedad-precio').value);
     const enStock = document.getElementById('novedad-stock').value === 'true';
-    const imagen = document.getElementById('novedad-imagen').value.trim();
-
     if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
 
-    const data = { nombre, descripcion, precio, enStock, imagen, tipo: 'novedad' };
+    let imagen = uploaderNovedad.getUrl();
+    const file = uploaderNovedad.getFile();
+    if (file) {
+        try { imagen = await subirImagenCloudinary(file, 'novedades', uploaderNovedad.setEstado); }
+        catch (e) { toast('Error al subir la imagen', 'error'); return; }
+    }
 
+    const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'novedad' };
     try {
-        if (id) {
-            await updateDoc(doc(db, 'novedades', id), data);
-            toast('Novedad actualizada', 'success');
-        } else {
-            await addDoc(collection(db, 'novedades'), data);
-            toast('Novedad agregada', 'success');
-        }
+        if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
+        else     { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
         cerrarModal('modal-novedad');
         cargarNovedades();
     } catch (e) { toast('Error al guardar', 'error'); }
-};
+});
 
 /* ====== PROMOCIONES ====== */
 async function cargarPromociones() {
@@ -874,88 +683,83 @@ async function cargarPromociones() {
         const row = document.createElement('div');
         row.className = 'producto-row th-promocion';
         row.innerHTML = `
+            ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
             <span>${fmt(p.precioOriginal)}</span>
             <span>${fmt(p.precioDescuento)}</span>
             <span>${p.descuentoPorcentaje}%</span>
             <span><span class="stock-badge ${p.enStock ? 'en-stock' : 'sin-stock'}">${p.enStock ? 'Con stock' : 'Sin stock'}</span></span>
             <div class="row-actions">
-                <button class="btn-toggle-stock" data-id="${d.id}" data-col="promociones" data-stock="${p.enStock}">📦</button>
-                <button class="btn-edit" onclick="editarPromocion('${d.id}', ${JSON.stringify(p).replace(/'/g, "\\'")} )">✏️</button>
-                <button class="btn-delete" onclick="eliminar('promociones', '${d.id}', cargarPromociones)">🗑️</button>
+                <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${p.enStock}">📦</button>
+                <button class="btn-edit">✏️</button>
+                <button class="btn-delete">🗑️</button>
             </div>`;
-        row.querySelector('.btn-toggle-stock').addEventListener('click', async (e) => {
+        row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
             const btn = e.currentTarget;
             await toggleStock('promociones', btn.dataset.id, btn.dataset.stock === 'true');
             cargarPromociones();
         });
+        row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
+        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, cargarPromociones));
         lista.appendChild(row);
     });
 }
 
-window.abrirModalPromocion = function() {
-    document.getElementById('modal-promocion-titulo').textContent = 'Agregar promoción';
-    document.getElementById('promocion-id').value = '';
-    document.getElementById('promocion-nombre').value = '';
-    document.getElementById('promocion-descripcion').value = '';
-    document.getElementById('promocion-precio-original').value = '';
-    document.getElementById('promocion-precio-descuento').value = '';
-    document.getElementById('promocion-descuento-pct').value = '';
-    document.getElementById('promocion-stock').value = 'true';
-    document.getElementById('promocion-imagen').value = '';
-    document.getElementById('modal-promocion').classList.add('active');
-};
-
-window.editarPromocion = function(id, p) {
-    document.getElementById('modal-promocion-titulo').textContent = 'Editar promoción';
+function abrirModalPromocion(id = '', p = {}) {
+    document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
     document.getElementById('promocion-id').value = id;
     document.getElementById('promocion-nombre').value = p.nombre || '';
     document.getElementById('promocion-descripcion').value = p.descripcion || '';
     document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
     document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
     document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
-    document.getElementById('promocion-stock').value = p.enStock ? 'true' : 'false';
-    document.getElementById('promocion-imagen').value = p.imagen || '';
+    document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
+    uploaderPromocion.reset();
+    if (p.imagen) uploaderPromocion.setUrl(p.imagen);
     document.getElementById('modal-promocion').classList.add('active');
-};
+}
 
-window.calcularDescuento = function() {
+document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
+document.getElementById('btn-cancelar-promocion').addEventListener('click', () => cerrarModal('modal-promocion'));
+
+document.getElementById('promocion-precio-original').addEventListener('input', calcularDescuento);
+document.getElementById('promocion-precio-descuento').addEventListener('input', calcularDescuento);
+
+function calcularDescuento() {
     const orig = parseFloat(document.getElementById('promocion-precio-original').value);
     const desc = parseFloat(document.getElementById('promocion-precio-descuento').value);
     if (orig > 0 && desc > 0 && desc < orig) {
-        const pct = Math.round(((orig - desc) / orig) * 100);
-        document.getElementById('promocion-descuento-pct').value = pct;
+        document.getElementById('promocion-descuento-pct').value = Math.round(((orig - desc) / orig) * 100);
     } else {
         document.getElementById('promocion-descuento-pct').value = '';
     }
-};
+}
 
-window.guardarPromocion = async function() {
-    const id     = document.getElementById('promocion-id').value;
+document.getElementById('btn-guardar-promocion').addEventListener('click', async () => {
+    const id = document.getElementById('promocion-id').value;
     const nombre = document.getElementById('promocion-nombre').value.trim();
     const descripcion = document.getElementById('promocion-descripcion').value.trim();
     const precioOriginal  = parseInt(document.getElementById('promocion-precio-original').value);
     const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
     const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
     const enStock = document.getElementById('promocion-stock').value === 'true';
-    const imagen  = document.getElementById('promocion-imagen').value.trim();
-
     if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
 
-    const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, imagen, tipo: 'promocion' };
+    let imagen = uploaderPromocion.getUrl();
+    const file = uploaderPromocion.getFile();
+    if (file) {
+        try { imagen = await subirImagenCloudinary(file, 'promociones', uploaderPromocion.setEstado); }
+        catch (e) { toast('Error al subir la imagen', 'error'); return; }
+    }
 
+    const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, imagen: imagen || '', tipo: 'promocion' };
     try {
-        if (id) {
-            await updateDoc(doc(db, 'promociones', id), data);
-            toast('Promoción actualizada', 'success');
-        } else {
-            await addDoc(collection(db, 'promociones'), data);
-            toast('Promoción agregada', 'success');
-        }
+        if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
+        else     { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
         cerrarModal('modal-promocion');
         cargarPromociones();
     } catch (e) { toast('Error al guardar', 'error'); }
-};
+});
 
 /* ====== COMBOS ====== */
 async function cargarCombos() {
@@ -970,111 +774,108 @@ async function cargarCombos() {
         const row = document.createElement('div');
         row.className = 'producto-row th-combo';
         row.innerHTML = `
+            ${thumbHTML(c.imagen)}
             <span class="producto-nombre-cell">${c.nombre}</span>
             <span class="producto-desc-cell">${prods}</span>
             <span><span class="stock-badge ${c.enStock ? 'en-stock' : 'sin-stock'}">${c.enStock ? 'Con stock' : 'Sin stock'}</span></span>
             <div class="row-actions">
-                <button class="btn-toggle-stock" data-id="${d.id}" data-col="combos" data-stock="${c.enStock}">📦</button>
-                <button class="btn-edit" onclick="editarCombo('${d.id}', ${JSON.stringify(c).replace(/'/g, "\\'")} )">✏️</button>
-                <button class="btn-delete" onclick="eliminar('combos', '${d.id}', cargarCombos)">🗑️</button>
+                <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${c.enStock}">📦</button>
+                <button class="btn-edit">✏️</button>
+                <button class="btn-delete">🗑️</button>
             </div>`;
-        row.querySelector('.btn-toggle-stock').addEventListener('click', async (e) => {
+        row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
             const btn = e.currentTarget;
             await toggleStock('combos', btn.dataset.id, btn.dataset.stock === 'true');
             cargarCombos();
         });
+        row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
+        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, cargarCombos));
         lista.appendChild(row);
     });
 }
 
-window.abrirModalCombo = function() {
-    document.getElementById('modal-combo-titulo').textContent = 'Agregar combo';
-    document.getElementById('combo-id').value = '';
-    document.getElementById('combo-nombre').value = '';
-    document.getElementById('combo-precio').value = '';
-    document.getElementById('combo-stock').value = 'true';
-    document.getElementById('combo-items-editor').innerHTML = '';
-    agregarFilaCombo();
-    agregarFilaCombo();
-    document.getElementById('modal-combo').classList.add('active');
-};
-
-window.editarCombo = function(id, c) {
-    document.getElementById('modal-combo-titulo').textContent = 'Editar combo';
+function abrirModalCombo(id = '', c = {}) {
+    document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
     document.getElementById('combo-id').value = id;
     document.getElementById('combo-nombre').value = c.nombre || '';
     document.getElementById('combo-precio').value = c.precio || '';
-    document.getElementById('combo-stock').value = c.enStock ? 'true' : 'false';
+    document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
+    uploaderCombo.reset();
+    if (c.imagen) uploaderCombo.setUrl(c.imagen);
     const editor = document.getElementById('combo-items-editor');
     editor.innerHTML = '';
-    (c.productos || []).forEach(p => agregarFilaCombo(p.nombre, p.imagen));
+    if (c.productos && c.productos.length > 0) {
+        c.productos.forEach(p => agregarFilaCombo(p.nombre));
+    } else {
+        agregarFilaCombo(); agregarFilaCombo();
+    }
     document.getElementById('modal-combo').classList.add('active');
-};
+}
 
-window.agregarFilaCombo = function(nombre = '', imagen = '') {
+document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
+document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModal('modal-combo'));
+document.getElementById('btn-agregar-item-combo').addEventListener('click', () => agregarFilaCombo());
+
+function agregarFilaCombo(nombre = '') {
     const editor = document.getElementById('combo-items-editor');
     const row = document.createElement('div');
     row.className = 'combo-item-row';
     row.innerHTML = `
-        <input type="text" placeholder="Nombre del producto" value="${nombre}" style="padding:10px 12px;border:2px solid #F2C0D8;border-radius:8px;font-family:Nunito,sans-serif;font-size:15px;outline:none;">
-        <input type="text" placeholder="images/prod.jpg" value="${imagen}" style="padding:10px 12px;border:2px solid #F2C0D8;border-radius:8px;font-family:Nunito,sans-serif;font-size:15px;outline:none;">
-        <button class="btn-remove-combo-item" onclick="this.parentElement.remove()">×</button>`;
+        <div class="combo-item-fields">
+            <input type="text" placeholder="Nombre del producto" value="${nombre}"
+                style="padding:10px 12px;border:2px solid #F2C0D8;border-radius:8px;font-family:Nunito,sans-serif;font-size:15px;outline:none;width:100%;">
+        </div>
+        <button class="btn-remove-combo-item">×</button>`;
+    row.querySelector('.btn-remove-combo-item').addEventListener('click', () => row.remove());
     editor.appendChild(row);
-};
+}
 
-window.guardarCombo = async function() {
-    const id     = document.getElementById('combo-id').value;
+document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
+    const id = document.getElementById('combo-id').value;
     const nombre = document.getElementById('combo-nombre').value.trim();
     const precio = parseInt(document.getElementById('combo-precio').value);
     const enStock = document.getElementById('combo-stock').value === 'true';
+    if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
 
     const filas = document.querySelectorAll('#combo-items-editor .combo-item-row');
     const productos = [];
     filas.forEach(f => {
-        const inputs = f.querySelectorAll('input');
-        const n = inputs[0].value.trim();
-        const i = inputs[1].value.trim();
-        if (n) productos.push({ nombre: n, imagen: i });
+        const n = f.querySelector('input').value.trim();
+        if (n) productos.push({ nombre: n });
     });
-
-    if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
     if (productos.length < 2) { toast('El combo necesita al menos 2 productos', 'error'); return; }
 
-    const data = { nombre, precio, enStock, productos, tipo: 'combo' };
+    let imagen = uploaderCombo.getUrl();
+    const file = uploaderCombo.getFile();
+    if (file) {
+        try { imagen = await subirImagenCloudinary(file, 'combos', uploaderCombo.setEstado); }
+        catch (e) { toast('Error al subir la imagen', 'error'); return; }
+    }
 
+    const data = { nombre, precio, enStock, productos, imagen: imagen || '', tipo: 'combo' };
     try {
-        if (id) {
-            await updateDoc(doc(db, 'combos', id), data);
-            toast('Combo actualizado', 'success');
-        } else {
-            await addDoc(collection(db, 'combos'), data);
-            toast('Combo agregado', 'success');
-        }
+        if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
+        else     { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
         cerrarModal('modal-combo');
         cargarCombos();
     } catch (e) { toast('Error al guardar', 'error'); }
-};
+});
 
 /* ====== TOGGLE STOCK ====== */
-async function toggleStock(coleccion, id, stockActual) {
-    await updateDoc(doc(db, coleccion, id), { enStock: !stockActual });
+async function toggleStock(col, id, stockActual) {
+    await updateDoc(doc(db, col, id), { enStock: !stockActual });
     toast(stockActual ? 'Marcado sin stock' : 'Marcado con stock', 'success');
 }
 
 /* ====== ELIMINAR ====== */
-window.eliminar = async function(coleccion, id, recargar) {
+async function eliminar(col, id, recargar) {
     if (!confirm('¿Seguro que querés eliminar este producto?')) return;
-    await deleteDoc(doc(db, coleccion, id));
-    toast('Producto eliminado', 'success');
+    await deleteDoc(doc(db, col, id));
+    toast('Eliminado', 'success');
     recargar();
-};
+}
 
-// Exponer funciones de recarga para los botones inline
-window.cargarNovedades  = cargarNovedades;
-window.cargarPromociones = cargarPromociones;
-window.cargarCombos     = cargarCombos;
-
-// Cerrar modales al hacer click en el overlay
+/* ====== CERRAR MODALES CON OVERLAY ====== */
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => {
         if (e.target === overlay) overlay.classList.remove('active');
