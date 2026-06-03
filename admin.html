@@ -805,7 +805,7 @@ function abrirModalCombo(id = '', c = {}) {
     const editor = document.getElementById('combo-items-editor');
     editor.innerHTML = '';
     if (c.productos && c.productos.length > 0) {
-        c.productos.forEach(p => agregarFilaCombo(p.nombre));
+        c.productos.forEach(p => agregarFilaCombo(p.nombre, p.imagen || ''));
     } else {
         agregarFilaCombo(); agregarFilaCombo();
     }
@@ -816,16 +816,75 @@ document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrir
 document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModal('modal-combo'));
 document.getElementById('btn-agregar-item-combo').addEventListener('click', () => agregarFilaCombo());
 
-function agregarFilaCombo(nombre = '') {
+function agregarFilaCombo(nombre = '', imagenUrl = '') {
     const editor = document.getElementById('combo-items-editor');
+    const idx = editor.children.length;
     const row = document.createElement('div');
     row.className = 'combo-item-row';
     row.innerHTML = `
         <div class="combo-item-fields">
             <input type="text" placeholder="Nombre del producto" value="${nombre}"
                 style="padding:10px 12px;border:2px solid #F2C0D8;border-radius:8px;font-family:Nunito,sans-serif;font-size:15px;outline:none;width:100%;">
+            <div class="combo-img-upload-area" style="border:2px dashed #F2C0D8;border-radius:8px;padding:10px;text-align:center;cursor:pointer;position:relative;background:#FFF0F5;">
+                <input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">
+                <span style="font-size:13px;font-weight:700;color:#D5006D;">📷 Imagen del producto</span>
+            </div>
+            <div class="combo-img-preview" style="display:none;align-items:center;gap:8px;margin-top:4px;">
+                <img style="width:40px;height:40px;object-fit:cover;border-radius:6px;" src="" alt="">
+                <span style="font-size:12px;color:#2E7D32;font-weight:700;">✓ Lista</span>
+                <button type="button" class="btn-quitar-img-producto" style="background:#FFEBEE;color:#E53935;border:none;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700;cursor:pointer;">Quitar</button>
+            </div>
+            <input type="hidden" class="combo-producto-imagen-url" value="${imagenUrl}">
         </div>
         <button class="btn-remove-combo-item">×</button>`;
+
+    // Si ya tiene imagen (edición), mostrar preview
+    if (imagenUrl) {
+        const preview = row.querySelector('.combo-img-preview');
+        const previewImg = preview.querySelector('img');
+        previewImg.src = imagenUrl;
+        preview.style.display = 'flex';
+    }
+
+    // Subida de imagen por producto
+    const fileInput = row.querySelector('input[type="file"]');
+    const uploadArea = row.querySelector('.combo-img-upload-area');
+    const preview = row.querySelector('.combo-img-preview');
+    const previewImg = preview.querySelector('img');
+    const urlInput = row.querySelector('.combo-producto-imagen-url');
+
+    fileInput.addEventListener('change', async e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        // Preview local inmediato
+        const reader = new FileReader();
+        reader.onload = ev => { previewImg.src = ev.target.result; preview.style.display = 'flex'; };
+        reader.readAsDataURL(file);
+        // Subir a Cloudinary
+        try {
+            const estadoSpan = preview.querySelector('span');
+            estadoSpan.textContent = 'Subiendo...';
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_PRESET);
+            formData.append('folder', 'farmacia-cicala/combos-productos');
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: 'POST', body: formData });
+            const data = await res.json();
+            urlInput.value = data.secure_url;
+            previewImg.src = data.secure_url;
+            estadoSpan.textContent = '✓ Lista';
+        } catch (err) {
+            preview.querySelector('span').textContent = '✗ Error';
+        }
+    });
+
+    row.querySelector('.btn-quitar-img-producto').addEventListener('click', () => {
+        fileInput.value = '';
+        urlInput.value = '';
+        previewImg.src = '';
+        preview.style.display = 'none';
+    });
+
     row.querySelector('.btn-remove-combo-item').addEventListener('click', () => row.remove());
     editor.appendChild(row);
 }
@@ -840,8 +899,9 @@ document.getElementById('btn-guardar-combo').addEventListener('click', async () 
     const filas = document.querySelectorAll('#combo-items-editor .combo-item-row');
     const productos = [];
     filas.forEach(f => {
-        const n = f.querySelector('input').value.trim();
-        if (n) productos.push({ nombre: n });
+        const n = f.querySelector('input[type="text"]').value.trim();
+        const imgUrl = f.querySelector('.combo-producto-imagen-url').value.trim();
+        if (n) productos.push({ nombre: n, imagen: imgUrl });
     });
     if (productos.length < 2) { toast('El combo necesita al menos 2 productos', 'error'); return; }
 

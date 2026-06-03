@@ -190,16 +190,17 @@ function crearTarjetaCombo(combo) {
 
     const productosHTML = (combo.productos || []).map(p => `
         <div class="combo-producto-item">
-            <img src="${p.imagen}" alt="${p.nombre}" class="combo-producto-img">
+            ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}" class="combo-producto-img">` : ''}
             <p class="combo-producto-nombre">${p.nombre}</p>
         </div>
     `).join('');
 
     const sinStockHTML = !combo.enStock ? `<div class="sin-stock-label">Sin stock</div>` : '';
+    const imagenPrincipal = combo.imagen || combo.productos?.[0]?.imagen || '';
 
     tarjeta.innerHTML = `
         <div class="producto-img-container">
-            <img src="${combo.productos?.[0]?.imagen || ''}" alt="${combo.nombre}" class="producto-img">
+            ${imagenPrincipal ? `<img src="${imagenPrincipal}" alt="${combo.nombre}" class="producto-img">` : ''}
             <div class="producto-badge badge-combo">COMBO</div>
         </div>
         ${sinStockHTML}
