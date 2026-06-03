@@ -56,9 +56,7 @@ const navTabs              = document.querySelectorAll('.nav-tab');
    ============================================ */
 
 function formatearPrecio(precio) {
-    return new Intl.NumberFormat('es-AR', {
-        style: 'currency',
-        currency: 'ARS',
+    return '$ ' + new Intl.NumberFormat('es-AR', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
     }).format(precio);
@@ -153,7 +151,7 @@ function crearTarjetaProducto(producto, tipo) {
                <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
            </div>`;
 
-    const sinStockHTML = !producto.enStock ? `<div class="sin-stock-label">Sin stock</div>` : '';
+    const sinStockHTML = '';
     const precioCarrito = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
 
     tarjeta.innerHTML = `
@@ -195,7 +193,7 @@ function crearTarjetaCombo(combo) {
         </div>
     `).join('');
 
-    const sinStockHTML = !combo.enStock ? `<div class="sin-stock-label">Sin stock</div>` : '';
+    const sinStockHTML = '';
     const imagenPrincipal = combo.imagen || combo.productos?.[0]?.imagen || '';
 
     tarjeta.innerHTML = `

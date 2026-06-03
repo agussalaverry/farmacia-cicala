@@ -84,13 +84,13 @@
         .table-header { display: grid; padding: 14px 20px; background: var(--pink-light); font-size: 13px; font-weight: 800; color: var(--pink-dark); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--pink-border); }
         .th-novedad   { grid-template-columns: 60px 2fr 1.5fr 1fr 1fr 120px; }
         .th-promocion { grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 120px; }
-        .th-combo     { grid-template-columns: 60px 2fr 1fr 1fr 120px; }
+        .th-combo     { grid-template-columns: 60px 2fr 2fr 1fr 1fr 120px; }
         .producto-row { display: grid; padding: 12px 20px; align-items: center; border-bottom: 1px solid #F5F5F5; transition: background 0.15s; font-size: 15px; }
         .producto-row:last-child { border-bottom: none; }
         .producto-row:hover { background: #FAFAFA; }
         .producto-row.th-novedad   { grid-template-columns: 60px 2fr 1.5fr 1fr 1fr 120px; }
         .producto-row.th-promocion { grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 120px; }
-        .producto-row.th-combo     { grid-template-columns: 60px 2fr 1fr 1fr 120px; }
+        .producto-row.th-combo     { grid-template-columns: 60px 2fr 2fr 1fr 1fr 120px; }
         .producto-nombre-cell { font-weight: 700; }
         .producto-desc-cell { font-size: 13px; color: var(--text-light); }
         .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #F0F0F0; }
@@ -162,7 +162,7 @@
 <div id="login-screen">
     <div class="login-card">
         <div class="login-logo">
-            <h1>💊 Farmacia Cicala</h1>
+            <h1>Farmacia Cicala</h1>
             <p>Panel de administración</p>
         </div>
         <div class="form-group">
@@ -181,7 +181,7 @@
 <!-- ADMIN PANEL -->
 <div id="admin-panel">
     <header class="admin-header">
-        <h1>💊 Panel Admin</h1>
+        <h1>Panel de productos</h1>
         <div style="display:flex;align-items:center;gap:16px;">
             <span id="admin-user-email"></span>
             <button class="btn-logout" id="logout-btn">Salir</button>
@@ -231,7 +231,7 @@
             </div>
             <div class="productos-table">
                 <div class="table-header th-combo">
-                    <span></span><span>Nombre del combo</span><span>Productos</span><span>Stock</span><span></span>
+                    <span></span><span>Nombre del combo</span><span>Descripción</span><span>Precio</span><span>Stock</span><span></span>
                 </div>
                 <div id="lista-combos"><div class="loading">Cargando...</div></div>
             </div>
@@ -360,6 +360,10 @@
             <label>Nombre del combo</label>
             <input type="text" id="combo-nombre" placeholder="Ej: Combo Salud & Bienestar">
         </div>
+        <div class="form-group">
+            <label>Descripción</label>
+            <textarea id="combo-descripcion" placeholder="Ej: Incluye vitamina C y complejo B"></textarea>
+        </div>
         <div class="form-row">
             <div class="form-group">
                 <label>Precio del combo ($)</label>
@@ -390,11 +394,6 @@
                 <button class="btn-quitar-imagen" id="btn-quitar-combo">Quitar</button>
             </div>
             <input type="hidden" id="combo-imagen-url">
-        </div>
-        <div class="form-group">
-            <label>Productos incluidos en el combo</label>
-            <div class="combo-items-editor" id="combo-items-editor"></div>
-            <button class="btn-add-combo-item" id="btn-agregar-item-combo">+ Agregar producto al combo</button>
         </div>
         <div class="modal-actions">
             <button class="btn-cancel" id="btn-cancelar-combo">Cancelar</button>
@@ -770,13 +769,13 @@ async function cargarCombos() {
     lista.innerHTML = '';
     snap.forEach(d => {
         const c = d.data();
-        const prods = (c.productos || []).map(p => p.nombre).join(', ');
         const row = document.createElement('div');
         row.className = 'producto-row th-combo';
         row.innerHTML = `
             ${thumbHTML(c.imagen)}
             <span class="producto-nombre-cell">${c.nombre}</span>
-            <span class="producto-desc-cell">${prods}</span>
+            <span class="producto-desc-cell">${c.descripcion || ''}</span>
+            <span>${fmt(c.precio)}</span>
             <span><span class="stock-badge ${c.enStock ? 'en-stock' : 'sin-stock'}">${c.enStock ? 'Con stock' : 'Sin stock'}</span></span>
             <div class="row-actions">
                 <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${c.enStock}">📦</button>
@@ -798,112 +797,24 @@ function abrirModalCombo(id = '', c = {}) {
     document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
     document.getElementById('combo-id').value = id;
     document.getElementById('combo-nombre').value = c.nombre || '';
+    document.getElementById('combo-descripcion').value = c.descripcion || '';
     document.getElementById('combo-precio').value = c.precio || '';
     document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
     uploaderCombo.reset();
     if (c.imagen) uploaderCombo.setUrl(c.imagen);
-    const editor = document.getElementById('combo-items-editor');
-    editor.innerHTML = '';
-    if (c.productos && c.productos.length > 0) {
-        c.productos.forEach(p => agregarFilaCombo(p.nombre, p.imagen || ''));
-    } else {
-        agregarFilaCombo(); agregarFilaCombo();
-    }
     document.getElementById('modal-combo').classList.add('active');
 }
 
 document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
 document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModal('modal-combo'));
-document.getElementById('btn-agregar-item-combo').addEventListener('click', () => agregarFilaCombo());
-
-function agregarFilaCombo(nombre = '', imagenUrl = '') {
-    const editor = document.getElementById('combo-items-editor');
-    const idx = editor.children.length;
-    const row = document.createElement('div');
-    row.className = 'combo-item-row';
-    row.innerHTML = `
-        <div class="combo-item-fields">
-            <input type="text" placeholder="Nombre del producto" value="${nombre}"
-                style="padding:10px 12px;border:2px solid #F2C0D8;border-radius:8px;font-family:Nunito,sans-serif;font-size:15px;outline:none;width:100%;">
-            <div class="combo-img-upload-area" style="border:2px dashed #F2C0D8;border-radius:8px;padding:10px;text-align:center;cursor:pointer;position:relative;background:#FFF0F5;">
-                <input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">
-                <span style="font-size:13px;font-weight:700;color:#D5006D;">📷 Imagen del producto</span>
-            </div>
-            <div class="combo-img-preview" style="display:none;align-items:center;gap:8px;margin-top:4px;">
-                <img style="width:40px;height:40px;object-fit:cover;border-radius:6px;" src="" alt="">
-                <span style="font-size:12px;color:#2E7D32;font-weight:700;">✓ Lista</span>
-                <button type="button" class="btn-quitar-img-producto" style="background:#FFEBEE;color:#E53935;border:none;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700;cursor:pointer;">Quitar</button>
-            </div>
-            <input type="hidden" class="combo-producto-imagen-url" value="${imagenUrl}">
-        </div>
-        <button class="btn-remove-combo-item">×</button>`;
-
-    // Si ya tiene imagen (edición), mostrar preview
-    if (imagenUrl) {
-        const preview = row.querySelector('.combo-img-preview');
-        const previewImg = preview.querySelector('img');
-        previewImg.src = imagenUrl;
-        preview.style.display = 'flex';
-    }
-
-    // Subida de imagen por producto
-    const fileInput = row.querySelector('input[type="file"]');
-    const uploadArea = row.querySelector('.combo-img-upload-area');
-    const preview = row.querySelector('.combo-img-preview');
-    const previewImg = preview.querySelector('img');
-    const urlInput = row.querySelector('.combo-producto-imagen-url');
-
-    fileInput.addEventListener('change', async e => {
-        const file = e.target.files[0];
-        if (!file) return;
-        // Preview local inmediato
-        const reader = new FileReader();
-        reader.onload = ev => { previewImg.src = ev.target.result; preview.style.display = 'flex'; };
-        reader.readAsDataURL(file);
-        // Subir a Cloudinary
-        try {
-            const estadoSpan = preview.querySelector('span');
-            estadoSpan.textContent = 'Subiendo...';
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_PRESET);
-            formData.append('folder', 'farmacia-cicala/combos-productos');
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: 'POST', body: formData });
-            const data = await res.json();
-            urlInput.value = data.secure_url;
-            previewImg.src = data.secure_url;
-            estadoSpan.textContent = '✓ Lista';
-        } catch (err) {
-            preview.querySelector('span').textContent = '✗ Error';
-        }
-    });
-
-    row.querySelector('.btn-quitar-img-producto').addEventListener('click', () => {
-        fileInput.value = '';
-        urlInput.value = '';
-        previewImg.src = '';
-        preview.style.display = 'none';
-    });
-
-    row.querySelector('.btn-remove-combo-item').addEventListener('click', () => row.remove());
-    editor.appendChild(row);
-}
 
 document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
     const id = document.getElementById('combo-id').value;
     const nombre = document.getElementById('combo-nombre').value.trim();
+    const descripcion = document.getElementById('combo-descripcion').value.trim();
     const precio = parseInt(document.getElementById('combo-precio').value);
     const enStock = document.getElementById('combo-stock').value === 'true';
     if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
-
-    const filas = document.querySelectorAll('#combo-items-editor .combo-item-row');
-    const productos = [];
-    filas.forEach(f => {
-        const n = f.querySelector('input[type="text"]').value.trim();
-        const imgUrl = f.querySelector('.combo-producto-imagen-url').value.trim();
-        if (n) productos.push({ nombre: n, imagen: imgUrl });
-    });
-    if (productos.length < 2) { toast('El combo necesita al menos 2 productos', 'error'); return; }
 
     let imagen = uploaderCombo.getUrl();
     const file = uploaderCombo.getFile();
@@ -912,7 +823,7 @@ document.getElementById('btn-guardar-combo').addEventListener('click', async () 
         catch (e) { toast('Error al subir la imagen', 'error'); return; }
     }
 
-    const data = { nombre, precio, enStock, productos, imagen: imagen || '', tipo: 'combo' };
+    const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'combo' };
     try {
         if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
         else     { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
