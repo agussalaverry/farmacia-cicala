@@ -174,6 +174,7 @@ function crearTarjetaProducto(producto, tipo) {
                 id: producto.id,
                 nombre: producto.nombre,
                 precio: precioCarrito,
+                imagen: producto.imagen || '',
                 tipo: tipo
             });
         });
@@ -218,6 +219,7 @@ function crearTarjetaCombo(combo) {
                 id: combo.id,
                 nombre: combo.nombre,
                 precio: combo.precio,
+                imagen: imagenPrincipal || '',
                 tipo: 'combo'
             });
         });
@@ -284,8 +286,14 @@ function renderizarCartItems() {
         const subtotal = item.precio * item.cantidad;
         const el = document.createElement('div');
         el.className = 'cart-item';
+        const imgHTML = item.imagen
+            ? `<img src="${item.imagen}" alt="${item.nombre}" class="cart-item-img">`
+            : '';
         el.innerHTML = `
-            <div class="cart-item-nombre">${item.nombre}</div>
+            <div class="cart-item-top">
+                ${imgHTML}
+                <div class="cart-item-nombre">${item.nombre}</div>
+            </div>
             <div class="cart-item-controls">
                 <button class="qty-btn qty-minus" data-id="${item.id}">−</button>
                 <span class="qty-cantidad">${item.cantidad}</span>
