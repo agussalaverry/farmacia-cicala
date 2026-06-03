@@ -82,26 +82,66 @@
 
         /* TABLA */
         .productos-table { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-        .table-header { display: grid; padding: 14px 20px; background: var(--pink-light); font-size: 13px; font-weight: 800; color: var(--pink-dark); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--pink-border); }
-        .th-novedad   { grid-template-columns: 60px 2fr 1.5fr 1fr 1fr 120px; }
-        .th-promocion { grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 120px; }
-        .th-combo     { grid-template-columns: 60px 2fr 2fr 1fr 1fr 120px; }
-        .producto-row { display: grid; padding: 12px 20px; align-items: center; border-bottom: 1px solid #F5F5F5; transition: background 0.15s; font-size: 15px; }
+        .table-header { display: grid; padding: 14px 20px; background: var(--pink-light); font-size: 13px; font-weight: 800; color: var(--pink-dark); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--pink-border); gap: 12px; align-items: center; }
+        /* Novedades: foto | nombre | descripción | precio | stock | acciones */
+        .th-novedad   { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
+        /* Promociones: foto | nombre | precio orig | precio desc | % off | stock | acciones */
+        .th-promocion { grid-template-columns: 56px 1fr 100px 110px 70px 110px 130px; }
+        /* Combos: foto | nombre | descripción | precio | stock | acciones */
+        .th-combo     { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
+        .producto-row { display: grid; padding: 12px 20px; align-items: center; border-bottom: 1px solid #F5F5F5; transition: background 0.15s; font-size: 15px; gap: 12px; }
         .producto-row:last-child { border-bottom: none; }
         .producto-row:hover { background: #FAFAFA; }
-        .producto-row.th-novedad   { grid-template-columns: 60px 2fr 1.5fr 1fr 1fr 120px; }
-        .producto-row.th-promocion { grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 120px; }
-        .producto-row.th-combo     { grid-template-columns: 60px 2fr 2fr 1fr 1fr 120px; }
-        .producto-nombre-cell { font-weight: 700; }
-        .producto-desc-cell { font-size: 13px; color: var(--text-light); }
-        .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #F0F0F0; }
-        .thumb-placeholder { width: 48px; height: 48px; border-radius: 8px; background: #F0F0F0; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .stock-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+        .producto-row.th-novedad   { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
+        .producto-row.th-promocion { grid-template-columns: 56px 1fr 100px 110px 70px 110px 130px; }
+        .producto-row.th-combo     { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
+        .producto-nombre-cell { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .producto-desc-cell { font-size: 13px; color: var(--text-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #F0F0F0; flex-shrink: 0; }
+        .thumb-placeholder { width: 48px; height: 48px; border-radius: 8px; background: #F0F0F0; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .stock-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; }
         .stock-badge.en-stock  { background: #E8F5E9; color: #2E7D32; }
         .stock-badge.sin-stock { background: #EEEEEE; color: #757575; }
-        .row-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+        .row-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: nowrap; align-items: center; }
         .empty-state { text-align: center; padding: 48px 24px; color: var(--text-light); font-size: 18px; }
         .loading { text-align: center; padding: 48px; color: var(--text-light); font-size: 18px; }
+
+        /* MODAL CONFIRMAR ELIMINACIÓN */
+        .confirm-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+            z-index: 8000; align-items: center; justify-content: center; padding: 20px;
+        }
+        .confirm-overlay.active { display: flex; }
+        .confirm-box {
+            background: var(--white); border-radius: 20px; padding: 40px 36px 32px;
+            width: 100%; max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: confirmIn 0.25s ease-out;
+        }
+        @keyframes confirmIn {
+            from { transform: scale(0.92) translateY(12px); opacity: 0; }
+            to   { transform: scale(1) translateY(0);       opacity: 1; }
+        }
+        .confirm-icon { font-size: 44px; margin-bottom: 16px; }
+        .confirm-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+        .confirm-subtitle { font-size: 15px; color: var(--text-light); margin-bottom: 32px; line-height: 1.5; }
+        .confirm-actions { display: flex; gap: 12px; }
+        .btn-confirm-cancel {
+            flex: 1; padding: 14px; background: #F0F0F0; color: var(--text-light);
+            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+            font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-confirm-cancel:hover { background: #E0E0E0; }
+        .btn-confirm-delete {
+            flex: 1; padding: 14px; background: var(--red); color: white;
+            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+            font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-confirm-delete:hover { background: #c62828; }
+
+        /* TOAST variantes extra */
+        .toast.gray { background: #666666; }
 
         /* SUBIDA DE IMAGEN */
         .imagen-upload-area {
@@ -460,13 +500,27 @@
     </div>
 </div>
 
+<!-- MODAL CONFIRMAR ELIMINACIÓN -->
+<div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-box">
+        <div class="confirm-icon">🗑️</div>
+        <div class="confirm-title">¿Eliminás este producto?</div>
+        <div class="confirm-subtitle" id="confirm-subtitle">Esta acción no se puede deshacer.</div>
+        <div class="confirm-actions">
+            <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
+            <button class="btn-confirm-delete" id="btn-confirm-delete">Eliminar</button>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+// Cropper.js importado como módulo ESM para que sea visible en este scope
+import Cropper from "https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.esm.js";
 
 /* ====== CONFIG ====== */
 const firebaseConfig = {
@@ -760,7 +814,7 @@ async function cargarNovedades() {
         row.querySelector('.btn-edit').addEventListener('click', () => {
             abrirModalNovedad(d.id, p);
         });
-        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, cargarNovedades));
+        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, p.nombre, cargarNovedades));
         lista.appendChild(row);
     });
 }
@@ -833,7 +887,7 @@ async function cargarPromociones() {
             cargarPromociones();
         });
         row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
-        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, cargarPromociones));
+        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
         lista.appendChild(row);
     });
 }
@@ -922,7 +976,7 @@ async function cargarCombos() {
             cargarCombos();
         });
         row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
-        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, cargarCombos));
+        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
         lista.appendChild(row);
     });
 }
@@ -969,15 +1023,47 @@ document.getElementById('btn-guardar-combo').addEventListener('click', async () 
 /* ====== TOGGLE STOCK ====== */
 async function toggleStock(col, id, stockActual) {
     await updateDoc(doc(db, col, id), { enStock: !stockActual });
-    toast(stockActual ? 'Marcado sin stock' : 'Marcado con stock', 'success');
+    // Notificación gris para cambio de stock
+    toast(stockActual ? 'Sin stock' : 'Con stock', 'gray');
+}
+
+/* ====== CONFIRMAR ELIMINACIÓN (modal centrado) ====== */
+function confirmarEliminacion(nombre, onAceptar) {
+    const overlay  = document.getElementById('confirm-overlay');
+    const subtitle = document.getElementById('confirm-subtitle');
+    const btnDel   = document.getElementById('btn-confirm-delete');
+    const btnCan   = document.getElementById('btn-confirm-cancel');
+
+    subtitle.textContent = `"${nombre}" será eliminado permanentemente.`;
+    overlay.classList.add('active');
+
+    // Clonar botones para limpiar listeners anteriores
+    const newDel = btnDel.cloneNode(true);
+    const newCan = btnCan.cloneNode(true);
+    btnDel.parentNode.replaceChild(newDel, btnDel);
+    btnCan.parentNode.replaceChild(newCan, btnCan);
+
+    newDel.addEventListener('click', async () => {
+        overlay.classList.remove('active');
+        await onAceptar();
+    });
+    newCan.addEventListener('click', () => {
+        overlay.classList.remove('active');
+    });
+
+    // Cerrar también al clickear fuera del box
+    overlay.onclick = (e) => {
+        if (e.target === overlay) overlay.classList.remove('active');
+    };
 }
 
 /* ====== ELIMINAR ====== */
-async function eliminar(col, id, recargar) {
-    if (!confirm('¿Seguro que querés eliminar este producto?')) return;
-    await deleteDoc(doc(db, col, id));
-    toast('Eliminado', 'success');
-    recargar();
+async function eliminar(col, id, nombre, recargar) {
+    confirmarEliminacion(nombre, async () => {
+        await deleteDoc(doc(db, col, id));
+        toast('Producto eliminado', 'error');
+        recargar();
+    });
 }
 
 /* ====== CERRAR MODALES CON OVERLAY ====== */
