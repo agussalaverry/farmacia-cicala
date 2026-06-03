@@ -86,14 +86,14 @@
         /* Novedades: foto | nombre | descripción | precio | stock | acciones */
         .th-novedad   { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
         /* Promociones: foto | nombre | precio orig | precio desc | % off | stock | acciones */
-        .th-promocion { grid-template-columns: 56px 1fr 100px 110px 70px 110px 130px; }
+        .th-promocion { grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px; }
         /* Combos: foto | nombre | descripción | precio | stock | acciones */
         .th-combo     { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
         .producto-row { display: grid; padding: 12px 20px; align-items: center; border-bottom: 1px solid #F5F5F5; transition: background 0.15s; font-size: 15px; gap: 12px; }
         .producto-row:last-child { border-bottom: none; }
         .producto-row:hover { background: #FAFAFA; }
         .producto-row.th-novedad   { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
-        .producto-row.th-promocion { grid-template-columns: 56px 1fr 100px 110px 70px 110px 130px; }
+        .producto-row.th-promocion { grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px; }
         .producto-row.th-combo     { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
         .producto-nombre-cell { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .producto-desc-cell { font-size: 13px; color: var(--text-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -297,7 +297,7 @@
             </div>
             <div class="productos-table">
                 <div class="table-header th-promocion">
-                    <span></span><span>Nombre</span><span>Precio original</span><span>Con descuento</span><span>% OFF</span><span>Stock</span><span></span>
+                    <span></span><span>Nombre</span><span>Descripción</span><span>Precio original</span><span>Precio descuento</span><span>% OFF</span><span>Stock</span><span></span>
                 </div>
                 <div id="lista-promociones"><div class="loading">Cargando...</div></div>
             </div>
@@ -872,6 +872,7 @@ async function cargarPromociones() {
         row.innerHTML = `
             ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
+            <span class="producto-desc-cell">${p.descripcion || ''}</span>
             <span>${fmt(p.precioOriginal)}</span>
             <span>${fmt(p.precioDescuento)}</span>
             <span>${p.descuentoPorcentaje}%</span>
@@ -1024,7 +1025,7 @@ document.getElementById('btn-guardar-combo').addEventListener('click', async () 
 async function toggleStock(col, id, stockActual) {
     await updateDoc(doc(db, col, id), { enStock: !stockActual });
     // Notificación gris para cambio de stock
-    toast(stockActual ? 'Sin stock' : 'Con stock', 'gray');
+    toast(stockActual ? 'Sin stock' : 'Con stock', stockActual ? 'gray' : 'success');
 }
 
 /* ====== CONFIRMAR ELIMINACIÓN (modal centrado) ====== */
