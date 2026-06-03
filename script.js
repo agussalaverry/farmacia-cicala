@@ -292,14 +292,16 @@ function renderizarCartItems() {
         el.innerHTML = `
             <div class="cart-item-top">
                 ${imgHTML}
-                <div class="cart-item-nombre">${item.nombre}</div>
-            </div>
-            <div class="cart-item-controls">
-                <button class="qty-btn qty-minus" data-id="${item.id}">−</button>
-                <span class="qty-cantidad">${item.cantidad}</span>
-                <button class="qty-btn qty-plus" data-id="${item.id}">+</button>
-                <span class="cart-item-subtotal">${formatearPrecio(subtotal)}</span>
-                <button class="cart-item-remove" data-id="${item.id}">×</button>
+                <div class="cart-item-body">
+                    <div class="cart-item-nombre">${item.nombre}</div>
+                    <div class="cart-item-controls">
+                        <button class="qty-btn qty-minus" data-id="${item.id}">−</button>
+                        <span class="qty-cantidad">${item.cantidad}</span>
+                        <button class="qty-btn qty-plus" data-id="${item.id}">+</button>
+                        <span class="cart-item-subtotal">${formatearPrecio(subtotal)}</span>
+                        <button class="cart-item-remove" data-id="${item.id}">×</button>
+                    </div>
+                </div>
             </div>
         `;
 
