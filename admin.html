@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Farmacia Cicala</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -154,6 +155,45 @@
             .th-promocion, .producto-row.th-promocion { grid-template-columns: 48px 1fr 80px 100px; }
             .th-combo, .producto-row.th-combo { grid-template-columns: 48px 1fr 80px 100px; }
         }
+        /* ---- MODAL RECORTADOR ---- */
+        .cropper-modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+            z-index: 9000; align-items: center; justify-content: center; padding: 16px;
+        }
+        .cropper-modal-overlay.active { display: flex; }
+        .cropper-modal-box {
+            background: #fff; border-radius: 20px; padding: 24px;
+            width: 100%; max-width: 640px; max-height: 90vh;
+            display: flex; flex-direction: column; gap: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .cropper-modal-title { font-size: 20px; font-weight: 800; color: var(--pink); }
+        .cropper-modal-subtitle { font-size: 14px; color: var(--text-light); margin-top: -8px; }
+        .cropper-wrapper {
+            width: 100%; max-height: 420px; overflow: hidden;
+            border-radius: 12px; background: #f0f0f0;
+        }
+        .cropper-wrapper img { display: block; max-width: 100%; }
+        .cropper-modal-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn-crop-confirm {
+            flex: 1; padding: 14px; background: var(--pink); color: white;
+            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+        }
+        .btn-crop-confirm:hover { background: var(--pink-dark); }
+        .btn-crop-original {
+            flex: 1; padding: 14px; background: #F0F0F0; color: var(--text);
+            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+        }
+        .btn-crop-original:hover { background: #E0E0E0; }
+        .btn-crop-cancel {
+            padding: 14px 20px; background: #FFEBEE; color: var(--red);
+            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+        }
+        .btn-crop-cancel:hover { background: #FFCDD2; }
+
     </style>
 </head>
 <body>
@@ -402,8 +442,27 @@
     </div>
 </div>
 
+<!-- MODAL RECORTADOR -->
+<div class="cropper-modal-overlay" id="cropper-modal">
+    <div class="cropper-modal-box">
+        <div>
+            <p class="cropper-modal-title">✂️ Recortá la imagen</p>
+            <p class="cropper-modal-subtitle">Arrastrá y redimensioná el recuadro para elegir el área del producto. O usá la imagen completa tal como está.</p>
+        </div>
+        <div class="cropper-wrapper">
+            <img id="cropper-img" src="" alt="Recortar">
+        </div>
+        <div class="cropper-modal-actions">
+            <button class="btn-crop-confirm" id="btn-crop-confirm">✓ Usar recorte</button>
+            <button class="btn-crop-original" id="btn-crop-original">📷 Usar imagen completa</button>
+            <button class="btn-crop-cancel" id="btn-crop-cancel">✕ Cancelar</button>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
@@ -463,6 +522,72 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
     });
 });
 
+/* ====== RECORTADOR DE IMÁGENES ====== */
+let cropperInstance = null;
+let cropperCallback = null; // función a llamar con el File resultante
+
+const cropperModal  = document.getElementById('cropper-modal');
+const cropperImg    = document.getElementById('cropper-img');
+const btnCropConfirm   = document.getElementById('btn-crop-confirm');
+const btnCropOriginal  = document.getElementById('btn-crop-original');
+const btnCropCancel    = document.getElementById('btn-crop-cancel');
+
+function abrirRecortador(file, onResult) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        cropperImg.src = e.target.result;
+        cropperModal.classList.add('active');
+        // Destruir instancia previa
+        if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+        // Inicializar Cropper
+        cropperInstance = new Cropper(cropperImg, {
+            aspectRatio: NaN,          // libre
+            viewMode: 1,
+            dragMode: 'move',
+            autoCropArea: 0.85,
+            responsive: true,
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+        });
+        cropperCallback = onResult;
+    };
+    reader.readAsDataURL(file);
+}
+
+btnCropConfirm.addEventListener('click', () => {
+    if (!cropperInstance) return;
+    cropperInstance.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200, fillColor: '#fff' })
+        .toBlob(blob => {
+            const croppedFile = new File([blob], 'recortada.jpg', { type: 'image/jpeg' });
+            cerrarRecortador();
+            if (cropperCallback) cropperCallback(croppedFile);
+        }, 'image/jpeg', 0.92);
+});
+
+btnCropOriginal.addEventListener('click', () => {
+    // Usar el archivo original sin recortar
+    const originalSrc = cropperImg.src;
+    // Convertimos la dataURL de vuelta a File
+    fetch(originalSrc).then(r => r.blob()).then(blob => {
+        const originalFile = new File([blob], 'original.jpg', { type: blob.type });
+        cerrarRecortador();
+        if (cropperCallback) cropperCallback(originalFile);
+    });
+});
+
+btnCropCancel.addEventListener('click', cerrarRecortador);
+
+function cerrarRecortador() {
+    cropperModal.classList.remove('active');
+    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+    cropperCallback = null;
+}
+
 /* ====== CLOUDINARY UPLOAD ====== */
 async function subirImagenCloudinary(file, prefijo, setEstado) {
     setEstado('Subiendo imagen...', 'subiendo');
@@ -482,6 +607,7 @@ async function subirImagenCloudinary(file, prefijo, setEstado) {
     return data.secure_url;
 }
 
+/* ====== SETUP UPLOADERS ====== */
 function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, previewNombreId, previewEstadoId, urlInputId, quitarBtnId) {
     const input = document.getElementById(inputId);
     const area  = document.getElementById(areaId);
@@ -492,23 +618,25 @@ function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, pr
     const urlInput = document.getElementById(urlInputId);
     const quitarBtn = document.getElementById(quitarBtnId);
 
-    function mostrarPreview(file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            previewImg.src = e.target.result;
-            previewNombre.textContent = file.name;
-            previewEstado.textContent = 'Lista para guardar';
-            previewEstado.className = 'imagen-preview-estado';
-            container.classList.add('visible');
-        };
-        reader.readAsDataURL(file);
-        // Guardamos el file en el input para usarlo al guardar
-        input._fileSeleccionado = file;
-        urlInput.value = ''; // se llenará al guardar
+    function procesarFile(file) {
+        // Abrir recortador; cuando el usuario confirme, guardar el file resultante
+        abrirRecortador(file, (fileResultante) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                previewImg.src = e.target.result;
+                previewNombre.textContent = file.name;
+                previewEstado.textContent = 'Lista para guardar';
+                previewEstado.className = 'imagen-preview-estado';
+                container.classList.add('visible');
+            };
+            reader.readAsDataURL(fileResultante);
+            input._fileSeleccionado = fileResultante;
+            urlInput.value = '';
+        });
     }
 
     input.addEventListener('change', e => {
-        if (e.target.files[0]) mostrarPreview(e.target.files[0]);
+        if (e.target.files[0]) procesarFile(e.target.files[0]);
     });
 
     area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
@@ -518,7 +646,7 @@ function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, pr
         area.classList.remove('dragover');
         if (e.dataTransfer.files[0]) {
             input.files = e.dataTransfer.files;
-            mostrarPreview(e.dataTransfer.files[0]);
+            procesarFile(e.dataTransfer.files[0]);
         }
     });
 

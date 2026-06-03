@@ -598,7 +598,7 @@ estilosDinamicos.innerHTML = `
     }
     .badge-nuevo  { background-color: #2196F3; }
     .badge-off    { background-color: #FF6B35; }
-    .badge-combo  { background-color: #9C27B0; }
+    .badge-combo  { background-color: #25D366; }
     .sin-stock-label {
         background-color: #CCCCCC;
         color: #555;
