@@ -187,13 +187,6 @@ function crearTarjetaCombo(combo) {
     const tarjeta = document.createElement('div');
     tarjeta.className = 'producto-card combo-card' + (!combo.enStock ? ' sin-stock' : '');
 
-    const productosHTML = (combo.productos || []).map(p => `
-        <div class="combo-producto-item">
-            ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}" class="combo-producto-img">` : ''}
-            <p class="combo-producto-nombre">${p.nombre}</p>
-        </div>
-    `).join('');
-
     const sinStockHTML = '';
     const imagenPrincipal = combo.imagen || combo.productos?.[0]?.imagen || '';
 
@@ -204,7 +197,7 @@ function crearTarjetaCombo(combo) {
         </div>
         ${sinStockHTML}
         <h3 class="producto-nombre">${combo.nombre}</h3>
-        <div class="combo-productos-lista">${productosHTML}</div>
+        <p class="producto-descripcion">${combo.descripcion || ''}</p>
         <div class="producto-precios">
             <span class="precio-unico">${formatearPrecio(combo.precio)}</span>
         </div>
