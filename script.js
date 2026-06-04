@@ -470,12 +470,12 @@ function initDropdownsMobile() {
 }
 
 function abrirDropdown(dropdown) {
+    // Bloquear scroll PRIMERO, antes de mostrar el dropdown
+    document.body.classList.add('nav-open');
+    document.body.style.overflow = 'hidden';
     dropdown.classList.add('dropdown-mobile-open');
     overlayDropdown.classList.add('active');
     dropdownAbierto = dropdown;
-    // Bloquear scroll de fondo sin oscurecer
-    document.body.classList.add('nav-open');
-    document.body.style.overflow = 'hidden';
 }
 
 function cerrarDropdown(dropdown) {

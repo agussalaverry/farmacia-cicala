@@ -1375,7 +1375,7 @@ html {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -1387,31 +1387,31 @@ html {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    background-color: rgba(0, 0, 0, 0.35);
 }
 
-/* Dropdown en móvil: debajo del header, centrado horizontalmente,
-   encima de la barra secundaria pero sin taparla */
+/* Dropdown en móvil: centrado en pantalla */
 @media (max-width: 768px) {
     .nav-dropdown.dropdown-mobile-open {
         display: block !important;
         position: fixed !important;
-        /* Se posiciona justo debajo del header (~108px) con pequeño margen */
-        top: 112px !important;
+        top: 50% !important;
         left: 50% !important;
-        transform: translateX(-50%) !important;
+        transform: translate(-50%, -50%) !important;
         z-index: 1099 !important;
         opacity: 1 !important;
         visibility: visible !important;
         max-width: min(92vw, 360px);
-        max-height: calc(100vh - 200px);
+        width: min(92vw, 360px);
+        max-height: 70vh;
         overflow-y: auto;
-        /* Animación suave desde arriba */
+        margin-top: 0 !important;
         animation: dropdownSlideIn 0.22s ease-out;
     }
 
     @keyframes dropdownSlideIn {
-        from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
-        to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        from { opacity: 0; transform: translate(-50%, -48%); }
+        to   { opacity: 1; transform: translate(-50%, -50%); }
     }
 
     /* Bloquear scroll del fondo cuando dropdown o carrito están abiertos */
