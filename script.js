@@ -352,7 +352,7 @@ function generarMensajeWhatsApp() {
    ============================================ */
 
 function abrirCarrito() {
-    if (dropdownAbierto) cerrarDropdown(dropdownAbierto);
+    if (portalAbierto) cerrarPortal();
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
     bloquearScroll();
@@ -419,8 +419,8 @@ function mostrarModalConfirmacion(mensaje, onAceptar) {
    11. DROPDOWNS EN MOVIL
    ============================================ */
 
-let overlayDropdown = null;
-let dropdownAbierto = null;
+let portalAbierto = null;       // el div portal que está en el body
+let dropdownAbierto = null;     // el dropdown original (para toggle)
 let scrollY_bloqueado = 0;
 
 function bloquearScroll() {
@@ -439,12 +439,56 @@ function desbloquearScroll() {
     window.scrollTo(0, scrollY_bloqueado);
 }
 
-function initDropdownsMobile() {
-    // Overlay transparente solo para capturar taps fuera del dropdown
-    overlayDropdown = document.createElement('div');
-    overlayDropdown.className = 'nav-dropdown-overlay';
-    document.body.appendChild(overlayDropdown);
+function cerrarPortal() {
+    if (portalAbierto) {
+        portalAbierto.remove();
+        portalAbierto = null;
+    }
+    dropdownAbierto = null;
+    if (!cartPanel.classList.contains('active')) {
+        desbloquearScroll();
+    }
+}
 
+function abrirPortal(dropdown) {
+    // Bloquear scroll primero para que el body no salte
+    bloquearScroll();
+
+    // Crear portal con el contenido del dropdown original
+    const portal = document.createElement('div');
+    portal.innerHTML = dropdown.innerHTML;
+
+    // Estilos inline directos — sin herencia, sin CSS externo que interfiera
+    const vw = Math.min(window.innerWidth * 0.92, 360);
+    const vh = window.innerHeight;
+    const leftPx = (window.innerWidth - vw) / 2;
+
+    portal.style.cssText = `
+        position: fixed;
+        z-index: 9999;
+        background: #fff;
+        border-radius: 16px;
+        border-top: 4px solid #EF087C;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        padding: 24px;
+        width: ${vw}px;
+        max-height: ${vh * 0.70}px;
+        overflow-y: auto;
+        left: ${leftPx}px;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: 0;
+    `;
+
+    // Clic en el portal NO cierra (el usuario puede leer el contenido)
+    portal.addEventListener('click', e => e.stopPropagation());
+    portal.addEventListener('touchend', e => e.stopPropagation());
+
+    document.body.appendChild(portal);
+    portalAbierto = portal;
+}
+
+function initDropdownsMobile() {
     document.querySelectorAll('.nav-item').forEach(item => {
         const btn = item.querySelector('.nav-button');
         const dropdown = item.querySelector('.nav-dropdown');
@@ -454,49 +498,33 @@ function initDropdownsMobile() {
             e.preventDefault();
             e.stopPropagation();
 
-            const isMobile = window.innerWidth <= 768;
-            if (!isMobile) return;
+            if (window.innerWidth > 768) return;
 
-            // Si hay otro dropdown abierto, cerrarlo
-            if (dropdownAbierto && dropdownAbierto !== dropdown) {
-                cerrarDropdown(dropdownAbierto);
+            // Si el mismo dropdown está abierto → cerrar
+            if (dropdownAbierto === dropdown) {
+                cerrarPortal();
+                return;
             }
 
-            // Toggle: el mismo botón abre Y cierra
-            if (dropdown.classList.contains('dropdown-mobile-open')) {
-                cerrarDropdown(dropdown);
-            } else {
-                abrirDropdown(dropdown);
-            }
+            // Si hay otro abierto → cerrar primero
+            if (portalAbierto) cerrarPortal();
+
+            dropdownAbierto = dropdown;
+            abrirPortal(dropdown);
         });
     });
 
-    // Tap en el overlay cierra el dropdown
-    overlayDropdown.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (dropdownAbierto) cerrarDropdown(dropdownAbierto);
+    // Tocar cualquier parte de la pantalla fuera del portal cierra
+    document.addEventListener('click', (e) => {
+        if (portalAbierto && !portalAbierto.contains(e.target)) {
+            cerrarPortal();
+        }
     });
-    overlayDropdown.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (dropdownAbierto) cerrarDropdown(dropdownAbierto);
-    }, { passive: false });
-}
-
-function abrirDropdown(dropdown) {
-    bloquearScroll();
-    dropdown.classList.add('dropdown-mobile-open');
-    overlayDropdown.classList.add('active');
-    dropdownAbierto = dropdown;
-}
-
-function cerrarDropdown(dropdown) {
-    dropdown.classList.remove('dropdown-mobile-open');
-    overlayDropdown.classList.remove('active');
-    dropdownAbierto = null;
-    if (!cartPanel.classList.contains('active')) {
-        desbloquearScroll();
-    }
+    document.addEventListener('touchend', (e) => {
+        if (portalAbierto && !portalAbierto.contains(e.target)) {
+            cerrarPortal();
+        }
+    }, { passive: true });
 }
 
 /* ============================================
@@ -666,9 +694,9 @@ estilosDinamicos.innerHTML = `
     .qty-btn {
         width: 36px;
         height: 36px;
-        border: 2px solid #D5006D;
+        border: 2px solid #EF087C;
         background: white;
-        color: #D5006D;
+        color: #EF087C;
         font-size: 20px;
         font-weight: 700;
         border-radius: 8px;
@@ -679,7 +707,7 @@ estilosDinamicos.innerHTML = `
         transition: background 0.2s;
     }
     .qty-btn:hover {
-        background: #D5006D;
+        background: #EF087C;
         color: white;
     }
     .qty-cantidad {
@@ -691,7 +719,7 @@ estilosDinamicos.innerHTML = `
     .cart-item-subtotal {
         font-size: 16px;
         font-weight: 700;
-        color: #D5006D;
+        color: #EF087C;
         margin-left: auto;
     }
     .cart-item-remove {
