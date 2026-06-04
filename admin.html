@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Farmacia Cicala</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <link rel="icon" type="image/jpeg" href="images/logos/logo para la pestaña.png">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
             --pink: #D5006D;
@@ -22,780 +30,1501 @@
             --red: #E53935;
             --orange: #F57C00;
             --radius: 12px;
-            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
-        body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; min-height: 100vh; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 16px;
+            min-height: 100vh;
+        }
 
         /* LOGIN */
-        #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #FFF0F5 0%, #FFE4EF 100%); }
-        .login-card { background: var(--white); border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 400px; box-shadow: 0 8px 40px rgba(213,0,109,0.12); }
-        .login-logo { text-align: center; margin-bottom: 32px; }
-        .login-logo h1 { font-size: 24px; font-weight: 800; color: var(--pink); }
-        .login-logo p { font-size: 14px; color: var(--text-light); margin-top: 4px; }
-        .login-error { color: var(--red); font-size: 14px; text-align: center; margin-top: 12px; min-height: 20px; }
+        #login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4EF 100%);
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 40px rgba(213, 0, 109, 0.12);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--pink);
+        }
+
+        .login-logo p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .login-error {
+            color: var(--red);
+            font-size: 14px;
+            text-align: center;
+            margin-top: 12px;
+            min-height: 20px;
+        }
 
         /* FORM */
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 14px 16px; border: 2px solid var(--pink-border); border-radius: var(--radius);
-            font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--text); background: var(--white);
-            transition: border-color 0.2s; outline: none;
+        .form-group {
+            margin-bottom: 20px;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--pink); }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--pink-border);
+            border-radius: var(--radius);
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            color: var(--text);
+            background: var(--white);
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--pink);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
 
         /* BOTONES */
-        .btn-primary { width: 100%; padding: 16px; background: var(--pink); color: white; border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-        .btn-primary:hover { background: var(--pink-dark); }
-        .btn-save { flex: 1; padding: 16px; background: var(--pink); color: white; border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-        .btn-save:hover { background: var(--pink-dark); }
-        .btn-cancel { padding: 16px 24px; background: #F5F5F5; color: var(--text-light); border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; }
-        .btn-cancel:hover { background: #EEEEEE; }
-        .btn-add { background: var(--pink); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-        .btn-add:hover { background: var(--pink-dark); }
-        .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 20px; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
-        .btn-logout:hover { background: rgba(255,255,255,0.3); }
-        .btn-edit { background: #E3F2FD; color: #1565C0; }
-        .btn-delete { background: #FFEBEE; color: var(--red); }
-        .btn-toggle-stock { background: #FFF3E0; color: var(--orange); }
-        .btn-edit, .btn-delete, .btn-toggle-stock { padding: 7px 14px; border: none; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-        .btn-edit:hover, .btn-delete:hover, .btn-toggle-stock:hover { opacity: 0.75; }
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--pink);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-family: 'Nunito', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--pink-dark);
+        }
+
+        .btn-save {
+            flex: 1;
+            padding: 16px;
+            background: var(--pink);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-family: 'Nunito', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-save:hover {
+            background: var(--pink-dark);
+        }
+
+        .btn-cancel {
+            padding: 16px 24px;
+            background: #F5F5F5;
+            color: var(--text-light);
+            border: none;
+            border-radius: var(--radius);
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-cancel:hover {
+            background: #EEEEEE;
+        }
+
+        .btn-add {
+            background: var(--pink);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover {
+            background: var(--pink-dark);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-edit {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .btn-delete {
+            background: #FFEBEE;
+            color: var(--red);
+        }
+
+        .btn-toggle-stock {
+            background: #FFF3E0;
+            color: var(--orange);
+        }
+
+        .btn-edit,
+        .btn-delete,
+        .btn-toggle-stock {
+            padding: 7px 14px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-edit:hover,
+        .btn-delete:hover,
+        .btn-toggle-stock:hover {
+            opacity: 0.75;
+        }
 
         /* ADMIN PANEL */
-        #admin-panel { display: none; min-height: 100vh; }
-        .admin-header { background: var(--pink); color: white; padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(213,0,109,0.3); }
-        .admin-header h1 { font-size: 20px; font-weight: 800; }
-        .admin-header span { font-size: 14px; opacity: 0.85; }
-        .admin-body { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+        #admin-panel {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: var(--pink);
+            color: white;
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(213, 0, 109, 0.3);
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .admin-header span {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .admin-body {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
 
         /* TABS */
-        .admin-tabs { display: flex; gap: 8px; margin-bottom: 28px; background: var(--white); padding: 6px; border-radius: var(--radius); box-shadow: var(--shadow); width: fit-content; }
-        .admin-tab { padding: 10px 24px; border: none; background: transparent; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-light); cursor: pointer; border-radius: 8px; transition: all 0.2s; }
-        .admin-tab.active { background: var(--pink); color: white; }
-        .admin-section { display: none; }
-        .admin-section.active { display: block; }
-        .section-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .section-toolbar h2 { font-size: 22px; font-weight: 800; }
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+            background: var(--white);
+            padding: 6px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: fit-content;
+        }
+
+        .admin-tab {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .admin-tab.active {
+            background: var(--pink);
+            color: white;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .section-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-toolbar h2 {
+            font-size: 22px;
+            font-weight: 800;
+        }
 
         /* TABLA */
-        .productos-table { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-        .table-header { display: grid; padding: 14px 20px; background: var(--pink-light); font-size: 13px; font-weight: 800; color: var(--pink-dark); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--pink-border); gap: 12px; align-items: center; }
+        .productos-table {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            padding: 14px 20px;
+            background: var(--pink-light);
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--pink-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--pink-border);
+            gap: 12px;
+            align-items: center;
+        }
+
         /* Novedades: foto | nombre | descripción | precio | stock | acciones */
-        .th-novedad   { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
+        .th-novedad {
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
+        }
+
         /* Promociones: foto | nombre | precio orig | precio desc | % off | stock | acciones */
-        .th-promocion { grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px; }
+        .th-promocion {
+            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px;
+        }
+
         /* Combos: foto | nombre | descripción | precio | stock | acciones */
-        .th-combo     { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
-        .producto-row { display: grid; padding: 12px 20px; align-items: center; border-bottom: 1px solid #F5F5F5; transition: background 0.15s; font-size: 15px; gap: 12px; }
-        .producto-row:last-child { border-bottom: none; }
-        .producto-row:hover { background: #FAFAFA; }
-        .producto-row.th-novedad   { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
-        .producto-row.th-promocion { grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px; }
-        .producto-row.th-combo     { grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px; }
-        .producto-nombre-cell { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .producto-desc-cell { font-size: 13px; color: var(--text-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #F0F0F0; flex-shrink: 0; }
-        .thumb-placeholder { width: 48px; height: 48px; border-radius: 8px; background: #F0F0F0; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-        .stock-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; }
-        .stock-badge.en-stock  { background: #E8F5E9; color: #2E7D32; }
-        .stock-badge.sin-stock { background: #EEEEEE; color: #757575; }
-        .row-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: nowrap; align-items: center; }
-        .empty-state { text-align: center; padding: 48px 24px; color: var(--text-light); font-size: 18px; }
-        .loading { text-align: center; padding: 48px; color: var(--text-light); font-size: 18px; }
+        .th-combo {
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
+        }
+
+        .producto-row {
+            display: grid;
+            padding: 12px 20px;
+            align-items: center;
+            border-bottom: 1px solid #F5F5F5;
+            transition: background 0.15s;
+            font-size: 15px;
+            gap: 12px;
+        }
+
+        .producto-row:last-child {
+            border-bottom: none;
+        }
+
+        .producto-row:hover {
+            background: #FAFAFA;
+        }
+
+        .producto-row.th-novedad {
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
+        }
+
+        .producto-row.th-promocion {
+            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px;
+        }
+
+        .producto-row.th-combo {
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
+        }
+
+        .producto-nombre-cell {
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .producto-desc-cell {
+            font-size: 13px;
+            color: var(--text-light);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .thumb {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #F0F0F0;
+            flex-shrink: 0;
+        }
+
+        .thumb-placeholder {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: #F0F0F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .stock-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .stock-badge.en-stock {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .stock-badge.sin-stock {
+            background: #EEEEEE;
+            color: #757575;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
+            align-items: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-light);
+            font-size: 18px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-light);
+            font-size: 18px;
+        }
 
         /* MODAL CONFIRMAR ELIMINACIÓN */
         .confirm-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
-            z-index: 8000; align-items: center; justify-content: center; padding: 20px;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 8000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        .confirm-overlay.active { display: flex; }
+
+        .confirm-overlay.active {
+            display: flex;
+        }
+
         .confirm-box {
-            background: var(--white); border-radius: 20px; padding: 40px 36px 32px;
-            width: 100%; max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px 36px 32px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
             text-align: center;
             animation: confirmIn 0.25s ease-out;
         }
+
         @keyframes confirmIn {
-            from { transform: scale(0.92) translateY(12px); opacity: 0; }
-            to   { transform: scale(1) translateY(0);       opacity: 1; }
+            from {
+                transform: scale(0.92) translateY(12px);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
         }
-        .confirm-icon { font-size: 44px; margin-bottom: 16px; }
-        .confirm-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-        .confirm-subtitle { font-size: 15px; color: var(--text-light); margin-bottom: 32px; line-height: 1.5; }
-        .confirm-actions { display: flex; gap: 12px; }
+
+        .confirm-icon {
+            font-size: 44px;
+            margin-bottom: 16px;
+        }
+
+        .confirm-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .confirm-subtitle {
+            font-size: 15px;
+            color: var(--text-light);
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+        }
+
         .btn-confirm-cancel {
-            flex: 1; padding: 14px; background: #F0F0F0; color: var(--text-light);
-            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
-            font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+            flex: 1;
+            padding: 14px;
+            background: #F0F0F0;
+            color: var(--text-light);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-        .btn-confirm-cancel:hover { background: #E0E0E0; }
+
+        .btn-confirm-cancel:hover {
+            background: #E0E0E0;
+        }
+
         .btn-confirm-delete {
-            flex: 1; padding: 14px; background: var(--red); color: white;
-            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
-            font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+            flex: 1;
+            padding: 14px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-        .btn-confirm-delete:hover { background: #c62828; }
+
+        .btn-confirm-delete:hover {
+            background: #c62828;
+        }
 
         /* TOAST variantes extra */
-        .toast.gray { background: #666666; }
+        .toast.gray {
+            background: #666666;
+        }
 
         /* SUBIDA DE IMAGEN */
         .imagen-upload-area {
-            border: 2px dashed var(--pink-border); border-radius: var(--radius); padding: 20px;
-            text-align: center; cursor: pointer; transition: all 0.2s; background: var(--pink-light);
+            border: 2px dashed var(--pink-border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--pink-light);
             position: relative;
         }
-        .imagen-upload-area:hover { border-color: var(--pink); background: #FFE8F2; }
-        .imagen-upload-area.dragover { border-color: var(--pink); background: #FFE8F2; transform: scale(1.01); }
-        .imagen-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-        .imagen-upload-icon { font-size: 32px; margin-bottom: 8px; }
-        .imagen-upload-text { font-size: 15px; font-weight: 700; color: var(--pink); }
-        .imagen-upload-sub { font-size: 13px; color: var(--text-light); margin-top: 4px; }
-        .imagen-preview-container { margin-top: 12px; display: none; align-items: center; gap: 12px; background: white; border-radius: 8px; padding: 10px; border: 1px solid var(--pink-border); }
-        .imagen-preview-container.visible { display: flex; }
-        .imagen-preview { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
-        .imagen-preview-info { flex: 1; }
-        .imagen-preview-nombre { font-size: 14px; font-weight: 700; color: var(--text); }
-        .imagen-preview-estado { font-size: 13px; color: var(--text-light); margin-top: 2px; }
-        .imagen-preview-estado.subiendo { color: var(--orange); }
-        .imagen-preview-estado.listo { color: #2E7D32; }
-        .imagen-preview-estado.error { color: var(--red); }
-        .btn-quitar-imagen { background: #FFEBEE; color: var(--red); border: none; border-radius: 6px; padding: 6px 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+        .imagen-upload-area:hover {
+            border-color: var(--pink);
+            background: #FFE8F2;
+        }
+
+        .imagen-upload-area.dragover {
+            border-color: var(--pink);
+            background: #FFE8F2;
+            transform: scale(1.01);
+        }
+
+        .imagen-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .imagen-upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .imagen-upload-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--pink);
+        }
+
+        .imagen-upload-sub {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .imagen-preview-container {
+            margin-top: 12px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid var(--pink-border);
+        }
+
+        .imagen-preview-container.visible {
+            display: flex;
+        }
+
+        .imagen-preview {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .imagen-preview-info {
+            flex: 1;
+        }
+
+        .imagen-preview-nombre {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .imagen-preview-estado {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .imagen-preview-estado.subiendo {
+            color: var(--orange);
+        }
+
+        .imagen-preview-estado.listo {
+            color: #2E7D32;
+        }
+
+        .imagen-preview-estado.error {
+            color: var(--red);
+        }
+
+        .btn-quitar-imagen {
+            background: #FFEBEE;
+            color: var(--red);
+            border: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
 
         /* MODAL */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: var(--white); border-radius: 20px; padding: 36px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-        .modal h3 { font-size: 22px; font-weight: 800; color: var(--pink); margin-bottom: 24px; }
-        .modal-actions { display: flex; gap: 12px; margin-top: 28px; }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 36px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h3 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--pink);
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
 
         /* COMBO ITEMS */
-        .combo-items-editor { margin-top: 8px; }
-        .combo-item-row { display: grid; grid-template-columns: 1fr 36px; gap: 8px; margin-bottom: 12px; align-items: start; }
-        .combo-item-fields { display: flex; flex-direction: column; gap: 8px; }
-        .btn-remove-combo-item { width: 36px; height: 36px; background: #FFEBEE; color: var(--red); border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 4px; }
-        .btn-add-combo-item { background: var(--pink-light); color: var(--pink); border: 2px dashed var(--pink-border); padding: 10px; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px; }
+        .combo-items-editor {
+            margin-top: 8px;
+        }
+
+        .combo-item-row {
+            display: grid;
+            grid-template-columns: 1fr 36px;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: start;
+        }
+
+        .combo-item-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-remove-combo-item {
+            width: 36px;
+            height: 36px;
+            background: #FFEBEE;
+            color: var(--red);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        .btn-add-combo-item {
+            background: var(--pink-light);
+            color: var(--pink);
+            border: 2px dashed var(--pink-border);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 4px;
+        }
 
         /* TOAST */
-        .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: white; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 700; z-index: 9999; opacity: 0; transition: all 0.3s; pointer-events: none; }
-        .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .toast.success { background: var(--green); }
-        .toast.error   { background: var(--red); }
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: var(--green);
+        }
+
+        .toast.error {
+            background: var(--red);
+        }
 
         @media (max-width: 768px) {
-            .admin-header { padding: 0 16px; }
-            .admin-body { padding: 20px 16px; }
-            .admin-tabs { width: 100%; }
-            .form-row { grid-template-columns: 1fr; }
-            .th-novedad, .producto-row.th-novedad { grid-template-columns: 48px 1fr 80px 100px; }
-            .th-promocion, .producto-row.th-promocion { grid-template-columns: 48px 1fr 80px 100px; }
-            .th-combo, .producto-row.th-combo { grid-template-columns: 48px 1fr 80px 100px; }
+            .admin-header {
+                padding: 0 16px;
+            }
+
+            .admin-body {
+                padding: 20px 16px;
+            }
+
+            .admin-tabs {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .th-novedad,
+            .producto-row.th-novedad {
+                grid-template-columns: 48px 1fr 80px 100px;
+            }
+
+            .th-promocion,
+            .producto-row.th-promocion {
+                grid-template-columns: 48px 1fr 80px 100px;
+            }
+
+            .th-combo,
+            .producto-row.th-combo {
+                grid-template-columns: 48px 1fr 80px 100px;
+            }
         }
+
         /* ---- MODAL RECORTADOR ---- */
         .cropper-modal-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-            z-index: 9000; align-items: center; justify-content: center; padding: 16px;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
         }
-        .cropper-modal-overlay.active { display: flex; }
-        .cropper-modal-box {
-            background: #fff; border-radius: 20px; padding: 24px;
-            width: 100%; max-width: 640px; max-height: 90vh;
-            display: flex; flex-direction: column; gap: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .cropper-modal-title { font-size: 20px; font-weight: 800; color: var(--pink); }
-        .cropper-modal-subtitle { font-size: 14px; color: var(--text-light); margin-top: -8px; }
-        .cropper-wrapper {
-            width: 100%; max-height: 420px; overflow: hidden;
-            border-radius: 12px; background: #f0f0f0;
-        }
-        .cropper-wrapper img { display: block; max-width: 100%; }
-        .cropper-modal-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-        .btn-crop-confirm {
-            flex: 1; padding: 14px; background: var(--pink); color: white;
-            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
-            font-size: 16px; font-weight: 700; cursor: pointer;
-        }
-        .btn-crop-confirm:hover { background: var(--pink-dark); }
-        .btn-crop-original {
-            flex: 1; padding: 14px; background: #F0F0F0; color: var(--text);
-            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
-            font-size: 16px; font-weight: 700; cursor: pointer;
-        }
-        .btn-crop-original:hover { background: #E0E0E0; }
-        .btn-crop-cancel {
-            padding: 14px 20px; background: #FFEBEE; color: var(--red);
-            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
-            font-size: 16px; font-weight: 700; cursor: pointer;
-        }
-        .btn-crop-cancel:hover { background: #FFCDD2; }
 
+        .cropper-modal-overlay.active {
+            display: flex;
+        }
+
+        .cropper-modal-box {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .cropper-modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--pink);
+        }
+
+        .cropper-modal-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: -8px;
+        }
+
+        .cropper-wrapper {
+            width: 100%;
+            max-height: 420px;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #f0f0f0;
+        }
+
+        .cropper-wrapper img {
+            display: block;
+            max-width: 100%;
+        }
+
+        .cropper-modal-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-crop-confirm {
+            flex: 1;
+            padding: 14px;
+            background: var(--pink);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-crop-confirm:hover {
+            background: var(--pink-dark);
+        }
+
+        .btn-crop-original {
+            flex: 1;
+            padding: 14px;
+            background: #F0F0F0;
+            color: var(--text);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-crop-original:hover {
+            background: #E0E0E0;
+        }
+
+        .btn-crop-cancel {
+            padding: 14px 20px;
+            background: #FFEBEE;
+            color: var(--red);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-crop-cancel:hover {
+            background: #FFCDD2;
+        }
     </style>
 </head>
+
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-    <div class="login-card">
-        <div class="login-logo">
-            <h1>Farmacia Cicala</h1>
-            <p>Panel de administración</p>
-        </div>
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="login-email" placeholder="tu@email.com">
-        </div>
-        <div class="form-group">
-            <label>Contraseña</label>
-            <input type="password" id="login-password" placeholder="••••••••">
-        </div>
-        <button class="btn-primary" id="login-btn">Ingresar</button>
-        <p class="login-error" id="login-error"></p>
-    </div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="admin-panel">
-    <header class="admin-header">
-        <h1>Panel de productos</h1>
-        <div style="display:flex;align-items:center;gap:16px;">
-            <span id="admin-user-email"></span>
-            <button class="btn-logout" id="logout-btn">Salir</button>
-        </div>
-    </header>
-
-    <div class="admin-body">
-        <div class="admin-tabs">
-            <button class="admin-tab active" data-tab="novedades">Novedades</button>
-            <button class="admin-tab" data-tab="promociones">Promociones</button>
-            <button class="admin-tab" data-tab="combos">Combos</button>
-        </div>
-
-        <!-- NOVEDADES -->
-        <div class="admin-section active" id="tab-novedades">
-            <div class="section-toolbar">
-                <h2>Novedades</h2>
-                <button class="btn-add" id="btn-nueva-novedad">+ Agregar novedad</button>
+    <!-- LOGIN -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">
+                <h1>Farmacia Cicala</h1>
+                <p>Panel de administración</p>
             </div>
-            <div class="productos-table">
-                <div class="table-header th-novedad">
-                    <span></span><span>Nombre</span><span>Descripción</span><span>Precio</span><span>Stock</span><span></span>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="tu@email.com">
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+            <button class="btn-primary" id="login-btn">Ingresar</button>
+            <p class="login-error" id="login-error"></p>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="admin-panel">
+        <header class="admin-header">
+            <h1>Panel de productos</h1>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <span id="admin-user-email"></span>
+                <button class="btn-logout" id="logout-btn">Salir</button>
+            </div>
+        </header>
+
+        <div class="admin-body">
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="novedades">Novedades</button>
+                <button class="admin-tab" data-tab="promociones">Promociones</button>
+                <button class="admin-tab" data-tab="combos">Combos</button>
+            </div>
+
+            <!-- NOVEDADES -->
+            <div class="admin-section active" id="tab-novedades">
+                <div class="section-toolbar">
+                    <h2>Novedades</h2>
+                    <button class="btn-add" id="btn-nueva-novedad">+ Agregar novedad</button>
                 </div>
-                <div id="lista-novedades"><div class="loading">Cargando...</div></div>
-            </div>
-        </div>
-
-        <!-- PROMOCIONES -->
-        <div class="admin-section" id="tab-promociones">
-            <div class="section-toolbar">
-                <h2>Promociones</h2>
-                <button class="btn-add" id="btn-nueva-promocion">+ Agregar promoción</button>
-            </div>
-            <div class="productos-table">
-                <div class="table-header th-promocion">
-                    <span></span><span>Nombre</span><span>Descripción</span><span>Precio original</span><span>Precio descuento</span><span>% OFF</span><span>Stock</span><span></span>
+                <div class="productos-table">
+                    <div class="table-header th-novedad">
+                        <span></span><span>Nombre</span><span>Descripción</span><span>Precio</span><span>Stock</span><span></span>
+                    </div>
+                    <div id="lista-novedades">
+                        <div class="loading">Cargando...</div>
+                    </div>
                 </div>
-                <div id="lista-promociones"><div class="loading">Cargando...</div></div>
             </div>
-        </div>
 
-        <!-- COMBOS -->
-        <div class="admin-section" id="tab-combos">
-            <div class="section-toolbar">
-                <h2>Combos</h2>
-                <button class="btn-add" id="btn-nuevo-combo">+ Agregar combo</button>
-            </div>
-            <div class="productos-table">
-                <div class="table-header th-combo">
-                    <span></span><span>Nombre del combo</span><span>Descripción</span><span>Precio</span><span>Stock</span><span></span>
+            <!-- PROMOCIONES -->
+            <div class="admin-section" id="tab-promociones">
+                <div class="section-toolbar">
+                    <h2>Promociones</h2>
+                    <button class="btn-add" id="btn-nueva-promocion">+ Agregar promoción</button>
                 </div>
-                <div id="lista-combos"><div class="loading">Cargando...</div></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL NOVEDAD -->
-<div class="modal-overlay" id="modal-novedad">
-    <div class="modal">
-        <h3 id="modal-novedad-titulo">Agregar novedad</h3>
-        <input type="hidden" id="novedad-id">
-        <div class="form-group">
-            <label>Nombre del producto</label>
-            <input type="text" id="novedad-nombre" placeholder="Ej: Vitamina D3 2000 UI">
-        </div>
-        <div class="form-group">
-            <label>Descripción</label>
-            <textarea id="novedad-descripcion" placeholder="Ej: Frasco x60 comprimidos"></textarea>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Precio ($)</label>
-                <input type="number" id="novedad-precio" placeholder="4500">
-            </div>
-            <div class="form-group">
-                <label>Stock</label>
-                <select id="novedad-stock">
-                    <option value="true">Con stock</option>
-                    <option value="false">Sin stock</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Imagen del producto</label>
-            <div class="imagen-upload-area" id="upload-area-novedad">
-                <input type="file" id="novedad-imagen-file" accept="image/*">
-                <div class="imagen-upload-icon">📷</div>
-                <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
-                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
-            </div>
-            <div class="imagen-preview-container" id="preview-novedad">
-                <img class="imagen-preview" id="preview-img-novedad" src="" alt="">
-                <div class="imagen-preview-info">
-                    <div class="imagen-preview-nombre" id="preview-nombre-novedad"></div>
-                    <div class="imagen-preview-estado" id="preview-estado-novedad">Lista para guardar</div>
+                <div class="productos-table">
+                    <div class="table-header th-promocion">
+                        <span></span><span>Nombre</span><span>Descripción</span><span>Precio original</span><span>Precio
+                            descuento</span><span>% OFF</span><span>Stock</span><span></span>
+                    </div>
+                    <div id="lista-promociones">
+                        <div class="loading">Cargando...</div>
+                    </div>
                 </div>
-                <button class="btn-quitar-imagen" id="btn-quitar-novedad">Quitar</button>
             </div>
-            <input type="hidden" id="novedad-imagen-url">
-        </div>
-        <div class="modal-actions">
-            <button class="btn-cancel" id="btn-cancelar-novedad">Cancelar</button>
-            <button class="btn-save" id="btn-guardar-novedad">Guardar</button>
-        </div>
-    </div>
-</div>
 
-<!-- MODAL PROMOCION -->
-<div class="modal-overlay" id="modal-promocion">
-    <div class="modal">
-        <h3 id="modal-promocion-titulo">Agregar promoción</h3>
-        <input type="hidden" id="promocion-id">
-        <div class="form-group">
-            <label>Nombre del producto</label>
-            <input type="text" id="promocion-nombre" placeholder="Ej: Vitamina C 500mg">
-        </div>
-        <div class="form-group">
-            <label>Descripción</label>
-            <textarea id="promocion-descripcion" placeholder="Ej: Frasco x60 comprimidos"></textarea>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Precio original ($)</label>
-                <input type="number" id="promocion-precio-original" placeholder="5500">
-            </div>
-            <div class="form-group">
-                <label>Precio con descuento ($)</label>
-                <input type="number" id="promocion-precio-descuento" placeholder="3850">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>% de descuento</label>
-                <input type="number" id="promocion-descuento-pct" placeholder="Se calcula solo" readonly style="background:#F5F5F5">
-            </div>
-            <div class="form-group">
-                <label>Stock</label>
-                <select id="promocion-stock">
-                    <option value="true">Con stock</option>
-                    <option value="false">Sin stock</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Imagen del producto</label>
-            <div class="imagen-upload-area" id="upload-area-promocion">
-                <input type="file" id="promocion-imagen-file" accept="image/*">
-                <div class="imagen-upload-icon">📷</div>
-                <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
-                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
-            </div>
-            <div class="imagen-preview-container" id="preview-promocion">
-                <img class="imagen-preview" id="preview-img-promocion" src="" alt="">
-                <div class="imagen-preview-info">
-                    <div class="imagen-preview-nombre" id="preview-nombre-promocion"></div>
-                    <div class="imagen-preview-estado" id="preview-estado-promocion">Lista para guardar</div>
+            <!-- COMBOS -->
+            <div class="admin-section" id="tab-combos">
+                <div class="section-toolbar">
+                    <h2>Combos</h2>
+                    <button class="btn-add" id="btn-nuevo-combo">+ Agregar combo</button>
                 </div>
-                <button class="btn-quitar-imagen" id="btn-quitar-promocion">Quitar</button>
-            </div>
-            <input type="hidden" id="promocion-imagen-url">
-        </div>
-        <div class="modal-actions">
-            <button class="btn-cancel" id="btn-cancelar-promocion">Cancelar</button>
-            <button class="btn-save" id="btn-guardar-promocion">Guardar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL COMBO -->
-<div class="modal-overlay" id="modal-combo">
-    <div class="modal">
-        <h3 id="modal-combo-titulo">Agregar combo</h3>
-        <input type="hidden" id="combo-id">
-        <div class="form-group">
-            <label>Nombre del combo</label>
-            <input type="text" id="combo-nombre" placeholder="Ej: Combo Salud & Bienestar">
-        </div>
-        <div class="form-group">
-            <label>Descripción</label>
-            <textarea id="combo-descripcion" placeholder="Ej: Incluye vitamina C y complejo B"></textarea>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Precio del combo ($)</label>
-                <input type="number" id="combo-precio" placeholder="8500">
-            </div>
-            <div class="form-group">
-                <label>Stock</label>
-                <select id="combo-stock">
-                    <option value="true">Con stock</option>
-                    <option value="false">Sin stock</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Imagen principal del combo</label>
-            <div class="imagen-upload-area" id="upload-area-combo">
-                <input type="file" id="combo-imagen-file" accept="image/*">
-                <div class="imagen-upload-icon">📷</div>
-                <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
-                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
-            </div>
-            <div class="imagen-preview-container" id="preview-combo">
-                <img class="imagen-preview" id="preview-img-combo" src="" alt="">
-                <div class="imagen-preview-info">
-                    <div class="imagen-preview-nombre" id="preview-nombre-combo"></div>
-                    <div class="imagen-preview-estado" id="preview-estado-combo">Lista para guardar</div>
+                <div class="productos-table">
+                    <div class="table-header th-combo">
+                        <span></span><span>Nombre del
+                            combo</span><span>Descripción</span><span>Precio</span><span>Stock</span><span></span>
+                    </div>
+                    <div id="lista-combos">
+                        <div class="loading">Cargando...</div>
+                    </div>
                 </div>
-                <button class="btn-quitar-imagen" id="btn-quitar-combo">Quitar</button>
             </div>
-            <input type="hidden" id="combo-imagen-url">
-        </div>
-        <div class="modal-actions">
-            <button class="btn-cancel" id="btn-cancelar-combo">Cancelar</button>
-            <button class="btn-save" id="btn-guardar-combo">Guardar</button>
         </div>
     </div>
-</div>
 
-<!-- MODAL RECORTADOR -->
-<div class="cropper-modal-overlay" id="cropper-modal">
-    <div class="cropper-modal-box">
-        <div>
-            <p class="cropper-modal-title">✂️ Recortá la imagen</p>
-            <p class="cropper-modal-subtitle">Arrastrá y redimensioná el recuadro para elegir el área del producto. O usá la imagen completa tal como está.</p>
-        </div>
-        <div class="cropper-wrapper">
-            <img id="cropper-img" src="" alt="Recortar">
-        </div>
-        <div class="cropper-modal-actions">
-            <button class="btn-crop-confirm" id="btn-crop-confirm">✓ Usar recorte</button>
-            <button class="btn-crop-original" id="btn-crop-original">📷 Usar imagen completa</button>
-            <button class="btn-crop-cancel" id="btn-crop-cancel">✕ Cancelar</button>
+    <!-- MODAL NOVEDAD -->
+    <div class="modal-overlay" id="modal-novedad">
+        <div class="modal">
+            <h3 id="modal-novedad-titulo">Agregar novedad</h3>
+            <input type="hidden" id="novedad-id">
+            <div class="form-group">
+                <label>Nombre del producto</label>
+                <input type="text" id="novedad-nombre" placeholder="Ej: Vitamina D3 2000 UI">
+            </div>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="novedad-descripcion" placeholder="Ej: Frasco x60 comprimidos"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" id="novedad-precio" placeholder="4500">
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <select id="novedad-stock">
+                        <option value="true">Con stock</option>
+                        <option value="false">Sin stock</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Imagen del producto</label>
+                <div class="imagen-upload-area" id="upload-area-novedad">
+                    <input type="file" id="novedad-imagen-file" accept="image/*">
+                    <div class="imagen-upload-icon">📷</div>
+                    <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
+                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
+                </div>
+                <div class="imagen-preview-container" id="preview-novedad">
+                    <img class="imagen-preview" id="preview-img-novedad" src="" alt="">
+                    <div class="imagen-preview-info">
+                        <div class="imagen-preview-nombre" id="preview-nombre-novedad"></div>
+                        <div class="imagen-preview-estado" id="preview-estado-novedad">Lista para guardar</div>
+                    </div>
+                    <button class="btn-quitar-imagen" id="btn-quitar-novedad">Quitar</button>
+                </div>
+                <input type="hidden" id="novedad-imagen-url">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btn-cancelar-novedad">Cancelar</button>
+                <button class="btn-save" id="btn-guardar-novedad">Guardar</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- MODAL CONFIRMAR ELIMINACIÓN -->
-<div class="confirm-overlay" id="confirm-overlay">
-    <div class="confirm-box">
-        <div class="confirm-icon">🗑️</div>
-        <div class="confirm-title">¿Eliminás este producto?</div>
-        <div class="confirm-subtitle" id="confirm-subtitle">Esta acción no se puede deshacer.</div>
-        <div class="confirm-actions">
-            <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
-            <button class="btn-confirm-delete" id="btn-confirm-delete">Eliminar</button>
+    <!-- MODAL PROMOCION -->
+    <div class="modal-overlay" id="modal-promocion">
+        <div class="modal">
+            <h3 id="modal-promocion-titulo">Agregar promoción</h3>
+            <input type="hidden" id="promocion-id">
+            <div class="form-group">
+                <label>Nombre del producto</label>
+                <input type="text" id="promocion-nombre" placeholder="Ej: Vitamina C 500mg">
+            </div>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="promocion-descripcion" placeholder="Ej: Frasco x60 comprimidos"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Precio original ($)</label>
+                    <input type="number" id="promocion-precio-original" placeholder="5500">
+                </div>
+                <div class="form-group">
+                    <label>Precio con descuento ($)</label>
+                    <input type="number" id="promocion-precio-descuento" placeholder="3850">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>% de descuento</label>
+                    <input type="number" id="promocion-descuento-pct" placeholder="Se calcula solo" readonly
+                        style="background:#F5F5F5">
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <select id="promocion-stock">
+                        <option value="true">Con stock</option>
+                        <option value="false">Sin stock</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Imagen del producto</label>
+                <div class="imagen-upload-area" id="upload-area-promocion">
+                    <input type="file" id="promocion-imagen-file" accept="image/*">
+                    <div class="imagen-upload-icon">📷</div>
+                    <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
+                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
+                </div>
+                <div class="imagen-preview-container" id="preview-promocion">
+                    <img class="imagen-preview" id="preview-img-promocion" src="" alt="">
+                    <div class="imagen-preview-info">
+                        <div class="imagen-preview-nombre" id="preview-nombre-promocion"></div>
+                        <div class="imagen-preview-estado" id="preview-estado-promocion">Lista para guardar</div>
+                    </div>
+                    <button class="btn-quitar-imagen" id="btn-quitar-promocion">Quitar</button>
+                </div>
+                <input type="hidden" id="promocion-imagen-url">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btn-cancelar-promocion">Cancelar</button>
+                <button class="btn-save" id="btn-guardar-promocion">Guardar</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <!-- MODAL COMBO -->
+    <div class="modal-overlay" id="modal-combo">
+        <div class="modal">
+            <h3 id="modal-combo-titulo">Agregar combo</h3>
+            <input type="hidden" id="combo-id">
+            <div class="form-group">
+                <label>Nombre del combo</label>
+                <input type="text" id="combo-nombre" placeholder="Ej: Combo Salud & Bienestar">
+            </div>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="combo-descripcion" placeholder="Ej: Incluye vitamina C y complejo B"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Precio del combo ($)</label>
+                    <input type="number" id="combo-precio" placeholder="8500">
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <select id="combo-stock">
+                        <option value="true">Con stock</option>
+                        <option value="false">Sin stock</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Imagen principal del combo</label>
+                <div class="imagen-upload-area" id="upload-area-combo">
+                    <input type="file" id="combo-imagen-file" accept="image/*">
+                    <div class="imagen-upload-icon">📷</div>
+                    <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
+                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
+                </div>
+                <div class="imagen-preview-container" id="preview-combo">
+                    <img class="imagen-preview" id="preview-img-combo" src="" alt="">
+                    <div class="imagen-preview-info">
+                        <div class="imagen-preview-nombre" id="preview-nombre-combo"></div>
+                        <div class="imagen-preview-estado" id="preview-estado-combo">Lista para guardar</div>
+                    </div>
+                    <button class="btn-quitar-imagen" id="btn-quitar-combo">Quitar</button>
+                </div>
+                <input type="hidden" id="combo-imagen-url">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btn-cancelar-combo">Cancelar</button>
+                <button class="btn-save" id="btn-guardar-combo">Guardar</button>
+            </div>
+        </div>
+    </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
-// Cropper.js importado como módulo ESM para que sea visible en este scope
-import Cropper from "https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.esm.js";
+    <!-- MODAL RECORTADOR -->
+    <div class="cropper-modal-overlay" id="cropper-modal">
+        <div class="cropper-modal-box">
+            <div>
+                <p class="cropper-modal-title">✂️ Recortá la imagen</p>
+                <p class="cropper-modal-subtitle">Arrastrá y redimensioná el recuadro para elegir el área del producto.
+                    O usá la imagen completa tal como está.</p>
+            </div>
+            <div class="cropper-wrapper">
+                <img id="cropper-img" src="" alt="Recortar">
+            </div>
+            <div class="cropper-modal-actions">
+                <button class="btn-crop-confirm" id="btn-crop-confirm">✓ Usar recorte</button>
+                <button class="btn-crop-original" id="btn-crop-original">📷 Usar imagen completa</button>
+                <button class="btn-crop-cancel" id="btn-crop-cancel">✕ Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-/* ====== CONFIG ====== */
-const firebaseConfig = {
-    apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
-    authDomain: "farmacia-cicala.firebaseapp.com",
-    projectId: "farmacia-cicala",
-    storageBucket: "farmacia-cicala.firebasestorage.app",
-    messagingSenderId: "299138749267",
-    appId: "1:299138749267:web:c716a4f57e6e8957a987a6"
-};
-const CLOUDINARY_CLOUD = 'dhzkuqo5s';
-const CLOUDINARY_PRESET = 'farmacia_cicala';
+    <!-- MODAL CONFIRMAR ELIMINACIÓN -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-icon">🗑️</div>
+            <div class="confirm-title">¿Eliminás este producto?</div>
+            <div class="confirm-subtitle" id="confirm-subtitle">Esta acción no se puede deshacer.</div>
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
+                <button class="btn-confirm-delete" id="btn-confirm-delete">Eliminar</button>
+            </div>
+        </div>
+    </div>
 
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
-const auth = getAuth(app);
+    <div class="toast" id="toast"></div>
 
-/* ====== AUTH ====== */
-onAuthStateChanged(auth, user => {
-    if (user) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        document.getElementById('admin-user-email').textContent = user.email;
-        cargarTodo();
-    } else {
-        document.getElementById('login-screen').style.display = 'flex';
-        document.getElementById('admin-panel').style.display = 'none';
-    }
-});
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+        // Cropper.js importado como módulo ESM para que sea visible en este scope
+        import Cropper from "https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.esm.js";
 
-document.getElementById('login-btn').addEventListener('click', async () => {
-    const email = document.getElementById('login-email').value.trim();
-    const pass  = document.getElementById('login-password').value;
-    document.getElementById('login-error').textContent = '';
-    try {
-        await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-        document.getElementById('login-error').textContent = 'Email o contraseña incorrectos.';
-    }
-});
-document.getElementById('login-password').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('login-btn').click();
-});
-document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-
-/* ====== TABS ====== */
-document.querySelectorAll('.admin-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-    });
-});
-
-/* ====== RECORTADOR DE IMÁGENES ====== */
-let cropperInstance = null;
-let cropperCallback = null;
-let cropperOriginalFile = null;   // ← guardamos el File original ANTES de que Cropper lo toque
-
-const cropperModal  = document.getElementById('cropper-modal');
-const cropperImg    = document.getElementById('cropper-img');
-const btnCropConfirm   = document.getElementById('btn-crop-confirm');
-const btnCropOriginal  = document.getElementById('btn-crop-original');
-const btnCropCancel    = document.getElementById('btn-crop-cancel');
-
-function abrirRecortador(file, onResult) {
-    cropperOriginalFile = file;   // ← guardamos referencia al File original
-    const reader = new FileReader();
-    reader.onload = e => {
-        // Destruir instancia previa ANTES de cambiar el src
-        if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-        cropperImg.src = e.target.result;
-        cropperModal.classList.add('active');
-        // Esperar a que la imagen cargue para inicializar Cropper
-        cropperImg.onload = () => {
-            cropperInstance = new Cropper(cropperImg, {
-                aspectRatio: NaN,
-                viewMode: 1,
-                dragMode: 'move',
-                autoCropArea: 0.85,
-                responsive: true,
-                restore: false,
-                guides: true,
-                center: true,
-                highlight: false,
-                cropBoxMovable: true,
-                cropBoxResizable: true,
-                toggleDragModeOnDblclick: false,
-            });
+        /* ====== CONFIG ====== */
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
+            authDomain: "farmacia-cicala.firebaseapp.com",
+            projectId: "farmacia-cicala",
+            storageBucket: "farmacia-cicala.firebasestorage.app",
+            messagingSenderId: "299138749267",
+            appId: "1:299138749267:web:c716a4f57e6e8957a987a6"
         };
-        cropperCallback = onResult;
-    };
-    reader.readAsDataURL(file);
-}
+        const CLOUDINARY_CLOUD = 'dhzkuqo5s';
+        const CLOUDINARY_PRESET = 'farmacia_cicala';
 
-btnCropConfirm.addEventListener('click', () => {
-    if (!cropperInstance) return;
-    // Deshabilitar botón para evitar doble click
-    btnCropConfirm.disabled = true;
-    cropperInstance.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200, fillColor: '#fff' })
-        .toBlob(blob => {
-            const croppedFile = new File([blob], 'recortada.jpg', { type: 'image/jpeg' });
-            const cb = cropperCallback;
-            cerrarRecortador();
-            btnCropConfirm.disabled = false;
-            if (cb) cb(croppedFile);
-        }, 'image/jpeg', 0.92);
-});
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-btnCropOriginal.addEventListener('click', () => {
-    // Usamos el File original guardado — no tocamos cropperImg.src (que Cropper modifica)
-    const originalFile = cropperOriginalFile;
-    const cb = cropperCallback;
-    cerrarRecortador();
-    if (cb && originalFile) cb(originalFile);
-});
+        /* ====== AUTH ====== */
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('admin-user-email').textContent = user.email;
+                cargarTodo();
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('admin-panel').style.display = 'none';
+            }
+        });
 
-btnCropCancel.addEventListener('click', cerrarRecortador);
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
+            document.getElementById('login-error').textContent = '';
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                document.getElementById('login-error').textContent = 'Email o contraseña incorrectos.';
+            }
+        });
+        document.getElementById('login-password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('login-btn').click();
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-function cerrarRecortador() {
-    cropperModal.classList.remove('active');
-    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-    cropperCallback = null;
-    cropperOriginalFile = null;
-}
+        /* ====== TABS ====== */
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            });
+        });
 
-/* ====== CLOUDINARY UPLOAD ====== */
-async function subirImagenCloudinary(file, prefijo, setEstado) {
-    setEstado('Subiendo imagen...', 'subiendo');
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_PRESET);
-    formData.append('folder', `farmacia-cicala/${prefijo}`);
+        /* ====== RECORTADOR DE IMÁGENES ====== */
+        let cropperInstance = null;
+        let cropperCallback = null;
+        let cropperOriginalFile = null;   // ← guardamos el File original ANTES de que Cropper lo toque
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
-        method: 'POST',
-        body: formData
-    });
+        const cropperModal = document.getElementById('cropper-modal');
+        const cropperImg = document.getElementById('cropper-img');
+        const btnCropConfirm = document.getElementById('btn-crop-confirm');
+        const btnCropOriginal = document.getElementById('btn-crop-original');
+        const btnCropCancel = document.getElementById('btn-crop-cancel');
 
-    if (!res.ok) throw new Error('Error al subir imagen');
-    const data = await res.json();
-    setEstado('✓ Imagen subida correctamente', 'listo');
-    return data.secure_url;
-}
-
-/* ====== SETUP UPLOADERS ====== */
-function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, previewNombreId, previewEstadoId, urlInputId, quitarBtnId) {
-    const input = document.getElementById(inputId);
-    const area  = document.getElementById(areaId);
-    const container = document.getElementById(previewContainerId);
-    const previewImg = document.getElementById(previewImgId);
-    const previewNombre = document.getElementById(previewNombreId);
-    const previewEstado = document.getElementById(previewEstadoId);
-    const urlInput = document.getElementById(urlInputId);
-    const quitarBtn = document.getElementById(quitarBtnId);
-
-    function procesarFile(file) {
-        abrirRecortador(file, (fileResultante) => {
-            // Guardar referencia ANTES del reader async para evitar race condition
-            input._fileSeleccionado = fileResultante;
-            urlInput.value = '';
+        function abrirRecortador(file, onResult) {
+            cropperOriginalFile = file;   // ← guardamos referencia al File original
             const reader = new FileReader();
             reader.onload = e => {
-                previewImg.src = e.target.result;
-                previewNombre.textContent = fileResultante.name || file.name;
-                previewEstado.textContent = 'Lista para guardar';
-                previewEstado.className = 'imagen-preview-estado';
-                container.classList.add('visible');
+                // Destruir instancia previa ANTES de cambiar el src
+                if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+                cropperImg.src = e.target.result;
+                cropperModal.classList.add('active');
+                // Esperar a que la imagen cargue para inicializar Cropper
+                cropperImg.onload = () => {
+                    cropperInstance = new Cropper(cropperImg, {
+                        aspectRatio: NaN,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 0.85,
+                        responsive: true,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                    });
+                };
+                cropperCallback = onResult;
             };
-            reader.readAsDataURL(fileResultante);
+            reader.readAsDataURL(file);
+        }
+
+        btnCropConfirm.addEventListener('click', () => {
+            if (!cropperInstance) return;
+            // Deshabilitar botón para evitar doble click
+            btnCropConfirm.disabled = true;
+            cropperInstance.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200, fillColor: '#fff' })
+                .toBlob(blob => {
+                    const croppedFile = new File([blob], 'recortada.jpg', { type: 'image/jpeg' });
+                    const cb = cropperCallback;
+                    cerrarRecortador();
+                    btnCropConfirm.disabled = false;
+                    if (cb) cb(croppedFile);
+                }, 'image/jpeg', 0.92);
         });
-    }
 
-    input.addEventListener('change', e => {
-        if (e.target.files[0]) procesarFile(e.target.files[0]);
-    });
+        btnCropOriginal.addEventListener('click', () => {
+            // Usamos el File original guardado — no tocamos cropperImg.src (que Cropper modifica)
+            const originalFile = cropperOriginalFile;
+            const cb = cropperCallback;
+            cerrarRecortador();
+            if (cb && originalFile) cb(originalFile);
+        });
 
-    area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
-    area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-    area.addEventListener('drop', e => {
-        e.preventDefault();
-        area.classList.remove('dragover');
-        if (e.dataTransfer.files[0]) {
-            input.files = e.dataTransfer.files;
-            procesarFile(e.dataTransfer.files[0]);
+        btnCropCancel.addEventListener('click', cerrarRecortador);
+
+        function cerrarRecortador() {
+            cropperModal.classList.remove('active');
+            if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+            cropperCallback = null;
+            cropperOriginalFile = null;
         }
-    });
 
-    quitarBtn.addEventListener('click', () => {
-        input.value = '';
-        input._fileSeleccionado = null;
-        urlInput.value = '';
-        previewImg.src = '';
-        container.classList.remove('visible');
-    });
+        /* ====== CLOUDINARY UPLOAD ====== */
+        async function subirImagenCloudinary(file, prefijo, setEstado) {
+            setEstado('Subiendo imagen...', 'subiendo');
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_PRESET);
+            formData.append('folder', `farmacia-cicala/${prefijo}`);
 
-    return {
-        getFile: () => input._fileSeleccionado,
-        getUrl: () => urlInput.value,
-        setUrl: (url) => {
-            urlInput.value = url;
-            previewImg.src = url;
-            previewNombre.textContent = 'Imagen actual';
-            previewEstado.textContent = '✓ Guardada en la nube';
-            previewEstado.className = 'imagen-preview-estado listo';
-            container.classList.add('visible');
-            input._fileSeleccionado = null;
-        },
-        setEstado: (msg, cls) => {
-            previewEstado.textContent = msg;
-            previewEstado.className = 'imagen-preview-estado ' + cls;
-        },
-        reset: () => {
-            input.value = '';
-            input._fileSeleccionado = null;
-            urlInput.value = '';
-            previewImg.src = '';
-            container.classList.remove('visible');
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) throw new Error('Error al subir imagen');
+            const data = await res.json();
+            setEstado('✓ Imagen subida correctamente', 'listo');
+            return data.secure_url;
         }
-    };
-}
 
-/* ====== SETUP UPLOADERS ====== */
-const uploaderNovedad = setupImagenUpload(
-    'novedad-imagen-file', 'upload-area-novedad', 'preview-novedad',
-    'preview-img-novedad', 'preview-nombre-novedad', 'preview-estado-novedad',
-    'novedad-imagen-url', 'btn-quitar-novedad'
-);
-const uploaderPromocion = setupImagenUpload(
-    'promocion-imagen-file', 'upload-area-promocion', 'preview-promocion',
-    'preview-img-promocion', 'preview-nombre-promocion', 'preview-estado-promocion',
-    'promocion-imagen-url', 'btn-quitar-promocion'
-);
-const uploaderCombo = setupImagenUpload(
-    'combo-imagen-file', 'upload-area-combo', 'preview-combo',
-    'preview-img-combo', 'preview-nombre-combo', 'preview-estado-combo',
-    'combo-imagen-url', 'btn-quitar-combo'
-);
+        /* ====== SETUP UPLOADERS ====== */
+        function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, previewNombreId, previewEstadoId, urlInputId, quitarBtnId) {
+            const input = document.getElementById(inputId);
+            const area = document.getElementById(areaId);
+            const container = document.getElementById(previewContainerId);
+            const previewImg = document.getElementById(previewImgId);
+            const previewNombre = document.getElementById(previewNombreId);
+            const previewEstado = document.getElementById(previewEstadoId);
+            const urlInput = document.getElementById(urlInputId);
+            const quitarBtn = document.getElementById(quitarBtnId);
 
-/* ====== UTILIDADES ====== */
-function fmt(n) {
-    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n);
-}
-function toast(msg, tipo = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast ' + tipo;
-    setTimeout(() => t.classList.add('visible'), 10);
-    setTimeout(() => t.classList.remove('visible'), 2500);
-}
-function cerrarModal(id) {
-    document.getElementById(id).classList.remove('active');
-}
-function thumbHTML(url) {
-    return url
-        ? `<img class="thumb" src="${url}" alt="" onerror="this.style.display='none'">`
-        : `<div class="thumb-placeholder">📦</div>`;
-}
+            function procesarFile(file) {
+                abrirRecortador(file, (fileResultante) => {
+                    // Guardar referencia ANTES del reader async para evitar race condition
+                    input._fileSeleccionado = fileResultante;
+                    urlInput.value = '';
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        previewImg.src = e.target.result;
+                        previewNombre.textContent = fileResultante.name || file.name;
+                        previewEstado.textContent = 'Lista para guardar';
+                        previewEstado.className = 'imagen-preview-estado';
+                        container.classList.add('visible');
+                    };
+                    reader.readAsDataURL(fileResultante);
+                });
+            }
 
-/* ====== CARGAR TODO ====== */
-function cargarTodo() { cargarNovedades(); cargarPromociones(); cargarCombos(); }
+            input.addEventListener('change', e => {
+                if (e.target.files[0]) procesarFile(e.target.files[0]);
+            });
 
-/* ====== NOVEDADES ====== */
-async function cargarNovedades() {
-    const lista = document.getElementById('lista-novedades');
-    lista.innerHTML = '<div class="loading">Cargando...</div>';
-    const snap = await getDocs(collection(db, 'novedades'));
-    if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin novedades aún. Agregá la primera.</div>'; return; }
-    lista.innerHTML = '';
-    snap.forEach(d => {
-        const p = d.data();
-        const row = document.createElement('div');
-        row.className = 'producto-row th-novedad';
-        row.innerHTML = `
+            area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+            area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+            area.addEventListener('drop', e => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                if (e.dataTransfer.files[0]) {
+                    input.files = e.dataTransfer.files;
+                    procesarFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            quitarBtn.addEventListener('click', () => {
+                input.value = '';
+                input._fileSeleccionado = null;
+                urlInput.value = '';
+                previewImg.src = '';
+                container.classList.remove('visible');
+            });
+
+            return {
+                getFile: () => input._fileSeleccionado,
+                getUrl: () => urlInput.value,
+                setUrl: (url) => {
+                    urlInput.value = url;
+                    previewImg.src = url;
+                    previewNombre.textContent = 'Imagen actual';
+                    previewEstado.textContent = '✓ Guardada en la nube';
+                    previewEstado.className = 'imagen-preview-estado listo';
+                    container.classList.add('visible');
+                    input._fileSeleccionado = null;
+                },
+                setEstado: (msg, cls) => {
+                    previewEstado.textContent = msg;
+                    previewEstado.className = 'imagen-preview-estado ' + cls;
+                },
+                reset: () => {
+                    input.value = '';
+                    input._fileSeleccionado = null;
+                    urlInput.value = '';
+                    previewImg.src = '';
+                    container.classList.remove('visible');
+                }
+            };
+        }
+
+        /* ====== SETUP UPLOADERS ====== */
+        const uploaderNovedad = setupImagenUpload(
+            'novedad-imagen-file', 'upload-area-novedad', 'preview-novedad',
+            'preview-img-novedad', 'preview-nombre-novedad', 'preview-estado-novedad',
+            'novedad-imagen-url', 'btn-quitar-novedad'
+        );
+        const uploaderPromocion = setupImagenUpload(
+            'promocion-imagen-file', 'upload-area-promocion', 'preview-promocion',
+            'preview-img-promocion', 'preview-nombre-promocion', 'preview-estado-promocion',
+            'promocion-imagen-url', 'btn-quitar-promocion'
+        );
+        const uploaderCombo = setupImagenUpload(
+            'combo-imagen-file', 'upload-area-combo', 'preview-combo',
+            'preview-img-combo', 'preview-nombre-combo', 'preview-estado-combo',
+            'combo-imagen-url', 'btn-quitar-combo'
+        );
+
+        /* ====== UTILIDADES ====== */
+        function fmt(n) {
+            return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n);
+        }
+        function toast(msg, tipo = '') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast ' + tipo;
+            setTimeout(() => t.classList.add('visible'), 10);
+            setTimeout(() => t.classList.remove('visible'), 2500);
+        }
+        function cerrarModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        function thumbHTML(url) {
+            return url
+                ? `<img class="thumb" src="${url}" alt="" onerror="this.style.display='none'">`
+                : `<div class="thumb-placeholder">📦</div>`;
+        }
+
+        /* ====== CARGAR TODO ====== */
+        function cargarTodo() { cargarNovedades(); cargarPromociones(); cargarCombos(); }
+
+        /* ====== NOVEDADES ====== */
+        async function cargarNovedades() {
+            const lista = document.getElementById('lista-novedades');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'novedades'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin novedades aún. Agregá la primera.</div>'; return; }
+            lista.innerHTML = '';
+            snap.forEach(d => {
+                const p = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-novedad';
+                row.innerHTML = `
             ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
             <span class="producto-desc-cell">${p.descripcion || ''}</span>
@@ -806,70 +1535,70 @@ async function cargarNovedades() {
                 <button class="btn-edit">✏️</button>
                 <button class="btn-delete">🗑️</button>
             </div>`;
-        row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-            const btn = e.currentTarget;
-            await toggleStock('novedades', btn.dataset.id, btn.dataset.stock === 'true');
-            cargarNovedades();
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('novedades', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarNovedades();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => {
+                    abrirModalNovedad(d.id, p);
+                });
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, p.nombre, cargarNovedades));
+                lista.appendChild(row);
+            });
+        }
+
+        function abrirModalNovedad(id = '', p = {}) {
+            document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
+            document.getElementById('novedad-id').value = id;
+            document.getElementById('novedad-nombre').value = p.nombre || '';
+            document.getElementById('novedad-descripcion').value = p.descripcion || '';
+            document.getElementById('novedad-precio').value = p.precio || '';
+            document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
+            uploaderNovedad.reset();
+            if (p.imagen) uploaderNovedad.setUrl(p.imagen);
+            document.getElementById('modal-novedad').classList.add('active');
+        }
+
+        document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
+        document.getElementById('btn-cancelar-novedad').addEventListener('click', () => cerrarModal('modal-novedad'));
+
+        document.getElementById('btn-guardar-novedad').addEventListener('click', async () => {
+            const id = document.getElementById('novedad-id').value;
+            const nombre = document.getElementById('novedad-nombre').value.trim();
+            const descripcion = document.getElementById('novedad-descripcion').value.trim();
+            const precio = parseInt(document.getElementById('novedad-precio').value);
+            const enStock = document.getElementById('novedad-stock').value === 'true';
+            if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
+
+            let imagen = uploaderNovedad.getUrl();
+            const file = uploaderNovedad.getFile();
+            if (file) {
+                try { imagen = await subirImagenCloudinary(file, 'novedades', uploaderNovedad.setEstado); }
+                catch (e) { toast('Error al subir la imagen', 'error'); return; }
+            }
+
+            const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'novedad' };
+            try {
+                if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
+                else { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
+                cerrarModal('modal-novedad');
+                cargarNovedades();
+            } catch (e) { toast('Error al guardar', 'error'); }
         });
-        row.querySelector('.btn-edit').addEventListener('click', () => {
-            abrirModalNovedad(d.id, p);
-        });
-        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, p.nombre, cargarNovedades));
-        lista.appendChild(row);
-    });
-}
 
-function abrirModalNovedad(id = '', p = {}) {
-    document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
-    document.getElementById('novedad-id').value = id;
-    document.getElementById('novedad-nombre').value = p.nombre || '';
-    document.getElementById('novedad-descripcion').value = p.descripcion || '';
-    document.getElementById('novedad-precio').value = p.precio || '';
-    document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
-    uploaderNovedad.reset();
-    if (p.imagen) uploaderNovedad.setUrl(p.imagen);
-    document.getElementById('modal-novedad').classList.add('active');
-}
-
-document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
-document.getElementById('btn-cancelar-novedad').addEventListener('click', () => cerrarModal('modal-novedad'));
-
-document.getElementById('btn-guardar-novedad').addEventListener('click', async () => {
-    const id = document.getElementById('novedad-id').value;
-    const nombre = document.getElementById('novedad-nombre').value.trim();
-    const descripcion = document.getElementById('novedad-descripcion').value.trim();
-    const precio = parseInt(document.getElementById('novedad-precio').value);
-    const enStock = document.getElementById('novedad-stock').value === 'true';
-    if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
-
-    let imagen = uploaderNovedad.getUrl();
-    const file = uploaderNovedad.getFile();
-    if (file) {
-        try { imagen = await subirImagenCloudinary(file, 'novedades', uploaderNovedad.setEstado); }
-        catch (e) { toast('Error al subir la imagen', 'error'); return; }
-    }
-
-    const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'novedad' };
-    try {
-        if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
-        else     { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
-        cerrarModal('modal-novedad');
-        cargarNovedades();
-    } catch (e) { toast('Error al guardar', 'error'); }
-});
-
-/* ====== PROMOCIONES ====== */
-async function cargarPromociones() {
-    const lista = document.getElementById('lista-promociones');
-    lista.innerHTML = '<div class="loading">Cargando...</div>';
-    const snap = await getDocs(collection(db, 'promociones'));
-    if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin promociones aún. Agregá la primera.</div>'; return; }
-    lista.innerHTML = '';
-    snap.forEach(d => {
-        const p = d.data();
-        const row = document.createElement('div');
-        row.className = 'producto-row th-promocion';
-        row.innerHTML = `
+        /* ====== PROMOCIONES ====== */
+        async function cargarPromociones() {
+            const lista = document.getElementById('lista-promociones');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'promociones'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin promociones aún. Agregá la primera.</div>'; return; }
+            lista.innerHTML = '';
+            snap.forEach(d => {
+                const p = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-promocion';
+                row.innerHTML = `
             ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
             <span class="producto-desc-cell">${p.descripcion || ''}</span>
@@ -882,85 +1611,85 @@ async function cargarPromociones() {
                 <button class="btn-edit">✏️</button>
                 <button class="btn-delete">🗑️</button>
             </div>`;
-        row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-            const btn = e.currentTarget;
-            await toggleStock('promociones', btn.dataset.id, btn.dataset.stock === 'true');
-            cargarPromociones();
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('promociones', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarPromociones();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
+                lista.appendChild(row);
+            });
+        }
+
+        function abrirModalPromocion(id = '', p = {}) {
+            document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
+            document.getElementById('promocion-id').value = id;
+            document.getElementById('promocion-nombre').value = p.nombre || '';
+            document.getElementById('promocion-descripcion').value = p.descripcion || '';
+            document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
+            document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
+            document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
+            document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
+            uploaderPromocion.reset();
+            if (p.imagen) uploaderPromocion.setUrl(p.imagen);
+            document.getElementById('modal-promocion').classList.add('active');
+        }
+
+        document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
+        document.getElementById('btn-cancelar-promocion').addEventListener('click', () => cerrarModal('modal-promocion'));
+
+        document.getElementById('promocion-precio-original').addEventListener('input', calcularDescuento);
+        document.getElementById('promocion-precio-descuento').addEventListener('input', calcularDescuento);
+
+        function calcularDescuento() {
+            const orig = parseFloat(document.getElementById('promocion-precio-original').value);
+            const desc = parseFloat(document.getElementById('promocion-precio-descuento').value);
+            if (orig > 0 && desc > 0 && desc < orig) {
+                document.getElementById('promocion-descuento-pct').value = Math.round(((orig - desc) / orig) * 100);
+            } else {
+                document.getElementById('promocion-descuento-pct').value = '';
+            }
+        }
+
+        document.getElementById('btn-guardar-promocion').addEventListener('click', async () => {
+            const id = document.getElementById('promocion-id').value;
+            const nombre = document.getElementById('promocion-nombre').value.trim();
+            const descripcion = document.getElementById('promocion-descripcion').value.trim();
+            const precioOriginal = parseInt(document.getElementById('promocion-precio-original').value);
+            const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
+            const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
+            const enStock = document.getElementById('promocion-stock').value === 'true';
+            if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
+
+            let imagen = uploaderPromocion.getUrl();
+            const file = uploaderPromocion.getFile();
+            if (file) {
+                try { imagen = await subirImagenCloudinary(file, 'promociones', uploaderPromocion.setEstado); }
+                catch (e) { toast('Error al subir la imagen', 'error'); return; }
+            }
+
+            const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, imagen: imagen || '', tipo: 'promocion' };
+            try {
+                if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
+                else { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
+                cerrarModal('modal-promocion');
+                cargarPromociones();
+            } catch (e) { toast('Error al guardar', 'error'); }
         });
-        row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
-        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
-        lista.appendChild(row);
-    });
-}
 
-function abrirModalPromocion(id = '', p = {}) {
-    document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
-    document.getElementById('promocion-id').value = id;
-    document.getElementById('promocion-nombre').value = p.nombre || '';
-    document.getElementById('promocion-descripcion').value = p.descripcion || '';
-    document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
-    document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
-    document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
-    document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
-    uploaderPromocion.reset();
-    if (p.imagen) uploaderPromocion.setUrl(p.imagen);
-    document.getElementById('modal-promocion').classList.add('active');
-}
-
-document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
-document.getElementById('btn-cancelar-promocion').addEventListener('click', () => cerrarModal('modal-promocion'));
-
-document.getElementById('promocion-precio-original').addEventListener('input', calcularDescuento);
-document.getElementById('promocion-precio-descuento').addEventListener('input', calcularDescuento);
-
-function calcularDescuento() {
-    const orig = parseFloat(document.getElementById('promocion-precio-original').value);
-    const desc = parseFloat(document.getElementById('promocion-precio-descuento').value);
-    if (orig > 0 && desc > 0 && desc < orig) {
-        document.getElementById('promocion-descuento-pct').value = Math.round(((orig - desc) / orig) * 100);
-    } else {
-        document.getElementById('promocion-descuento-pct').value = '';
-    }
-}
-
-document.getElementById('btn-guardar-promocion').addEventListener('click', async () => {
-    const id = document.getElementById('promocion-id').value;
-    const nombre = document.getElementById('promocion-nombre').value.trim();
-    const descripcion = document.getElementById('promocion-descripcion').value.trim();
-    const precioOriginal  = parseInt(document.getElementById('promocion-precio-original').value);
-    const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
-    const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
-    const enStock = document.getElementById('promocion-stock').value === 'true';
-    if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
-
-    let imagen = uploaderPromocion.getUrl();
-    const file = uploaderPromocion.getFile();
-    if (file) {
-        try { imagen = await subirImagenCloudinary(file, 'promociones', uploaderPromocion.setEstado); }
-        catch (e) { toast('Error al subir la imagen', 'error'); return; }
-    }
-
-    const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, imagen: imagen || '', tipo: 'promocion' };
-    try {
-        if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
-        else     { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
-        cerrarModal('modal-promocion');
-        cargarPromociones();
-    } catch (e) { toast('Error al guardar', 'error'); }
-});
-
-/* ====== COMBOS ====== */
-async function cargarCombos() {
-    const lista = document.getElementById('lista-combos');
-    lista.innerHTML = '<div class="loading">Cargando...</div>';
-    const snap = await getDocs(collection(db, 'combos'));
-    if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún. Agregá el primero.</div>'; return; }
-    lista.innerHTML = '';
-    snap.forEach(d => {
-        const c = d.data();
-        const row = document.createElement('div');
-        row.className = 'producto-row th-combo';
-        row.innerHTML = `
+        /* ====== COMBOS ====== */
+        async function cargarCombos() {
+            const lista = document.getElementById('lista-combos');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'combos'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún. Agregá el primero.</div>'; return; }
+            lista.innerHTML = '';
+            snap.forEach(d => {
+                const c = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-combo';
+                row.innerHTML = `
             ${thumbHTML(c.imagen)}
             <span class="producto-nombre-cell">${c.nombre}</span>
             <span class="producto-desc-cell">${c.descripcion || ''}</span>
@@ -971,109 +1700,110 @@ async function cargarCombos() {
                 <button class="btn-edit">✏️</button>
                 <button class="btn-delete">🗑️</button>
             </div>`;
-        row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-            const btn = e.currentTarget;
-            await toggleStock('combos', btn.dataset.id, btn.dataset.stock === 'true');
-            cargarCombos();
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('combos', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarCombos();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
+                lista.appendChild(row);
+            });
+        }
+
+        function abrirModalCombo(id = '', c = {}) {
+            document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
+            document.getElementById('combo-id').value = id;
+            document.getElementById('combo-nombre').value = c.nombre || '';
+            document.getElementById('combo-descripcion').value = c.descripcion || '';
+            document.getElementById('combo-precio').value = c.precio || '';
+            document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
+            uploaderCombo.reset();
+            if (c.imagen) uploaderCombo.setUrl(c.imagen);
+            document.getElementById('modal-combo').classList.add('active');
+        }
+
+        document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
+        document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModal('modal-combo'));
+
+        document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
+            const id = document.getElementById('combo-id').value;
+            const nombre = document.getElementById('combo-nombre').value.trim();
+            const descripcion = document.getElementById('combo-descripcion').value.trim();
+            const precio = parseInt(document.getElementById('combo-precio').value);
+            const enStock = document.getElementById('combo-stock').value === 'true';
+            if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
+
+            let imagen = uploaderCombo.getUrl();
+            const file = uploaderCombo.getFile();
+            if (file) {
+                try { imagen = await subirImagenCloudinary(file, 'combos', uploaderCombo.setEstado); }
+                catch (e) { toast('Error al subir la imagen', 'error'); return; }
+            }
+
+            const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'combo' };
+            try {
+                if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
+                else { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
+                cerrarModal('modal-combo');
+                cargarCombos();
+            } catch (e) { toast('Error al guardar', 'error'); }
         });
-        row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
-        row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
-        lista.appendChild(row);
-    });
-}
 
-function abrirModalCombo(id = '', c = {}) {
-    document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
-    document.getElementById('combo-id').value = id;
-    document.getElementById('combo-nombre').value = c.nombre || '';
-    document.getElementById('combo-descripcion').value = c.descripcion || '';
-    document.getElementById('combo-precio').value = c.precio || '';
-    document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
-    uploaderCombo.reset();
-    if (c.imagen) uploaderCombo.setUrl(c.imagen);
-    document.getElementById('modal-combo').classList.add('active');
-}
+        /* ====== TOGGLE STOCK ====== */
+        async function toggleStock(col, id, stockActual) {
+            await updateDoc(doc(db, col, id), { enStock: !stockActual });
+            // Notificación gris para cambio de stock
+            toast(stockActual ? 'Sin stock' : 'Con stock', stockActual ? 'gray' : 'success');
+        }
 
-document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
-document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModal('modal-combo'));
+        /* ====== CONFIRMAR ELIMINACIÓN (modal centrado) ====== */
+        function confirmarEliminacion(nombre, onAceptar) {
+            const overlay = document.getElementById('confirm-overlay');
+            const subtitle = document.getElementById('confirm-subtitle');
+            const btnDel = document.getElementById('btn-confirm-delete');
+            const btnCan = document.getElementById('btn-confirm-cancel');
 
-document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
-    const id = document.getElementById('combo-id').value;
-    const nombre = document.getElementById('combo-nombre').value.trim();
-    const descripcion = document.getElementById('combo-descripcion').value.trim();
-    const precio = parseInt(document.getElementById('combo-precio').value);
-    const enStock = document.getElementById('combo-stock').value === 'true';
-    if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
+            subtitle.textContent = `"${nombre}" será eliminado permanentemente.`;
+            overlay.classList.add('active');
 
-    let imagen = uploaderCombo.getUrl();
-    const file = uploaderCombo.getFile();
-    if (file) {
-        try { imagen = await subirImagenCloudinary(file, 'combos', uploaderCombo.setEstado); }
-        catch (e) { toast('Error al subir la imagen', 'error'); return; }
-    }
+            // Clonar botones para limpiar listeners anteriores
+            const newDel = btnDel.cloneNode(true);
+            const newCan = btnCan.cloneNode(true);
+            btnDel.parentNode.replaceChild(newDel, btnDel);
+            btnCan.parentNode.replaceChild(newCan, btnCan);
 
-    const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'combo' };
-    try {
-        if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
-        else     { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
-        cerrarModal('modal-combo');
-        cargarCombos();
-    } catch (e) { toast('Error al guardar', 'error'); }
-});
+            newDel.addEventListener('click', async () => {
+                overlay.classList.remove('active');
+                await onAceptar();
+            });
+            newCan.addEventListener('click', () => {
+                overlay.classList.remove('active');
+            });
 
-/* ====== TOGGLE STOCK ====== */
-async function toggleStock(col, id, stockActual) {
-    await updateDoc(doc(db, col, id), { enStock: !stockActual });
-    // Notificación gris para cambio de stock
-    toast(stockActual ? 'Sin stock' : 'Con stock', stockActual ? 'gray' : 'success');
-}
+            // Cerrar también al clickear fuera del box
+            overlay.onclick = (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        }
 
-/* ====== CONFIRMAR ELIMINACIÓN (modal centrado) ====== */
-function confirmarEliminacion(nombre, onAceptar) {
-    const overlay  = document.getElementById('confirm-overlay');
-    const subtitle = document.getElementById('confirm-subtitle');
-    const btnDel   = document.getElementById('btn-confirm-delete');
-    const btnCan   = document.getElementById('btn-confirm-cancel');
+        /* ====== ELIMINAR ====== */
+        async function eliminar(col, id, nombre, recargar) {
+            confirmarEliminacion(nombre, async () => {
+                await deleteDoc(doc(db, col, id));
+                toast('Producto eliminado', 'error');
+                recargar();
+            });
+        }
 
-    subtitle.textContent = `"${nombre}" será eliminado permanentemente.`;
-    overlay.classList.add('active');
+        /* ====== CERRAR MODALES CON OVERLAY ====== */
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
+        });
 
-    // Clonar botones para limpiar listeners anteriores
-    const newDel = btnDel.cloneNode(true);
-    const newCan = btnCan.cloneNode(true);
-    btnDel.parentNode.replaceChild(newDel, btnDel);
-    btnCan.parentNode.replaceChild(newCan, btnCan);
-
-    newDel.addEventListener('click', async () => {
-        overlay.classList.remove('active');
-        await onAceptar();
-    });
-    newCan.addEventListener('click', () => {
-        overlay.classList.remove('active');
-    });
-
-    // Cerrar también al clickear fuera del box
-    overlay.onclick = (e) => {
-        if (e.target === overlay) overlay.classList.remove('active');
-    };
-}
-
-/* ====== ELIMINAR ====== */
-async function eliminar(col, id, nombre, recargar) {
-    confirmarEliminacion(nombre, async () => {
-        await deleteDoc(doc(db, col, id));
-        toast('Producto eliminado', 'error');
-        recargar();
-    });
-}
-
-/* ====== CERRAR MODALES CON OVERLAY ====== */
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay) overlay.classList.remove('active');
-    });
-});
-
-</script>
+    </script>
 </body>
+
 </html>
