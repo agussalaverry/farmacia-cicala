@@ -1206,22 +1206,23 @@ footer::before {
    RESPONSIVE DESIGN
    ============================================ */
 
-@media (max-width: 480px) {
-    :root {
-        --font-size-base: 16px;
-        --font-size-large: 20px;
-        --font-size-xl: 24px;
-        --font-size-xxl: 28px;
-        --font-size-heading: 28px;
-    }
+@media (max-width: 768px) {
 
+    /* ---- HEADER ---- */
     .header {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
     }
 
     .header-container {
         flex-direction: column;
+        align-items: center;
         gap: var(--spacing-xs);
+    }
+
+    .header-logo-section {
+        justify-content: center;
+        flex: unset;
+        width: 100%;
     }
 
     .header-logo {
@@ -1232,14 +1233,17 @@ footer::before {
         font-size: var(--font-size-large);
     }
 
+    /* Nav centrada debajo del logo */
     .header-nav {
         width: 100%;
+        justify-content: center;
     }
 
     .nav-list {
         justify-content: center;
         flex-wrap: wrap;
         gap: var(--spacing-sm);
+        width: 100%;
     }
 
     .nav-button {
@@ -1247,22 +1251,25 @@ footer::before {
         padding: var(--spacing-xs) var(--spacing-sm);
     }
 
+    /* ---- BARRA SECUNDARIA pegada al header ---- */
+    /* La altura del header en mobile es aprox logo(45) + nav(~40) + padding(16) = ~110px */
     .secondary-nav {
-        top: 140px;
+        top: 108px;
     }
 
     .nav-tab {
         padding: var(--spacing-sm) var(--spacing-xs);
-        font-size: var(--font-size-base);
+        font-size: 16px;
     }
 
+    /* ---- CONTENIDO ---- */
     .main-content {
         padding: var(--spacing-lg) var(--spacing-md);
-        margin-top: 210px;
+        margin-top: 180px;
     }
 
     .section-title {
-        font-size: var(--font-size-xl);
+        font-size: 24px;
     }
 
     .productos-grid {
@@ -1278,6 +1285,7 @@ footer::before {
         height: 150px;
     }
 
+    /* ---- BOTÓN FLOTANTE ---- */
     .floating-buttons {
         bottom: var(--spacing-md);
         right: var(--spacing-md);
@@ -1289,8 +1297,18 @@ footer::before {
         font-size: 24px;
     }
 
+    /* ---- CARRITO: pantalla completa, sin scroll detrás ---- */
     .cart-panel {
         max-width: 100%;
+        /* El scroll se bloquea en body desde JS, el panel tiene su propio scroll */
+        overscroll-behavior: contain;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
     }
 }
 
@@ -1350,17 +1368,18 @@ html {
    ESTILOS PARA DROPDOWNS EN MÓVIL
    ============================================ */
 
+/* Overlay invisible — solo captura clicks afuera, sin oscurecer pantalla */
 .nav-dropdown-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: transparent;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 2000;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 1098;
     pointer-events: none;
 }
 
@@ -1368,6 +1387,51 @@ html {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+}
+
+/* Dropdown en móvil: debajo del header, centrado horizontalmente,
+   encima de la barra secundaria pero sin taparla */
+@media (max-width: 768px) {
+    .nav-dropdown.dropdown-mobile-open {
+        display: block !important;
+        position: fixed !important;
+        /* Se posiciona justo debajo del header (~108px) con pequeño margen */
+        top: 112px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 1099 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        max-width: min(92vw, 360px);
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        /* Animación suave desde arriba */
+        animation: dropdownSlideIn 0.22s ease-out;
+    }
+
+    @keyframes dropdownSlideIn {
+        from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+        to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Bloquear scroll del fondo cuando dropdown o carrito están abiertos */
+    body.nav-open,
+    body.cart-open {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    /* El panel del carrito tiene su propio scroll independiente */
+    .cart-panel {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+    }
+
+    /* El input de dirección no propaga el touch al carrito */
+    .direccion-input {
+        touch-action: auto;
+    }
 }
 
 /* ============================================
