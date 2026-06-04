@@ -419,10 +419,9 @@ function mostrarModalConfirmacion(mensaje, onAceptar) {
    11. DROPDOWNS EN MOVIL
    ============================================ */
 
-let portalAbierto = null;       // el div portal que está en el body
-let dropdownAbierto = null;     // el dropdown original (para toggle)
+let portalAbierto = null;    // el div portal activo en el body
+let dropdownAbierto = null;  // qué dropdown está mostrando el portal
 let scrollY_bloqueado = 0;
-let _portalJustOpened = false;  // evita que el evento que abrió cierre inmediatamente
 
 function bloquearScroll() {
     scrollY_bloqueado = window.scrollY;
@@ -452,49 +451,38 @@ function cerrarPortal() {
 }
 
 function abrirPortal(dropdown) {
-    // Bloquear scroll primero para que el body no salte
     bloquearScroll();
 
-    // Crear portal con el contenido del dropdown original
     const portal = document.createElement('div');
     portal.innerHTML = dropdown.innerHTML;
 
-    // Estilos inline directos — sin herencia, sin CSS externo que interfiera
-    const vw = Math.min(window.innerWidth * 0.92, 360);
-    const vh = window.innerHeight;
-    const leftPx = (window.innerWidth - vw) / 2;
+    // Centrado perfecto con CSS puro — no depende de medidas calculadas
+    const maxW = Math.min(Math.round(window.innerWidth * 0.92), 360);
+    const maxH = Math.round(window.innerHeight * 0.70);
 
     portal.style.cssText = `
         position: fixed;
         z-index: 9999;
-        background: #fff;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: ${maxW}px;
+        max-height: ${maxH}px;
+        overflow-y: auto;
+        background: #ffffff;
         border-radius: 16px;
         border-top: 4px solid #EF087C;
         box-shadow: 0 12px 40px rgba(0,0,0,0.25);
         padding: 24px;
-        width: ${vw}px;
-        max-height: ${Math.round(vh * 0.70)}px;
-        overflow-y: auto;
-        left: ${leftPx}px;
-        top: 50%;
-        transform: translateY(-50%);
-        margin: 0;
         box-sizing: border-box;
+        margin: 0;
     `;
 
-    // Clic dentro del portal NO cierra
+    // Toques dentro del portal no propagan al document → no lo cierran
     portal.addEventListener('click', e => e.stopPropagation());
-    portal.addEventListener('touchend', e => e.stopPropagation(), { passive: true });
 
     document.body.appendChild(portal);
     portalAbierto = portal;
-
-    // Marcar que acabamos de abrir: el evento que disparó abrirPortal
-    // todavía está en bubbling; ignorar el primer disparo del listener global.
-    _portalJustOpened = true;
-    // Usar setTimeout 0 para que el flag se limpie DESPUÉS de que terminen
-    // todos los handlers del evento actual (click / touchend).
-    setTimeout(() => { _portalJustOpened = false; }, 0);
 }
 
 function initDropdownsMobile() {
@@ -504,34 +492,30 @@ function initDropdownsMobile() {
         if (!btn || !dropdown) return;
 
         btn.addEventListener('click', (e) => {
-            e.preventDefault();
-
             if (window.innerWidth > 768) return;
 
-            // Si el mismo dropdown está abierto → cerrar y no reabrir
+            e.preventDefault();
+            // stopPropagation: evita que el click llegue al document
+            // (que cerraría el portal que acabamos de abrir / queremos cerrar)
+            e.stopPropagation();
+
             if (dropdownAbierto === dropdown) {
+                // El mismo botón: cerrar
                 cerrarPortal();
                 return;
             }
 
-            // Si hay otro abierto → cerrar primero
+            // Diferente botón o ninguno: cerrar el anterior y abrir el nuevo
             if (portalAbierto) cerrarPortal();
-
             dropdownAbierto = dropdown;
             abrirPortal(dropdown);
         });
     });
 
-    // Cerrar al tocar fuera del portal
-    function onOutsideInteraction(e) {
-        if (_portalJustOpened) return;          // ignorar el evento que abrió
-        if (!portalAbierto) return;
-        if (portalAbierto.contains(e.target)) return;
-        cerrarPortal();
-    }
-
-    document.addEventListener('click', onOutsideInteraction);
-    document.addEventListener('touchend', onOutsideInteraction, { passive: true });
+    // Cualquier click fuera del portal lo cierra
+    document.addEventListener('click', () => {
+        if (portalAbierto) cerrarPortal();
+    });
 }
 
 /* ============================================

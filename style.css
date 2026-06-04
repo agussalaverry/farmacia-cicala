@@ -1271,17 +1271,23 @@ footer::before {
     /* ---- CONTENIDO ---- */
     .main-content {
         padding: var(--spacing-lg) var(--spacing-md);
-        margin-top: 180px;
+        margin-top: 190px;
     }
 
     /* Scroll margin generoso para que los títulos no queden tapados por las barras fijas */
     .productos-section {
-        scroll-margin-top: 170px;
+        scroll-margin-top: 185px;
+    }
+
+    /* Aire entre la barra fija y el título de sección (aplica a las 3 secciones) */
+    .section-header {
+        padding-top: 20px;
     }
 
     .section-title {
         font-size: 24px;
     }
+
 
     .productos-grid {
         grid-template-columns: 1fr;
