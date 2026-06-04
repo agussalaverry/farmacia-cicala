@@ -1257,6 +1257,15 @@ footer::before {
         padding: var(--spacing-xs) var(--spacing-sm);
     }
 
+    /* Ocultar el dropdown CSS original en mobile — en mobile todo pasa por el portal JS */
+    .nav-dropdown,
+    .nav-item:hover .nav-dropdown {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
     /* ---- BARRA SECUNDARIA pegada al header ---- */
     /* La altura del header en mobile es aprox logo(45) + nav(~40) + padding(16) = ~110px */
     .secondary-nav {
