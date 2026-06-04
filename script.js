@@ -352,20 +352,16 @@ function generarMensajeWhatsApp() {
    ============================================ */
 
 function abrirCarrito() {
-    // Cerrar cualquier dropdown abierto primero
     if (dropdownAbierto) cerrarDropdown(dropdownAbierto);
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
-    // Bloquear scroll del fondo en mobile y desktop
-    document.body.classList.add('cart-open');
-    document.body.style.overflow = 'hidden';
+    bloquearScroll();
 }
 
 function cerrarCarrito() {
     cartPanel.classList.remove('active');
     cartOverlay.classList.remove('active');
-    document.body.classList.remove('cart-open');
-    document.body.style.overflow = '';
+    desbloquearScroll();
 }
 
 /* ============================================
@@ -425,9 +421,26 @@ function mostrarModalConfirmacion(mensaje, onAceptar) {
 
 let overlayDropdown = null;
 let dropdownAbierto = null;
+let scrollY_bloqueado = 0;
+
+function bloquearScroll() {
+    scrollY_bloqueado = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY_bloqueado}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+}
+
+function desbloquearScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    window.scrollTo(0, scrollY_bloqueado);
+}
 
 function initDropdownsMobile() {
-    // Overlay invisible: solo captura taps afuera del dropdown, sin oscurecer
+    // Overlay transparente solo para capturar taps fuera del dropdown
     overlayDropdown = document.createElement('div');
     overlayDropdown.className = 'nav-dropdown-overlay';
     document.body.appendChild(overlayDropdown);
@@ -458,21 +471,20 @@ function initDropdownsMobile() {
         });
     });
 
-    // Tap fuera del dropdown cierra (overlay invisible)
-    overlayDropdown.addEventListener('click', () => {
+    // Tap en el overlay cierra el dropdown
+    overlayDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (dropdownAbierto) cerrarDropdown(dropdownAbierto);
     });
-    overlayDropdown.addEventListener('touchstart', (e) => {
-        // Evitar que el tap se propague a la página
+    overlayDropdown.addEventListener('touchend', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         if (dropdownAbierto) cerrarDropdown(dropdownAbierto);
     }, { passive: false });
 }
 
 function abrirDropdown(dropdown) {
-    // Bloquear scroll PRIMERO, antes de mostrar el dropdown
-    document.body.classList.add('nav-open');
-    document.body.style.overflow = 'hidden';
+    bloquearScroll();
     dropdown.classList.add('dropdown-mobile-open');
     overlayDropdown.classList.add('active');
     dropdownAbierto = dropdown;
@@ -482,10 +494,8 @@ function cerrarDropdown(dropdown) {
     dropdown.classList.remove('dropdown-mobile-open');
     overlayDropdown.classList.remove('active');
     dropdownAbierto = null;
-    // Restaurar scroll solo si el carrito también está cerrado
     if (!cartPanel.classList.contains('active')) {
-        document.body.classList.remove('nav-open');
-        document.body.style.overflow = '';
+        desbloquearScroll();
     }
 }
 

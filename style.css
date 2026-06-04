@@ -203,8 +203,9 @@ body {
     margin: 0 auto;
     display: flex;
     gap: var(--spacing-md);
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-lg);
     align-items: center;
+    justify-content: center;
 }
 
 .nav-tab {
@@ -1258,7 +1259,7 @@ footer::before {
     }
 
     .nav-tab {
-        padding: var(--spacing-sm) var(--spacing-xs);
+        padding: var(--spacing-md) var(--spacing-xs);
         font-size: 16px;
     }
 
@@ -1375,28 +1376,26 @@ html {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    background-color: transparent;
     z-index: 1098;
     pointer-events: none;
+    visibility: hidden;
 }
 
 .nav-dropdown-overlay.active {
-    opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    background-color: rgba(0, 0, 0, 0.35);
 }
 
-/* Dropdown en móvil: centrado en pantalla */
+/* Dropdown en móvil: centrado en pantalla, sin movimiento */
 @media (max-width: 768px) {
     .nav-dropdown.dropdown-mobile-open {
         display: block !important;
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
+        /* Cancelar transición del base para evitar el efecto de movimiento */
+        transition: none !important;
         transform: translate(-50%, -50%) !important;
         z-index: 1099 !important;
         opacity: 1 !important;
@@ -1406,19 +1405,12 @@ html {
         max-height: 70vh;
         overflow-y: auto;
         margin-top: 0 !important;
-        animation: dropdownSlideIn 0.22s ease-out;
+        animation: dropdownFadeIn 0.18s ease-out;
     }
 
-    @keyframes dropdownSlideIn {
-        from { opacity: 0; transform: translate(-50%, -48%); }
-        to   { opacity: 1; transform: translate(-50%, -50%); }
-    }
-
-    /* Bloquear scroll del fondo cuando dropdown o carrito están abiertos */
-    body.nav-open,
-    body.cart-open {
-        overflow: hidden;
-        touch-action: none;
+    @keyframes dropdownFadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
     }
 
     /* El panel del carrito tiene su propio scroll independiente */
