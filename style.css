@@ -1228,6 +1228,11 @@ footer::before {
 
     .header-logo {
         max-height: 45px;
+        /* Desactivar interacción del logo en mobile: sin hover, sin transform */
+        pointer-events: none;
+        cursor: default;
+        transform: none !important;
+        transition: none;
     }
 
     .header-title {
@@ -1267,6 +1272,11 @@ footer::before {
     .main-content {
         padding: var(--spacing-lg) var(--spacing-md);
         margin-top: 180px;
+    }
+
+    /* Scroll margin generoso para que los títulos no queden tapados por las barras fijas */
+    .productos-section {
+        scroll-margin-top: 170px;
     }
 
     .section-title {
@@ -1407,7 +1417,6 @@ html {
         margin-left: -46vw;
         margin-top: -35vh;
     }
-}
 
     /* El panel del carrito tiene su propio scroll independiente */
     .cart-panel {

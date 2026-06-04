@@ -422,6 +422,7 @@ function mostrarModalConfirmacion(mensaje, onAceptar) {
 let portalAbierto = null;       // el div portal que está en el body
 let dropdownAbierto = null;     // el dropdown original (para toggle)
 let scrollY_bloqueado = 0;
+let _portalJustOpened = false;  // evita que el evento que abrió cierre inmediatamente
 
 function bloquearScroll() {
     scrollY_bloqueado = window.scrollY;
@@ -472,20 +473,28 @@ function abrirPortal(dropdown) {
         box-shadow: 0 12px 40px rgba(0,0,0,0.25);
         padding: 24px;
         width: ${vw}px;
-        max-height: ${vh * 0.70}px;
+        max-height: ${Math.round(vh * 0.70)}px;
         overflow-y: auto;
         left: ${leftPx}px;
         top: 50%;
         transform: translateY(-50%);
         margin: 0;
+        box-sizing: border-box;
     `;
 
-    // Clic en el portal NO cierra (el usuario puede leer el contenido)
+    // Clic dentro del portal NO cierra
     portal.addEventListener('click', e => e.stopPropagation());
-    portal.addEventListener('touchend', e => e.stopPropagation());
+    portal.addEventListener('touchend', e => e.stopPropagation(), { passive: true });
 
     document.body.appendChild(portal);
     portalAbierto = portal;
+
+    // Marcar que acabamos de abrir: el evento que disparó abrirPortal
+    // todavía está en bubbling; ignorar el primer disparo del listener global.
+    _portalJustOpened = true;
+    // Usar setTimeout 0 para que el flag se limpie DESPUÉS de que terminen
+    // todos los handlers del evento actual (click / touchend).
+    setTimeout(() => { _portalJustOpened = false; }, 0);
 }
 
 function initDropdownsMobile() {
@@ -496,11 +505,10 @@ function initDropdownsMobile() {
 
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation();
 
             if (window.innerWidth > 768) return;
 
-            // Si el mismo dropdown está abierto → cerrar
+            // Si el mismo dropdown está abierto → cerrar y no reabrir
             if (dropdownAbierto === dropdown) {
                 cerrarPortal();
                 return;
@@ -514,17 +522,16 @@ function initDropdownsMobile() {
         });
     });
 
-    // Tocar cualquier parte de la pantalla fuera del portal cierra
-    document.addEventListener('click', (e) => {
-        if (portalAbierto && !portalAbierto.contains(e.target)) {
-            cerrarPortal();
-        }
-    });
-    document.addEventListener('touchend', (e) => {
-        if (portalAbierto && !portalAbierto.contains(e.target)) {
-            cerrarPortal();
-        }
-    }, { passive: true });
+    // Cerrar al tocar fuera del portal
+    function onOutsideInteraction(e) {
+        if (_portalJustOpened) return;          // ignorar el evento que abrió
+        if (!portalAbierto) return;
+        if (portalAbierto.contains(e.target)) return;
+        cerrarPortal();
+    }
+
+    document.addEventListener('click', onOutsideInteraction);
+    document.addEventListener('touchend', onOutsideInteraction, { passive: true });
 }
 
 /* ============================================
@@ -539,7 +546,9 @@ function scrollToSection(sectionId) {
     const secondaryNav = document.querySelector('.secondary-nav');
     const headerHeight = header ? header.offsetHeight : 100;
     const secondaryHeight = secondaryNav ? secondaryNav.offsetHeight : 44;
-    const offset = headerHeight + secondaryHeight + 40;
+    // En mobile usamos un margen generoso para que el título quede visible
+    const extraMargen = window.innerWidth <= 768 ? 24 : 40;
+    const offset = headerHeight + secondaryHeight + extraMargen;
 
     const top = section.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top, behavior: 'smooth' });
@@ -597,8 +606,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initDropdownsMobile();
 
     window.addEventListener('resize', () => {
-        if (window.innerWidth > 768 && dropdownAbierto) {
-            cerrarDropdown(dropdownAbierto);
+        if (window.innerWidth > 768 && portalAbierto) {
+            cerrarPortal();
         }
     });
 
