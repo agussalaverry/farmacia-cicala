@@ -1294,11 +1294,10 @@ footer::before {
         font-size: 24px;
     }
 
-
-    .productos-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
-    }
+   .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }   
 
     .producto-card {
         padding: var(--spacing-md);
