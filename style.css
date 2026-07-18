@@ -1536,7 +1536,7 @@ html {
 }
 
 @media (min-width: 769px) {
-    .producto-modal-overlay {
+    .producto-modal-overlay.active {
         background: var(--color-secondary);
         display: flex;
         align-items: center;
