@@ -168,19 +168,6 @@ function crearTarjetaProducto(producto, tipo) {
     `;
 
     // Abrir modal al tocar imagen o nombre
-    const abrirModal = () => {
-        abrirModalProducto({
-            nombre: producto.nombre,
-            descripcion: producto.descripcion,
-            imagen: producto.imagen,
-            precio: precioTexto,
-            enStock: producto.enStock,
-            id: producto.id,
-            precioCarrito,
-            tipo
-        });
-    };
-
     tarjeta.addEventListener('click', (e) => {
     if (e.target.closest('.btn-agregar-carrito')) return;
         abrirModalProducto({
