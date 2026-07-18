@@ -1299,12 +1299,13 @@ footer::before {
         gap: var(--spacing-lg);
     }   
 
-    .producto-card {
-        padding: var(--spacing-md);
+   .producto-card {
+    padding: 10px;
+    font-size: 14px;
     }
 
     .producto-img {
-        height: 150px;
+        height: 100px;
     }
 
     /* ---- BOTÓN FLOTANTE ---- */
