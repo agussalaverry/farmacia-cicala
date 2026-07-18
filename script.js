@@ -151,15 +151,14 @@ function crearTarjetaProducto(producto, tipo) {
                <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
            </div>`;
 
-    const sinStockHTML = '';
     const precioCarrito = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
+    const precioTexto = tipo === 'novedad' ? formatearPrecio(producto.precio) : formatearPrecio(producto.precioDescuento);
 
     tarjeta.innerHTML = `
         <div class="producto-img-container">
             <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-img">
             ${badge}
         </div>
-        ${sinStockHTML}
         <h3 class="producto-nombre">${producto.nombre}</h3>
         <p class="producto-descripcion">${producto.descripcion}</p>
         ${precios}
@@ -168,15 +167,26 @@ function crearTarjetaProducto(producto, tipo) {
         </button>
     `;
 
+    // Abrir modal al tocar imagen o nombre
+    const abrirModal = () => {
+        abrirModalProducto({
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            imagen: producto.imagen,
+            precio: precioTexto,
+            enStock: producto.enStock,
+            id: producto.id,
+            precioCarrito,
+            tipo
+        });
+    };
+
+    tarjeta.querySelector('.producto-img').addEventListener('click', abrirModal);
+    tarjeta.querySelector('.producto-nombre').addEventListener('click', abrirModal);
+
     if (producto.enStock) {
         tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
-            agregarAlCarrito({
-                id: producto.id,
-                nombre: producto.nombre,
-                precio: precioCarrito,
-                imagen: producto.imagen || '',
-                tipo: tipo
-            });
+            agregarAlCarrito({ id: producto.id, nombre: producto.nombre, precio: precioCarrito, imagen: producto.imagen || '', tipo });
         });
     }
 
@@ -829,6 +839,36 @@ estilosDinamicos.innerHTML = `
     .modal-btn-aceptar:hover { background: #AA0000; }
 `;
 document.head.appendChild(estilosDinamicos);
+
+/* ============================================
+   MODAL DETALLE PRODUCTO
+   ============================================ */
+
+function abrirModalProducto(p) {
+    document.getElementById('modal-img').src = p.imagen || '';
+    document.getElementById('modal-nombre').textContent = p.nombre;
+    document.getElementById('modal-descripcion').textContent = p.descripcion;
+    document.getElementById('modal-precio').textContent = p.precio;
+
+    const btnCarrito = document.getElementById('modal-btn-carrito');
+    btnCarrito.textContent = p.enStock ? 'Agregar al carrito' : 'Sin stock';
+    btnCarrito.disabled = !p.enStock;
+
+    btnCarrito.onclick = () => {
+        agregarAlCarrito({ id: p.id, nombre: p.nombre, precio: p.precioCarrito, imagen: p.imagen || '', tipo: p.tipo });
+        cerrarModalProducto();
+    };
+
+    document.getElementById('producto-modal').classList.add('active');
+    bloquearScroll();
+}
+
+function cerrarModalProducto() {
+    document.getElementById('producto-modal').classList.remove('active');
+    desbloquearScroll();
+}
+
+document.getElementById('btn-volver-modal').addEventListener('click', cerrarModalProducto);
 
 /* ============================================
    FIN DEL SCRIPT

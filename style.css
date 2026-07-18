@@ -1444,5 +1444,67 @@ html {
 }
 
 /* ============================================
+   MODAL DETALLE PRODUCTO
+   ============================================ */
+
+.producto-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #FFF8FA;
+    z-index: 3000;
+    overflow-y: auto;
+}
+
+.producto-modal-overlay.active {
+    display: block;
+}
+
+.producto-modal-contenido {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.producto-modal-volver {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--font-family);
+    cursor: pointer;
+    padding: 12px 0;
+    text-align: left;
+}
+
+.producto-modal-img {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.producto-modal-nombre {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.producto-modal-descripcion {
+    font-size: 18px;
+    color: var(--color-text-light);
+    line-height: 1.6;
+}
+
+.producto-modal-precio {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+/* ============================================
    FIN DEL CSS MEJORADO
    ============================================ */
