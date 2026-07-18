@@ -438,6 +438,7 @@ body {
     border-top: 3px solid var(--color-primary);
     animation: slideInUp 0.6s ease-out;
     animation-fill-mode: both;
+    cursor: pointer;
 }
 
 .producto-card:nth-child(1) { animation-delay: 0.1s; }
@@ -1354,6 +1355,11 @@ footer::before {
         max-width: 100%;
         /* El scroll se bloquea en body desde JS, el panel tiene su propio scroll */
         overscroll-behavior: contain;
+    }
+
+    .producto-modal-contenido .btn-agregar-carrito {
+        font-size: 16px;
+        padding: 14px;
     }
 }
 
