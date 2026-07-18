@@ -181,8 +181,19 @@ function crearTarjetaProducto(producto, tipo) {
         });
     };
 
-    tarjeta.querySelector('.producto-img').addEventListener('click', abrirModal);
-    tarjeta.querySelector('.producto-nombre').addEventListener('click', abrirModal);
+    tarjeta.addEventListener('click', (e) => {
+    if (e.target.closest('.btn-agregar-carrito')) return;
+        abrirModalProducto({
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            imagen: producto.imagen,
+            precio: precioTexto,
+            enStock: producto.enStock,
+            id: producto.id,
+            precioCarrito,
+            tipo
+        });
+    });
 
     if (producto.enStock) {
         tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
