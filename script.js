@@ -598,6 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarProductos();
     actualizarCarritoUI();
     initDropdownsMobile();
+    twemoji.parse(document.body);
 
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && portalAbierto) {
