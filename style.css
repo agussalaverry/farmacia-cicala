@@ -103,7 +103,7 @@ body {
     right: 0;
     background: var(--color-primary);
     color: var(--color-white);
-    z-index: 1000;
+    z-index: 100;
     box-shadow: var(--shadow-lg);
     padding: var(--spacing-md);
 }
@@ -189,7 +189,7 @@ body {
     left: 0;
     right: 0;
     background-color: #FFB6C1;
-    z-index: 999;
+    z-index: 99;
     box-shadow: var(--shadow-md);
     margin: 0;
     padding: 0;
