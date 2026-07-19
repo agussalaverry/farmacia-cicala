@@ -598,6 +598,20 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarProductos();
     actualizarCarritoUI();
     initDropdownsMobile();
+   
+// Ocultar barra secundaria al scrollear
+   let lastScroll = 0;
+   const secondaryNav = document.querySelector('.secondary-nav');
+   window.addEventListener('scroll', () => {
+       const currentScroll = window.scrollY;
+       if (currentScroll > lastScroll && currentScroll > 100) {
+           secondaryNav.style.transform = 'translateY(-100%)';
+       } else {
+           secondaryNav.style.transform = 'translateY(0)';
+       }
+       lastScroll = currentScroll;
+   });
+   
     twemoji.parse(document.body);
 
     window.addEventListener('resize', () => {
