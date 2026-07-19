@@ -685,7 +685,7 @@ body {
     max-width: 420px;
     height: 100vh;
     background-color: var(--color-white);
-    z-index: 2000;
+    z-index: 9999;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
     transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
@@ -1097,7 +1097,7 @@ body {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0);
-    z-index: 1999;
+    z-index: 9998;
     transition: background-color 0.4s ease;
     pointer-events: none;
 }
