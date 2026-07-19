@@ -179,6 +179,8 @@ function crearTarjetaProducto(producto, tipo) {
             id: producto.id,
             precioCarrito,
             tipo
+            precioOriginal: tipo === 'promocion' ? producto.precioOriginal : null,
+            descuentoPorcentaje: producto.descuentoPorcentaje || null,
         });
     });
 
@@ -848,7 +850,18 @@ function abrirModalProducto(p) {
     document.getElementById('modal-img').src = p.imagen || '';
     document.getElementById('modal-nombre').textContent = p.nombre;
     document.getElementById('modal-descripcion').textContent = p.descripcion;
-    document.getElementById('modal-precio').textContent = p.precio;
+
+const precioEl = document.getElementById('modal-precio');
+    if (p.precioOriginal) {
+    precioEl.innerHTML = `
+        <span style="text-decoration:line-through; color:#999; font-size:18px;">${formatearPrecio(p.precioOriginal)}</span>
+        <span style="color:var(--color-primary); font-size:28px; font-weight:800; margin-left:8px;">${formatearPrecio(p.precioCarrito)}</span>
+        <span style="background:#FF6B35; color:white; padding:4px 10px; border-radius:20px; font-size:14px; margin-left:8px;">${p.descuentoPorcentaje}% OFF</span>
+    `;
+    } 
+    else {
+    precioEl.textContent = p.precio;
+    }
 
     const btnCarrito = document.getElementById('modal-btn-carrito');
     btnCarrito.textContent = p.enStock ? 'Agregar al carrito' : 'Sin stock';
