@@ -528,7 +528,7 @@ body {
     font-size: var(--font-size-base);
     color: var(--color-text-light);
     margin-bottom: var(--spacing-md);
-    flex-grow: 1;
+    flex-grow: 0;
     line-height: 1.6;
     display: -webkit-box;
     -webkit-line-clamp: 3;
