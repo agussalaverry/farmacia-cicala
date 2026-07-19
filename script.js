@@ -843,6 +843,8 @@ document.head.appendChild(estilosDinamicos);
    ============================================ */
 
 function abrirModalProducto(p) {
+    document.querySelector('.header').style.display = 'none';
+    document.querySelector('.secondary-nav').style.display = 'none';
     document.getElementById('modal-img').src = p.imagen || '';
     document.getElementById('modal-nombre').textContent = p.nombre;
     document.getElementById('modal-descripcion').textContent = p.descripcion;
@@ -862,6 +864,8 @@ function abrirModalProducto(p) {
 }
 
 function cerrarModalProducto() {
+    document.querySelector('.header').style.display = '';
+    document.querySelector('.secondary-nav').style.display = '';
     document.getElementById('producto-modal').classList.remove('active');
     desbloquearScroll();
 }
