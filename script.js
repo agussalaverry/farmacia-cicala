@@ -178,7 +178,7 @@ function crearTarjetaProducto(producto, tipo) {
             enStock: producto.enStock,
             id: producto.id,
             precioCarrito,
-            tipo
+            tipo,
             precioOriginal: tipo === 'promocion' ? producto.precioOriginal : null,
             descuentoPorcentaje: producto.descuentoPorcentaje || null,
         });
