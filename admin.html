@@ -1731,7 +1731,7 @@
             <span>${fmt(c.precio)}</span>
             <span><span class="stock-badge ${c.enStock ? 'en-stock' : 'sin-stock'}">${c.enStock ? 'Con stock' : 'Sin stock'}</span></span>
             <div class="row-actions">
-                <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${p.visible !== false}">
+                <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${c.visible !== false}">
                     ${c.visible !== false ? '👁️' : '🙈'}</button>
                 <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${c.enStock}">📦</button>
                 <button class="btn-edit">✏️</button>
