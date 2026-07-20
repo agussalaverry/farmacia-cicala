@@ -545,31 +545,46 @@ body {
 
 .producto-precios {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-bottom: var(--spacing-md);
 }
 
 .precio-original {
-    font-size: var(--font-size-base);
+    font-size: 13px;
     color: var(--color-gray);
     text-decoration: line-through;
-    font-weight: 600;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.precio-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .precio-descuento {
     font-size: var(--font-size-xxl);
     font-weight: 800;
-    color: var(--color-primary);
+    color: var(--color-text);
     font-family: var(--font-family-display);
+    line-height: 1.1;
 }
 
 .precio-unico {
     font-size: var(--font-size-xxl);
     font-weight: 800;
-    color: var(--color-primary);
+    color: var(--color-text);
     font-family: var(--font-family-display);
+}
+
+.descuento-tag {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--color-badge-off);
 }
 
 /* ============================================

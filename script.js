@@ -145,14 +145,17 @@ function crearTarjetaProducto(producto, tipo) {
 
     const badge = tipo === 'novedad'
         ? `<div class="producto-badge badge-nuevo">NUEVO</div>`
-        : `<div class="producto-badge badge-off">${producto.descuentoPorcentaje}% OFF</div>`;
+        : `<div class="producto-badge badge-off">PROMO</div>`;
 
     const precios = tipo === 'novedad'
         ? `<div class="producto-precios"><span class="precio-unico">${formatearPrecio(producto.precio)}</span></div>`
         : `<div class="producto-precios">
-               <span class="precio-original">${formatearPrecio(producto.precioOriginal)}</span>
-               <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
-           </div>`;
+            <span class="precio-original">${formatearPrecio(producto.precioOriginal)}</span>
+            <div class="precio-row">
+                <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
+                <span class="descuento-tag">${producto.descuentoPorcentaje}% OFF</span>
+            </div>
+        </div>`;
 
     const precioCarrito = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
     const precioTexto = tipo === 'novedad' ? formatearPrecio(producto.precio) : formatearPrecio(producto.precioDescuento);
