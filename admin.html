@@ -375,21 +375,21 @@
         .th-novedad,
         .table-header.th-novedad,
         .producto-row.th-novedad {
-            grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr) 100px 120px minmax(200px, 220px);
+            grid-template-columns: 56px minmax(0, 1.2fr) minmax(0, 1.4fr) 100px 120px minmax(170px, 190px);
         }
 
         /* Promociones: foto | nombre | descripción | precio orig | precio desc | % off | stock | acciones */
         .th-promocion,
         .table-header.th-promocion,
         .producto-row.th-promocion {
-            grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr) 100px 100px 70px 120px minmax(200px, 220px);
+            grid-template-columns: 56px minmax(0, 1.2fr) minmax(0, 1.4fr) 100px 100px 70px 120px minmax(170px, 190px);
         }
 
         /* Combos: foto | nombre | descripción | precio | stock | acciones */
         .th-combo,
         .table-header.th-combo,
         .producto-row.th-combo {
-            grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr) 100px 120px minmax(200px, 220px);
+            grid-template-columns: 56px minmax(0, 1.2fr) minmax(0, 1.4fr) 100px 120px minmax(170px, 190px);
         }
 
         .producto-row {
@@ -399,7 +399,14 @@
             border-bottom: 1px solid #F5F5F5;
             transition: background 0.15s;
             font-size: 15px;
-            gap: 12px;
+            gap: 10px;
+        }
+
+        .table-header > span,
+        .producto-row > span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .producto-row:last-child {
@@ -410,23 +417,13 @@
             background: #FAFAFA;
         }
 
-        .producto-row.th-novedad {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
-        }
-
-        .producto-row.th-promocion {
-            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px;
-        }
-
-        .producto-row.th-combo {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
-        }
 
         .producto-nombre-cell {
             font-weight: 700;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            min-width: 0;
         }
 
         .producto-desc-cell {
@@ -435,6 +432,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            min-width: 0;
         }
 
         .thumb {
@@ -459,12 +457,16 @@
         }
 
         .stock-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 700;
             white-space: nowrap;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .stock-badge.en-stock {
@@ -480,12 +482,13 @@
         .row-actions {
             width: 100%;
             display: flex;
-            gap: 6px;
+            gap: 4px;
             justify-content: flex-end;
             flex-wrap: nowrap;
             align-items: center;
             min-width: 0;
             flex-shrink: 0;
+            overflow: hidden;
         }
 
         .empty-state {
@@ -1680,7 +1683,7 @@
             <span>${fmt(p.precioDescuento)}</span>
             <span>${p.descuentoPorcentaje}%</span>
             <span><span class="stock-badge ${p.enStock ? 'en-stock' : 'sin-stock'}">${p.enStock ? 'Con stock' : 'Sin stock'}</span></span>
-            <div class="row-actions">}
+            <div class="row-actions">
                 <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${p.visible !== false}">
                     ${p.visible !== false ? '👁️' : '🙈'}</button>
                 <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${p.enStock}">📦</button>
