@@ -1717,7 +1717,10 @@
             const snap = await getDocs(collection(db, 'combos'));
             if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún. Agregá el primero.</div>'; return; }
             lista.innerHTML = '';
-            snap.forEach(d => {
+            const docsOrdenados = snap.docs.sort((a, b) => 
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
                 const c = d.data();
                 const row = document.createElement('div');
                 row.className = 'producto-row th-combo';
