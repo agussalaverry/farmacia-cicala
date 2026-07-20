@@ -372,27 +372,24 @@
         }
 
         /* Novedades: foto | nombre | descripción | precio | stock | acciones */
-        .th-novedad {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
-        }
+        .th-novedad,
+        .table-header.th-novedad,
         .producto-row.th-novedad {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
+            grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr) 100px 120px minmax(200px, 220px);
         }
 
-        /* Promociones: foto | nombre | precio orig | precio desc | % off | stock | acciones */
-        .th-promocion {
-            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 180px;
-        }
+        /* Promociones: foto | nombre | descripción | precio orig | precio desc | % off | stock | acciones */
+        .th-promocion,
+        .table-header.th-promocion,
         .producto-row.th-promocion {
-            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 180px;
+            grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr) 100px 100px 70px 120px minmax(200px, 220px);
         }
 
         /* Combos: foto | nombre | descripción | precio | stock | acciones */
-        .th-combo {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
-        }
+        .th-combo,
+        .table-header.th-combo,
         .producto-row.th-combo {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
+            grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr) 100px 120px minmax(200px, 220px);
         }
 
         .producto-row {
@@ -441,8 +438,8 @@
         }
 
         .thumb {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             object-fit: cover;
             border-radius: 8px;
             background: #F0F0F0;
@@ -450,8 +447,8 @@
         }
 
         .thumb-placeholder {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             border-radius: 8px;
             background: #F0F0F0;
             display: flex;
@@ -481,11 +478,14 @@
         }
 
         .row-actions {
+            width: 100%;
             display: flex;
             gap: 6px;
             justify-content: flex-end;
             flex-wrap: nowrap;
             align-items: center;
+            min-width: 0;
+            flex-shrink: 0;
         }
 
         .empty-state {
