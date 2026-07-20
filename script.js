@@ -72,20 +72,26 @@ async function cargarProductos() {
     try {
         // Cargar novedades
         const novedadesSnap = await getDocs(collection(db, 'novedades'));
-        const novedades = novedadesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(p => p.visible !== false);;
+        const novedades = novedadesSnap.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(p => p.visible !== false)
+            .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
         renderNovedades(novedades);
 
         // Cargar promociones
         const promocionesSnap = await getDocs(collection(db, 'promociones'));
-        const promociones = promocionesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(p => p.visible !== false);;
+        const promociones = promocionesSnap.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(p => p.visible !== false)
+            .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
         renderPromociones(promociones);
 
         // Cargar combos
         const combosSnap = await getDocs(collection(db, 'combos'));
-        const combos = combosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(p => p.visible !== false);;
+        const combos = combosSnap.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(p => p.visible !== false)
+            .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
         renderCombos(combos);
 
     } catch (error) {

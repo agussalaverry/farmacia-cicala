@@ -373,17 +373,26 @@
 
         /* Novedades: foto | nombre | descripción | precio | stock | acciones */
         .th-novedad {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
+        }
+        .producto-row.th-novedad {
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
         }
 
         /* Promociones: foto | nombre | precio orig | precio desc | % off | stock | acciones */
         .th-promocion {
-            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 130px;
+            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 180px;
+        }
+        .producto-row.th-promocion {
+            grid-template-columns: 56px 1fr 1.2fr 100px 110px 60px 110px 180px;
         }
 
         /* Combos: foto | nombre | descripción | precio | stock | acciones */
         .th-combo {
-            grid-template-columns: 56px 1fr 1.4fr 100px 110px 130px;
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
+        }
+        .producto-row.th-combo {
+            grid-template-columns: 56px 1fr 1.4fr 100px 110px 180px;
         }
 
         .producto-row {
@@ -966,6 +975,31 @@
         .btn-crop-cancel:hover {
             background: #FFCDD2;
         }
+
+        /* Drag & drop */
+        .producto-row.dragging {
+            opacity: 0.4;
+            background: #FFF0F5;
+        }
+        .producto-row.drag-over {
+            border-top: 3px solid var(--pink);
+        }
+        .producto-row { cursor: grab; }
+
+        /* Toolbar con botón alfabético */
+        .btn-sort-alpha {
+            background: #E3F2FD;
+            color: #1565C0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-sort-alpha:hover { opacity: 0.8; }
+        .section-toolbar { gap: 12px; }
     </style>
 </head>
 
@@ -1013,6 +1047,7 @@
                 <div class="section-toolbar">
                     <h2>Novedades</h2>
                     <button class="btn-add" id="btn-nueva-novedad">+ Agregar novedad</button>
+                    <button class="btn-sort-alpha" id="btn-sort-novedades">A→Z</button>
                 </div>
                 <div class="productos-table">
                     <div class="table-header th-novedad">
@@ -1029,6 +1064,7 @@
                 <div class="section-toolbar">
                     <h2>Promociones</h2>
                     <button class="btn-add" id="btn-nueva-promocion">+ Agregar promoción</button>
+                    <button class="btn-sort-alpha" id="btn-sort-promociones">A→Z</button>
                 </div>
                 <div class="productos-table">
                     <div class="table-header th-promocion">
@@ -1046,6 +1082,7 @@
                 <div class="section-toolbar">
                     <h2>Combos</h2>
                     <button class="btn-add" id="btn-nuevo-combo">+ Agregar combo</button>
+                    <button class="btn-sort-alpha" id="btn-sort-combos">A→Z</button>
                 </div>
                 <div class="productos-table">
                     <div class="table-header th-combo">
@@ -1534,10 +1571,16 @@
             const snap = await getDocs(collection(db, 'novedades'));
             if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin novedades aún. Agregá la primera.</div>'; return; }
             lista.innerHTML = '';
-            snap.forEach(d => {
+            // Ordenar por campo 'orden'
+            const docsOrdenados = snap.docs.sort((a, b) => 
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
                 const p = d.data();
                 const row = document.createElement('div');
                 row.className = 'producto-row th-novedad';
+                row.draggable = true;
+                row.dataset.id = d.id;  // ← necesario para el drag & drop      
                 row.innerHTML = `
             ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
@@ -1570,6 +1613,7 @@
                 row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, p.nombre, cargarNovedades));
                 lista.appendChild(row);
             });
+            initDragAndDrop('lista-novedades', 'novedades', cargarNovedades);
         }
 
         function abrirModalNovedad(id = '', p = {}) {
@@ -1618,10 +1662,16 @@
             const snap = await getDocs(collection(db, 'promociones'));
             if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin promociones aún. Agregá la primera.</div>'; return; }
             lista.innerHTML = '';
-            snap.forEach(d => {
+            // Ordenar por campo 'orden'
+            const docsOrdenados = snap.docs.sort((a, b) => 
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
                 const p = d.data();
                 const row = document.createElement('div');
                 row.className = 'producto-row th-promocion';
+                row.draggable = true;
+                row.dataset.id = d.id;  // ← necesario para el drag & drop  
                 row.innerHTML = `
             ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
@@ -1652,6 +1702,7 @@
                 row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
                 lista.appendChild(row);
             });
+            initDragAndDrop('lista-promociones', 'promociones', cargarPromociones);
         }
 
         function abrirModalPromocion(id = '', p = {}) {
@@ -1717,6 +1768,7 @@
             const snap = await getDocs(collection(db, 'combos'));
             if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún. Agregá el primero.</div>'; return; }
             lista.innerHTML = '';
+            // Ordenar por campo 'orden'
             const docsOrdenados = snap.docs.sort((a, b) => 
                 (a.data().orden ?? 999) - (b.data().orden ?? 999)
             );
@@ -1724,6 +1776,8 @@
                 const c = d.data();
                 const row = document.createElement('div');
                 row.className = 'producto-row th-combo';
+                row.draggable = true;
+                row.dataset.id = d.id;  // ← necesario para el drag & drop  
                 row.innerHTML = `
             ${thumbHTML(c.imagen)}
             <span class="producto-nombre-cell">${c.nombre}</span>
@@ -1752,6 +1806,7 @@
                 row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
                 lista.appendChild(row);
             });
+            initDragAndDrop('lista-combos', 'combos', cargarCombos);
         }
 
         function abrirModalCombo(id = '', c = {}) {
@@ -1792,6 +1847,80 @@
                 cargarCombos();
             } catch (e) { toast('Error al guardar', 'error'); }
         });
+
+        /* ====== DRAG & DROP ORDEN ====== */
+        function initDragAndDrop(listaId, coleccion, recargar) {
+            const lista = document.getElementById(listaId);
+            let dragSrc = null;
+
+            function getRows() {
+                return [...lista.querySelectorAll('.producto-row')];
+            }
+
+            lista.addEventListener('dragstart', e => {
+                dragSrc = e.target.closest('.producto-row');
+                if (!dragSrc) return;
+                dragSrc.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            lista.addEventListener('dragover', e => {
+                e.preventDefault();
+                const target = e.target.closest('.producto-row');
+                if (!target || target === dragSrc) return;
+                getRows().forEach(r => r.classList.remove('drag-over'));
+                target.classList.add('drag-over');
+            });
+
+            lista.addEventListener('dragleave', e => {
+                const target = e.target.closest('.producto-row');
+                if (target) target.classList.remove('drag-over');
+            });
+
+            lista.addEventListener('drop', async e => {
+                e.preventDefault();
+                const target = e.target.closest('.producto-row');
+                if (!target || target === dragSrc) return;
+                target.classList.remove('drag-over');
+                dragSrc.classList.remove('dragging');
+
+                // Reordenar en el DOM
+                lista.insertBefore(dragSrc, target);
+
+                // Guardar nuevo orden en Firestore
+                const rows = getRows();
+                const updates = rows.map((row, i) =>
+                    updateDoc(doc(db, coleccion, row.dataset.id), { orden: i })
+                );
+                await Promise.all(updates);
+                toast('Orden guardado', 'success');
+            });
+
+            lista.addEventListener('dragend', e => {
+                getRows().forEach(r => {
+                    r.classList.remove('dragging');
+                    r.classList.remove('drag-over');
+                });
+            });
+            document.getElementById('btn-sort-novedades').addEventListener('click', () =>
+                ordenarAlfabetico('novedades', cargarNovedades));
+            document.getElementById('btn-sort-promociones').addEventListener('click', () =>
+                ordenarAlfabetico('promociones', cargarPromociones));
+            document.getElementById('btn-sort-combos').addEventListener('click', () =>
+                ordenarAlfabetico('combos', cargarCombos));
+        }
+
+        async function ordenarAlfabetico(coleccion, recargar) {
+            const snap = await getDocs(collection(db, coleccion));
+            const docs = snap.docs.map(d => ({ id: d.id, nombre: d.data().nombre }));
+            docs.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            const updates = docs.map((d, i) =>
+                updateDoc(doc(db, coleccion, d.id), { orden: i })
+            );
+            await Promise.all(updates);
+            toast('Ordenado A→Z', 'success');
+            recargar();
+        }
 
         /* ====== TOGGLE STOCK ====== */
         async function toggleStock(col, id, stockActual) {
