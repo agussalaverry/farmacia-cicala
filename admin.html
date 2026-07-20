@@ -380,21 +380,21 @@
         .th-novedad,
         .table-header.th-novedad,
         .producto-row.th-novedad {
-            grid-template-columns: 56px 220px minmax(0, 1fr) 110px 120px 220px;
+            grid-template-columns: 56px 240px minmax(0, 1.2fr) 120px 140px 240px;
         }
 
         /* Promociones: foto | nombre | descripción | precio orig | precio desc | % off | stock | acciones */
         .th-promocion,
         .table-header.th-promocion,
         .producto-row.th-promocion {
-            grid-template-columns: 56px 220px minmax(0, 1fr) 120px 120px 80px 120px 220px;
+            grid-template-columns: 56px 240px minmax(0, 1.2fr) 130px 130px 90px 140px 240px;
         }
 
         /* Combos: foto | nombre | descripción | precio | stock | acciones */
         .th-combo,
         .table-header.th-combo,
         .producto-row.th-combo {
-            grid-template-columns: 56px 220px minmax(0, 1fr) 110px 120px 220px;
+            grid-template-columns: 56px 240px minmax(0, 1.2fr) 120px 140px 240px;
         }
 
         .producto-row {
@@ -415,6 +415,10 @@
             min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .producto-row:last-child {
@@ -432,6 +436,9 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             min-width: 0;
+            justify-content: flex-start;
+            text-align: left;
+            padding-left: 4px;
         }
 
         .producto-desc-cell {
@@ -441,6 +448,9 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             min-width: 0;
+            justify-content: flex-start;
+            text-align: left;
+            padding-left: 4px;
         }
 
         .thumb {
@@ -491,10 +501,10 @@
             width: 100%;
             display: flex;
             gap: 4px;
-            justify-content: flex-end;
+            justify-content: center;
             flex-wrap: nowrap;
             align-items: center;
-            min-width: 220px;
+            min-width: 240px;
             flex-shrink: 0;
             overflow: hidden;
             margin-left: auto;
