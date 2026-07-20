@@ -241,6 +241,11 @@
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            min-width: 40px;
         }
 
         .btn-toggle-visible {
@@ -254,6 +259,11 @@
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            min-width: 40px;
         }
         .btn-toggle-visible:hover { opacity: 0.75; }
 
@@ -504,9 +514,9 @@
             justify-content: center;
             flex-wrap: nowrap;
             align-items: center;
-            min-width: 160px;
+            min-width: 200px;
             flex-shrink: 0;
-            overflow: hidden;
+            overflow: visible;
             margin-left: auto;
         }
 
@@ -873,18 +883,21 @@
             }
 
             .th-novedad,
+            .table-header.th-novedad,
             .producto-row.th-novedad {
-                grid-template-columns: 48px 1fr 80px 100px;
+                grid-template-columns: 64px 200px minmax(200px, 400px) 130px 140px 180px;
             }
 
             .th-promocion,
+            .table-header.th-promocion,
             .producto-row.th-promocion {
-                grid-template-columns: 48px 1fr 80px 100px;
+                grid-template-columns: 64px 200px minmax(150px, 300px) 130px 140px 70px 140px 180px;
             }
 
             .th-combo,
+            .table-header.th-combo,
             .producto-row.th-combo {
-                grid-template-columns: 48px 1fr 80px 100px;
+                grid-template-columns: 64px 200px minmax(200px, 400px) 130px 140px 180px;
             }
         }
 
