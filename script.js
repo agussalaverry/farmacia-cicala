@@ -72,17 +72,20 @@ async function cargarProductos() {
     try {
         // Cargar novedades
         const novedadesSnap = await getDocs(collection(db, 'novedades'));
-        const novedades = novedadesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const novedades = novedadesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(p => p.visible !== false);;
         renderNovedades(novedades);
 
         // Cargar promociones
         const promocionesSnap = await getDocs(collection(db, 'promociones'));
-        const promociones = promocionesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const promociones = promocionesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(p => p.visible !== false);;
         renderPromociones(promociones);
 
         // Cargar combos
         const combosSnap = await getDocs(collection(db, 'combos'));
-        const combos = combosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const combos = combosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(p => p.visible !== false);;
         renderCombos(combos);
 
     } catch (error) {
