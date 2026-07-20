@@ -329,6 +329,20 @@ body {
     margin-bottom: var(--spacing-xs);
 }
 
+/* Contact icons inside dropdowns */
+.dropdown-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: inline-block;
+}
+
 .dropdown-value {
     font-size: var(--font-size-base);
     color: var(--color-text);
