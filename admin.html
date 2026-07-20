@@ -243,6 +243,20 @@
             transition: opacity 0.2s;
         }
 
+        .btn-toggle-visible {
+            background: #F3E5F5;
+            color: #7B1FA2;
+            padding: 7px 14px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-toggle-visible:hover { opacity: 0.75; }
+
         .btn-edit:hover,
         .btn-delete:hover,
         .btn-toggle-stock:hover {
@@ -1531,10 +1545,20 @@
             <span>${fmt(p.precio)}</span>
             <span><span class="stock-badge ${p.enStock ? 'en-stock' : 'sin-stock'}">${p.enStock ? 'Con stock' : 'Sin stock'}</span></span>
             <div class="row-actions">
+                <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${p.visible !== false}">
+                ${p.visible !== false ? '👁️' : '🙈'}</button>
                 <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${p.enStock}">📦</button>
                 <button class="btn-edit">✏️</button>
                 <button class="btn-delete">🗑️</button>
             </div>`;
+
+                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    const esVisible = btn.dataset.visible === 'true';
+                    await toggleVisible('novedades', btn.dataset.id, esVisible);
+                    cargarNovedades();
+                });
+
                 row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
                     const btn = e.currentTarget;
                     await toggleStock('novedades', btn.dataset.id, btn.dataset.stock === 'true');
@@ -1755,6 +1779,12 @@
             await updateDoc(doc(db, col, id), { enStock: !stockActual });
             // Notificación gris para cambio de stock
             toast(stockActual ? 'Sin stock' : 'Con stock', stockActual ? 'gray' : 'success');
+        }
+        
+
+        async function toggleVisible(col, id, visibleActual) {
+            await updateDoc(doc(db, col, id), { visible: !visibleActual });
+            toast(visibleActual ? 'Producto oculto' : 'Producto visible', visibleActual ? 'gray' : 'success');
         }
 
         /* ====== CONFIRMAR ELIMINACIÓN (modal centrado) ====== */
