@@ -356,7 +356,7 @@
             box-shadow: var(--shadow);
             overflow-x: auto;
             width: 100%;
-            min-width: 0;
+            min-width: 900px;
         }
 
         .table-header {
@@ -369,7 +369,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid var(--pink-border);
-            gap: 12px;
+            gap: 20px;
             align-items: center;
             width: 100%;
             min-width: 980px;
@@ -380,21 +380,21 @@
         .th-novedad,
         .table-header.th-novedad,
         .producto-row.th-novedad {
-            grid-template-columns: 64px 1.5fr 2fr 130px 140px 160px;
+            grid-template-columns: 64px 200px minmax(200px, 400px) 130px 140px 180px;
         }
 
         /* Promociones: foto | nombre | descripción | precio orig | precio desc | % off | stock | acciones */
         .th-promocion,
         .table-header.th-promocion,
         .producto-row.th-promocion {
-            grid-template-columns: 64px 1.5fr 1.5fr 130px 140px 80px 140px 160px;
+            grid-template-columns: 64px 200px minmax(150px, 300px) 130px 140px 70px 140px 180px;
         }
 
         /* Combos: foto | nombre | descripción | precio | stock | acciones */
         .th-combo,
         .table-header.th-combo,
         .producto-row.th-combo {
-            grid-template-columns: 64px 1.5fr 2fr 130px 140px 160px;
+            grid-template-columns: 64px 200px minmax(200px, 400px) 130px 140px 180px;
         }
 
         .producto-row {
@@ -404,7 +404,7 @@
             border-bottom: 1px solid #F5F5F5;
             transition: background 0.15s;
             font-size: 15px;
-            gap: 10px;
+            gap: 20px;
             width: 100%;
             min-width: 980px;
             box-sizing: border-box;
@@ -500,11 +500,11 @@
         .row-actions {
             width: 100%;
             display: flex;
-            gap: 4px;
+            gap: 8px;
             justify-content: center;
             flex-wrap: nowrap;
             align-items: center;
-            min-width: 140px;
+            min-width: 160px;
             flex-shrink: 0;
             overflow: hidden;
             margin-left: auto;
