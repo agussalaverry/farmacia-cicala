@@ -1261,7 +1261,7 @@
                     </select>
                 </div>
             </div>
-            <!-- MODAL NOVEDAD — reemplaza el form-group de imagen -->
+            <!-- MODAL COMBO — reemplaza el form-group de imagen -->
             <div class="form-group">
             <label>Imágenes del producto</label>
             <div class="imagen-upload-area" id="upload-area-novedad">
@@ -1578,7 +1578,9 @@
         }
 
         /* ====== CARGAR TODO ====== */
-        function cargarTodo() { cargarNovedades(); cargarPromociones(); cargarCombos(); }
+        function cargarTodo() { 
+            setTimeout(() => { cargarNovedades(); cargarPromociones(); cargarCombos(); }, 0);
+        }
 
         /* ====== NOVEDADES ====== */
         async function cargarNovedades() {
