@@ -1553,9 +1553,12 @@
         };
         }
 
-        const uploaderNovedad   = setupImagenUploadMultiple('novedad-imagen-file',   'upload-area-novedad',   'preview-list-novedad',   'novedad-imagen-url');
-        const uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
-        const uploaderCombo     = setupImagenUploadMultiple('combo-imagen-file',     'upload-area-combo',     'preview-list-combo',     'combo-imagen-url');
+    let uploaderNovedad, uploaderPromocion, uploaderCombo;
+    document.addEventListener('DOMContentLoaded', () => {
+        uploaderNovedad   = setupImagenUploadMultiple('novedad-imagen-file',   'upload-area-novedad',   'preview-list-novedad',   'novedad-imagen-url');
+        uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
+        uploaderCombo     = setupImagenUploadMultiple('combo-imagen-file',     'upload-area-combo',     'preview-list-combo',     'combo-imagen-url');
+    });
 
         /* ====== UTILIDADES ====== */
         function fmt(n) {
@@ -1580,7 +1583,7 @@
         /* ====== CARGAR TODO ====== */
         function cargarTodo() { 
             setTimeout(() => { cargarNovedades(); cargarPromociones(); cargarCombos(); }, 0);
-        }
+        }Ñ
 
         /* ====== NOVEDADES ====== */
         async function cargarNovedades() {
