@@ -145,102 +145,159 @@ function renderCombos(combos) {
     combos.forEach(c => combosContainer.appendChild(crearTarjetaCombo(c)));
 }
 
-function crearTarjetaProducto(producto, tipo) {
-    const tarjeta = document.createElement('div');
-    tarjeta.className = 'producto-card' + (!producto.enStock ? ' sin-stock' : '');
+/* ====== HELPERS DE CARRUSEL ====== */
+function crearCarrusel(imagenes, altText, heightClass = '') {
+  // imagenes: array de URLs. Si viene vacío, placeholder.
+  const imgs = (imagenes && imagenes.length > 0) ? imagenes : [''];
+  const id = 'car-' + Math.random().toString(36).slice(2, 8);
 
-    const badge = tipo === 'novedad'
-        ? `<div class="producto-badge badge-nuevo">NUEVO</div>`
-        : `<div class="producto-badge badge-off">PROMO</div>`;
-
-    const precios = tipo === 'novedad'
-        ? `<div class="producto-precios"><span class="precio-unico">${formatearPrecio(producto.precio)}</span></div>`
-        : `<div class="producto-precios">
-            <span class="precio-original">${formatearPrecio(producto.precioOriginal)}</span>
-            <div class="precio-row">
-                <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
-                <span class="descuento-tag">${producto.descuentoPorcentaje}% OFF</span>
-            </div>
-        </div>`;
-
-    const precioCarrito = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
-    const precioTexto = tipo === 'novedad' ? formatearPrecio(producto.precio) : formatearPrecio(producto.precioDescuento);
-
-    tarjeta.innerHTML = `
-        <div class="producto-img-container">
-            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-img">
-            ${badge}
+  const html = `
+    <div class="carrusel" id="${id}" data-idx="0">
+      <div class="carrusel-track">
+        ${imgs.map(src => `<img src="${src}" alt="${altText}" class="producto-img ${heightClass}" onerror="this.src='';">`).join('')}
+      </div>
+      ${imgs.length > 1 ? `
+        <button class="car-btn car-prev" aria-label="Anterior">&#8249;</button>
+        <button class="car-btn car-next" aria-label="Siguiente">&#8250;</button>
+        <div class="car-dots">
+          ${imgs.map((_, i) => `<span class="car-dot${i===0?' active':''}"></span>`).join('')}
         </div>
-        <h3 class="producto-nombre">${producto.nombre}</h3>
-        <p class="producto-descripcion">${producto.descripcion}</p>
-        ${precios}
-        <button class="btn-agregar-carrito" ${!producto.enStock ? 'disabled' : ''}>
-            ${producto.enStock ? 'Agregar al carrito' : 'Sin stock'}
-        </button>
-    `;
-
-    // Abrir modal al tocar imagen o nombre
-    tarjeta.addEventListener('click', (e) => {
-    if (e.target.closest('.btn-agregar-carrito')) return;
-        abrirModalProducto({
-            nombre: producto.nombre,
-            descripcion: producto.descripcion,
-            imagen: producto.imagen,
-            precio: precioTexto,
-            enStock: producto.enStock,
-            id: producto.id,
-            precioCarrito,
-            tipo,
-            precioOriginal: tipo === 'promocion' ? producto.precioOriginal : null,
-            descuentoPorcentaje: producto.descuentoPorcentaje || null,
-        });
-    });
-
-    if (producto.enStock) {
-        tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
-            agregarAlCarrito({ id: producto.id, nombre: producto.nombre, precio: precioCarrito, imagen: producto.imagen || '', tipo });
-        });
-    }
-
-    return tarjeta;
+      ` : ''}
+    </div>`;
+  return { html, id, total: imgs.length };
 }
 
+function initCarrusel(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const track = el.querySelector('.carrusel-track');
+  const dots = el.querySelectorAll('.car-dot');
+  const total = track.children.length;
+  if (total <= 1) return;
+
+  let idx = 0;
+  let timer = null;
+
+  function goTo(n) {
+    idx = (n + total) % total;
+    track.style.transform = `translateX(-${idx * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  }
+
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(idx + 1), 5000);
+  }
+
+  el.querySelector('.car-prev')?.addEventListener('click', e => {
+    e.stopPropagation(); goTo(idx - 1); startAuto();
+  });
+  el.querySelector('.car-next')?.addEventListener('click', e => {
+    e.stopPropagation(); goTo(idx + 1); startAuto();
+  });
+
+  // Swipe táctil
+  let startX = 0;
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) { goTo(idx + (diff > 0 ? 1 : -1)); startAuto(); }
+  }, { passive: true });
+
+  startAuto();
+  // Pausar al pasar el mouse
+  el.addEventListener('mouseenter', () => clearInterval(timer));
+  el.addEventListener('mouseleave', startAuto);
+}
+
+/* ====== TARJETA DE PRODUCTO ====== */
+function crearTarjetaProducto(producto, tipo) {
+  const tarjeta = document.createElement('div');
+  tarjeta.className = 'producto-card' + (!producto.enStock ? ' sin-stock' : '');
+
+  const badge = tipo === 'novedad'
+    ? `<div class="producto-badge badge-nuevo">NUEVO</div>`
+    : `<div class="producto-badge badge-off">PROMO</div>`;
+
+  const precios = tipo === 'novedad'
+    ? `<div class="producto-precios"><span class="precio-unico">${formatearPrecio(producto.precio)}</span></div>`
+    : `<div class="producto-precios">
+        <span class="precio-original">${formatearPrecio(producto.precioOriginal)}</span>
+        <div class="precio-row">
+          <span class="precio-descuento">${formatearPrecio(producto.precioDescuento)}</span>
+          <span class="descuento-tag">${producto.descuentoPorcentaje}% OFF</span>
+        </div>
+      </div>`;
+
+  const precioCarrito = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
+  const precioTexto   = tipo === 'novedad' ? formatearPrecio(producto.precio) : formatearPrecio(producto.precioDescuento);
+  const imagenes = producto.imagenes || (producto.imagen ? [producto.imagen] : []);
+  const { html: carHtml, id: carId } = crearCarrusel(imagenes, producto.nombre);
+
+  tarjeta.innerHTML = `
+    <div class="producto-img-container">
+      ${carHtml}
+      ${badge}
+    </div>
+    <h3 class="producto-nombre">${producto.nombre}</h3>
+    <p class="producto-descripcion">${producto.descripcion || ''}</p>
+    ${precios}
+    <button class="btn-agregar-carrito" ${!producto.enStock ? 'disabled' : ''}>
+      ${producto.enStock ? 'Agregar al carrito' : 'Sin stock'}
+    </button>`;
+
+  // Click en tarjeta → modal (excepto flechas y botón carrito)
+  tarjeta.addEventListener('click', e => {
+    if (e.target.closest('.btn-agregar-carrito') || e.target.closest('.car-btn')) return;
+    abrirModalProducto({ nombre: producto.nombre, descripcion: producto.descripcion,
+      imagenes, precio: precioTexto, enStock: producto.enStock,
+      id: producto.id, precioCarrito, tipo,
+      precioOriginal: tipo === 'promocion' ? producto.precioOriginal : null,
+      descuentoPorcentaje: producto.descuentoPorcentaje || null });
+  });
+
+  if (producto.enStock) {
+    tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
+      agregarAlCarrito({ id: producto.id, nombre: producto.nombre,
+        precio: precioCarrito, imagen: imagenes[0] || '', tipo });
+    });
+  }
+
+  // Inicializar carrusel DESPUÉS de que el elemento esté en el DOM
+  requestAnimationFrame(() => initCarrusel(carId));
+  return tarjeta;
+}
+
+/* ====== TARJETA DE COMBO ====== */
 function crearTarjetaCombo(combo) {
-    const tarjeta = document.createElement('div');
-    tarjeta.className = 'producto-card combo-card' + (!combo.enStock ? ' sin-stock' : '');
+  const tarjeta = document.createElement('div');
+  tarjeta.className = 'producto-card combo-card' + (!combo.enStock ? ' sin-stock' : '');
+  const imagenes = combo.imagenes || (combo.imagen ? [combo.imagen] : []);
+  const { html: carHtml, id: carId } = crearCarrusel(imagenes, combo.nombre);
 
-    const sinStockHTML = '';
-    const imagenPrincipal = combo.imagen || combo.productos?.[0]?.imagen || '';
+  tarjeta.innerHTML = `
+    <div class="producto-img-container">
+      ${carHtml}
+      <div class="producto-badge badge-combo">COMBO</div>
+    </div>
+    <h3 class="producto-nombre">${combo.nombre}</h3>
+    <p class="producto-descripcion">${combo.descripcion || ''}</p>
+    <div class="producto-precios">
+      <span class="precio-unico">${formatearPrecio(combo.precio)}</span>
+    </div>
+    <button class="btn-agregar-carrito" ${!combo.enStock ? 'disabled' : ''}>
+      ${combo.enStock ? 'Agregar al carrito' : 'Sin stock'}
+    </button>`;
 
-    tarjeta.innerHTML = `
-        <div class="producto-img-container">
-            ${imagenPrincipal ? `<img src="${imagenPrincipal}" alt="${combo.nombre}" class="producto-img">` : ''}
-            <div class="producto-badge badge-combo">COMBO</div>
-        </div>
-        ${sinStockHTML}
-        <h3 class="producto-nombre">${combo.nombre}</h3>
-        <p class="producto-descripcion">${combo.descripcion || ''}</p>
-        <div class="producto-precios">
-            <span class="precio-unico">${formatearPrecio(combo.precio)}</span>
-        </div>
-        <button class="btn-agregar-carrito" ${!combo.enStock ? 'disabled' : ''}>
-            ${combo.enStock ? 'Agregar al carrito' : 'Sin stock'}
-        </button>
-    `;
+  if (combo.enStock) {
+    tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
+      agregarAlCarrito({ id: combo.id, nombre: combo.nombre,
+        precio: combo.precio, imagen: imagenes[0] || '', tipo: 'combo' });
+    });
+  }
 
-    if (combo.enStock) {
-        tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
-            agregarAlCarrito({
-                id: combo.id,
-                nombre: combo.nombre,
-                precio: combo.precio,
-                imagen: imagenPrincipal || '',
-                tipo: 'combo'
-            });
-        });
-    }
-
-    return tarjeta;
+  requestAnimationFrame(() => initCarrusel(carId));
+  return tarjeta;
 }
 
 /* ============================================
@@ -871,36 +928,43 @@ document.head.appendChild(estilosDinamicos);
    MODAL DETALLE PRODUCTO
    ============================================ */
 
+/* ====== MODAL DE PRODUCTO CON CARRUSEL ====== */
 function abrirModalProducto(p) {
-    document.querySelector('.header').style.display = 'none';
-    document.querySelector('.secondary-nav').style.display = 'none';
-    document.getElementById('modal-img').src = p.imagen || '';
-    document.getElementById('modal-nombre').textContent = p.nombre;
-    document.getElementById('modal-descripcion').textContent = p.descripcion;
+  document.querySelector('.header').style.display = 'none';
+  document.querySelector('.secondary-nav').style.display = 'none';
 
-const precioEl = document.getElementById('modal-precio');
-    if (p.precioOriginal) {
+  const imagenes = p.imagenes || (p.imagen ? [p.imagen] : []);
+  const { html: carHtml, id: carId } = crearCarrusel(imagenes, p.nombre, 'modal-car-img');
+
+  // Inyectar carrusel en el modal
+  const modalImgWrap = document.getElementById('modal-img-wrap');
+  modalImgWrap.innerHTML = carHtml;
+
+  document.getElementById('modal-nombre').textContent = p.nombre;
+  document.getElementById('modal-descripcion').textContent = p.descripcion;
+
+  const precioEl = document.getElementById('modal-precio');
+  if (p.precioOriginal) {
     precioEl.innerHTML = `
-        <span style="text-decoration:line-through; color:#999; font-size:18px;">${formatearPrecio(p.precioOriginal)}</span>
-        <span style="color:var(--color-primary); font-size:28px; font-weight:800; margin-left:8px;">${formatearPrecio(p.precioCarrito)}</span>
-        <span style="background:#FF6B35; color:white; padding:4px 10px; border-radius:20px; font-size:14px; margin-left:8px;">${p.descuentoPorcentaje}% OFF</span>
-    `;
-    } 
-    else {
+      <span style="text-decoration:line-through;color:#999;font-size:18px;">${formatearPrecio(p.precioOriginal)}</span>
+      <span style="color:var(--color-primary);font-size:28px;font-weight:800;margin-left:8px;">${formatearPrecio(p.precioCarrito)}</span>
+      <span style="background:#FF6B35;color:white;padding:4px 10px;border-radius:20px;font-size:14px;margin-left:8px;">${p.descuentoPorcentaje}% OFF</span>`;
+  } else {
     precioEl.textContent = p.precio;
-    }
+  }
 
-    const btnCarrito = document.getElementById('modal-btn-carrito');
-    btnCarrito.textContent = p.enStock ? 'Agregar al carrito' : 'Sin stock';
-    btnCarrito.disabled = !p.enStock;
+  const btnCarrito = document.getElementById('modal-btn-carrito');
+  btnCarrito.textContent = p.enStock ? 'Agregar al carrito' : 'Sin stock';
+  btnCarrito.disabled = !p.enStock;
+  btnCarrito.onclick = () => {
+    agregarAlCarrito({ id: p.id, nombre: p.nombre,
+      precio: p.precioCarrito, imagen: imagenes[0] || '', tipo: p.tipo });
+    cerrarModalProducto();
+  };
 
-    btnCarrito.onclick = () => {
-        agregarAlCarrito({ id: p.id, nombre: p.nombre, precio: p.precioCarrito, imagen: p.imagen || '', tipo: p.tipo });
-        cerrarModalProducto();
-    };
-
-    document.getElementById('producto-modal').classList.add('active');
-    bloquearScroll();
+  document.getElementById('producto-modal').classList.add('active');
+  bloquearScroll();
+  requestAnimationFrame(() => initCarrusel(carId));
 }
 
 function cerrarModalProducto() {

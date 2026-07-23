@@ -1158,23 +1158,18 @@
                     </select>
                 </div>
             </div>
+            <!-- MODAL NOVEDAD — reemplaza el form-group de imagen -->
             <div class="form-group">
-                <label>Imagen del producto</label>
-                <div class="imagen-upload-area" id="upload-area-novedad">
-                    <input type="file" id="novedad-imagen-file" accept="image/*">
-                    <div class="imagen-upload-icon">📷</div>
-                    <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
-                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
-                </div>
-                <div class="imagen-preview-container" id="preview-novedad">
-                    <img class="imagen-preview" id="preview-img-novedad" src="" alt="">
-                    <div class="imagen-preview-info">
-                        <div class="imagen-preview-nombre" id="preview-nombre-novedad"></div>
-                        <div class="imagen-preview-estado" id="preview-estado-novedad">Lista para guardar</div>
-                    </div>
-                    <button class="btn-quitar-imagen" id="btn-quitar-novedad">Quitar</button>
-                </div>
-                <input type="hidden" id="novedad-imagen-url">
+            <label>Imágenes del producto</label>
+            <div class="imagen-upload-area" id="upload-area-novedad">
+                <input type="file" id="novedad-imagen-file" accept="image/*" multiple>
+                <div class="imagen-upload-icon">📷</div>
+                <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
+                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
+            </div>
+            <!-- Previews de imágenes múltiples -->
+            <div id="preview-list-novedad" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
+            <input type="hidden" id="novedad-imagen-url">
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" id="btn-cancelar-novedad">Cancelar</button>
@@ -1220,23 +1215,18 @@
                     </select>
                 </div>
             </div>
+            <!-- MODAL PROMOCION — reemplaza el form-group de imagen -->
             <div class="form-group">
-                <label>Imagen del producto</label>
-                <div class="imagen-upload-area" id="upload-area-promocion">
-                    <input type="file" id="promocion-imagen-file" accept="image/*">
-                    <div class="imagen-upload-icon">📷</div>
-                    <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
-                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
-                </div>
-                <div class="imagen-preview-container" id="preview-promocion">
-                    <img class="imagen-preview" id="preview-img-promocion" src="" alt="">
-                    <div class="imagen-preview-info">
-                        <div class="imagen-preview-nombre" id="preview-nombre-promocion"></div>
-                        <div class="imagen-preview-estado" id="preview-estado-promocion">Lista para guardar</div>
-                    </div>
-                    <button class="btn-quitar-imagen" id="btn-quitar-promocion">Quitar</button>
-                </div>
-                <input type="hidden" id="promocion-imagen-url">
+            <label>Imágenes del producto</label>
+            <div class="imagen-upload-area" id="upload-area-novedad">
+                <input type="file" id="novedad-imagen-file" accept="image/*" multiple>
+                <div class="imagen-upload-icon">📷</div>
+                <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
+                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
+            </div>
+            <!-- Previews de imágenes múltiples -->
+            <div id="preview-list-novedad" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
+            <input type="hidden" id="novedad-imagen-url">
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" id="btn-cancelar-promocion">Cancelar</button>
@@ -1271,23 +1261,18 @@
                     </select>
                 </div>
             </div>
+            <!-- MODAL NOVEDAD — reemplaza el form-group de imagen -->
             <div class="form-group">
-                <label>Imagen principal del combo</label>
-                <div class="imagen-upload-area" id="upload-area-combo">
-                    <input type="file" id="combo-imagen-file" accept="image/*">
-                    <div class="imagen-upload-icon">📷</div>
-                    <div class="imagen-upload-text">Hacé click o arrastrá la imagen acá</div>
-                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB</div>
-                </div>
-                <div class="imagen-preview-container" id="preview-combo">
-                    <img class="imagen-preview" id="preview-img-combo" src="" alt="">
-                    <div class="imagen-preview-info">
-                        <div class="imagen-preview-nombre" id="preview-nombre-combo"></div>
-                        <div class="imagen-preview-estado" id="preview-estado-combo">Lista para guardar</div>
-                    </div>
-                    <button class="btn-quitar-imagen" id="btn-quitar-combo">Quitar</button>
-                </div>
-                <input type="hidden" id="combo-imagen-url">
+            <label>Imágenes del producto</label>
+            <div class="imagen-upload-area" id="upload-area-novedad">
+                <input type="file" id="novedad-imagen-file" accept="image/*" multiple>
+                <div class="imagen-upload-icon">📷</div>
+                <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
+                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
+            </div>
+            <!-- Previews de imágenes múltiples -->
+            <div id="preview-list-novedad" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
+            <input type="hidden" id="novedad-imagen-url">
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" id="btn-cancelar-combo">Cancelar</button>
@@ -1482,99 +1467,95 @@
             return data.secure_url;
         }
 
-        /* ====== SETUP UPLOADERS ====== */
-        function setupImagenUpload(inputId, areaId, previewContainerId, previewImgId, previewNombreId, previewEstadoId, urlInputId, quitarBtnId) {
-            const input = document.getElementById(inputId);
-            const area = document.getElementById(areaId);
-            const container = document.getElementById(previewContainerId);
-            const previewImg = document.getElementById(previewImgId);
-            const previewNombre = document.getElementById(previewNombreId);
-            const previewEstado = document.getElementById(previewEstadoId);
-            const urlInput = document.getElementById(urlInputId);
-            const quitarBtn = document.getElementById(quitarBtnId);
+        /* ====== SETUP UPLOADERS MÚLTIPLES ====== */
+        function setupImagenUploadMultiple(inputId, areaId, previewListId, urlInputId) {
+        const input = document.getElementById(inputId);
+        const area = document.getElementById(areaId);
+        const previewList = document.getElementById(previewListId);
+        const urlInput = document.getElementById(urlInputId);
 
-            function procesarFile(file) {
-                abrirRecortador(file, (fileResultante) => {
-                    // Guardar referencia ANTES del reader async para evitar race condition
-                    input._fileSeleccionado = fileResultante;
-                    urlInput.value = '';
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        previewImg.src = e.target.result;
-                        previewNombre.textContent = fileResultante.name || file.name;
-                        previewEstado.textContent = 'Lista para guardar';
-                        previewEstado.className = 'imagen-preview-estado';
-                        container.classList.add('visible');
-                    };
-                    reader.readAsDataURL(fileResultante);
-                });
-            }
+        // Estado interno: array de { file?, url, previewSrc }
+        let imagenes = [];
 
-            input.addEventListener('change', e => {
-                if (e.target.files[0]) procesarFile(e.target.files[0]);
+        function renderPreviews() {
+            previewList.innerHTML = '';
+            imagenes.forEach((img, idx) => {
+            const wrap = document.createElement('div');
+            wrap.style.cssText = 'position:relative;display:inline-block;';
+            const im = document.createElement('img');
+            im.src = img.previewSrc;
+            im.style.cssText = 'width:72px;height:72px;object-fit:cover;border-radius:8px;border:2px solid #F2C0D8;';
+            const btn = document.createElement('button');
+            btn.textContent = '✕';
+            btn.type = 'button';
+            btn.style.cssText = 'position:absolute;top:-6px;right:-6px;background:#E53935;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;padding:0;';
+            btn.addEventListener('click', () => { imagenes.splice(idx, 1); renderPreviews(); });
+            wrap.appendChild(im);
+            wrap.appendChild(btn);
+            previewList.appendChild(wrap);
             });
-
-            area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
-            area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-            area.addEventListener('drop', e => {
-                e.preventDefault();
-                area.classList.remove('dragover');
-                if (e.dataTransfer.files[0]) {
-                    input.files = e.dataTransfer.files;
-                    procesarFile(e.dataTransfer.files[0]);
-                }
-            });
-
-            quitarBtn.addEventListener('click', () => {
-                input.value = '';
-                input._fileSeleccionado = null;
-                urlInput.value = '';
-                previewImg.src = '';
-                container.classList.remove('visible');
-            });
-
-            return {
-                getFile: () => input._fileSeleccionado,
-                getUrl: () => urlInput.value,
-                setUrl: (url) => {
-                    urlInput.value = url;
-                    previewImg.src = url;
-                    previewNombre.textContent = 'Imagen actual';
-                    previewEstado.textContent = '✓ Guardada en la nube';
-                    previewEstado.className = 'imagen-preview-estado listo';
-                    container.classList.add('visible');
-                    input._fileSeleccionado = null;
-                },
-                setEstado: (msg, cls) => {
-                    previewEstado.textContent = msg;
-                    previewEstado.className = 'imagen-preview-estado ' + cls;
-                },
-                reset: () => {
-                    input.value = '';
-                    input._fileSeleccionado = null;
-                    urlInput.value = '';
-                    previewImg.src = '';
-                    container.classList.remove('visible');
-                }
-            };
         }
 
-        /* ====== SETUP UPLOADERS ====== */
-        const uploaderNovedad = setupImagenUpload(
-            'novedad-imagen-file', 'upload-area-novedad', 'preview-novedad',
-            'preview-img-novedad', 'preview-nombre-novedad', 'preview-estado-novedad',
-            'novedad-imagen-url', 'btn-quitar-novedad'
-        );
-        const uploaderPromocion = setupImagenUpload(
-            'promocion-imagen-file', 'upload-area-promocion', 'preview-promocion',
-            'preview-img-promocion', 'preview-nombre-promocion', 'preview-estado-promocion',
-            'promocion-imagen-url', 'btn-quitar-promocion'
-        );
-        const uploaderCombo = setupImagenUpload(
-            'combo-imagen-file', 'upload-area-combo', 'preview-combo',
-            'preview-img-combo', 'preview-nombre-combo', 'preview-estado-combo',
-            'combo-imagen-url', 'btn-quitar-combo'
-        );
+        async function procesarFiles(files) {
+            for (const file of files) {
+            await new Promise(resolve => {
+                abrirRecortador(file, (resultado) => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    imagenes.push({ file: resultado, url: '', previewSrc: e.target.result });
+                    renderPreviews();
+                    resolve();
+                };
+                reader.readAsDataURL(resultado);
+                });
+            });
+            }
+        }
+
+        input.addEventListener('change', async e => {
+            if (e.target.files.length) await procesarFiles([...e.target.files]);
+            input.value = '';
+        });
+
+        area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+        area.addEventListener('drop', async e => {
+            e.preventDefault(); area.classList.remove('dragover');
+            if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files]);
+        });
+
+        return {
+            // Sube todas las imágenes pendientes y devuelve array de URLs
+            async subirTodas(prefijo, setEstado) {
+            const urls = [];
+            for (const img of imagenes) {
+                if (img.url) {
+                urls.push(img.url); // ya subida
+                } else if (img.file) {
+                const url = await subirImagenCloudinary(img.file, prefijo, setEstado);
+                img.url = url;
+                urls.push(url);
+                }
+            }
+            return urls;
+            },
+            // Carga URLs existentes al editar un producto
+            setUrls(urls) {
+            imagenes = (urls || []).map(url => ({ file: null, url, previewSrc: url }));
+            renderPreviews();
+            },
+            reset() {
+            imagenes = [];
+            renderPreviews();
+            },
+            // Para el toast de estado (reutilizamos el global)
+            setEstado: (msg, cls) => {},
+        };
+        }
+
+        const uploaderNovedad   = setupImagenUploadMultiple('novedad-imagen-file',   'upload-area-novedad',   'preview-list-novedad',   'novedad-imagen-url');
+        const uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
+        const uploaderCombo     = setupImagenUploadMultiple('combo-imagen-file',     'upload-area-combo',     'preview-list-combo',     'combo-imagen-url');
 
         /* ====== UTILIDADES ====== */
         function fmt(n) {
@@ -1651,236 +1632,123 @@
             initDragAndDrop('lista-novedades', 'novedades', cargarNovedades);
         }
 
+        /* ====== NOVEDADES - abrir modal ====== */
         function abrirModalNovedad(id = '', p = {}) {
-            document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
-            document.getElementById('novedad-id').value = id;
-            document.getElementById('novedad-nombre').value = p.nombre || '';
-            document.getElementById('novedad-descripcion').value = p.descripcion || '';
-            document.getElementById('novedad-precio').value = p.precio || '';
-            document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
-            uploaderNovedad.reset();
-            if (p.imagen) uploaderNovedad.setUrl(p.imagen);
-            document.getElementById('modal-novedad').classList.add('active');
+        document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
+        document.getElementById('novedad-id').value = id;
+        document.getElementById('novedad-nombre').value = p.nombre || '';
+        document.getElementById('novedad-descripcion').value = p.descripcion || '';
+        document.getElementById('novedad-precio').value = p.precio || '';
+        document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
+        uploaderNovedad.reset();
+        // Cargar imágenes existentes (campo 'imagenes' array, o 'imagen' string legacy)
+        const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
+        uploaderNovedad.setUrls(imgs);
+        document.getElementById('modal-novedad').classList.add('active');
         }
 
-        document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
-        document.getElementById('btn-cancelar-novedad').addEventListener('click', () => cerrarModal('modal-novedad'));
-
+        /* ====== NOVEDADES - guardar ====== */
         document.getElementById('btn-guardar-novedad').addEventListener('click', async () => {
-            const id = document.getElementById('novedad-id').value;
-            const nombre = document.getElementById('novedad-nombre').value.trim();
-            const descripcion = document.getElementById('novedad-descripcion').value.trim();
-            const precio = parseInt(document.getElementById('novedad-precio').value);
-            const enStock = document.getElementById('novedad-stock').value === 'true';
-            if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
+        const id = document.getElementById('novedad-id').value;
+        const nombre = document.getElementById('novedad-nombre').value.trim();
+        const descripcion = document.getElementById('novedad-descripcion').value.trim();
+        const precio = parseInt(document.getElementById('novedad-precio').value);
+        const enStock = document.getElementById('novedad-stock').value === 'true';
+        if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
 
-            let imagen = uploaderNovedad.getUrl();
-            const file = uploaderNovedad.getFile();
-            if (file) {
-                try { imagen = await subirImagenCloudinary(file, 'novedades', uploaderNovedad.setEstado); }
-                catch (e) { toast('Error al subir la imagen', 'error'); return; }
-            }
+        let imagenes = [];
+        try { imagenes = await uploaderNovedad.subirTodas('novedades', uploaderNovedad.setEstado); }
+        catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-            const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'novedad' };
-            try {
-                if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
-                else { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
-                cerrarModal('modal-novedad');
-                cargarNovedades();
-            } catch (e) { toast('Error al guardar', 'error'); }
+        const data = { nombre, descripcion, precio, enStock,
+            imagenes,
+            imagen: imagenes[0] || '',  // compatibilidad legacy
+            tipo: 'novedad' };
+        try {
+            if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
+            else { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
+            cerrarModal('modal-novedad'); cargarNovedades();
+        } catch (e) { toast('Error al guardar', 'error'); }
         });
 
-        /* ====== PROMOCIONES ====== */
-        async function cargarPromociones() {
-            const lista = document.getElementById('lista-promociones');
-            lista.innerHTML = '<div class="loading">Cargando...</div>';
-            const snap = await getDocs(collection(db, 'promociones'));
-            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin promociones aún. Agregá la primera.</div>'; return; }
-            lista.innerHTML = '';
-            // Ordenar por campo 'orden'
-            const docsOrdenados = snap.docs.sort((a, b) => 
-                (a.data().orden ?? 999) - (b.data().orden ?? 999)
-            );
-            docsOrdenados.forEach(d => {
-                const p = d.data();
-                const row = document.createElement('div');
-                row.className = 'producto-row th-promocion';
-                row.draggable = true;
-                row.dataset.id = d.id;  // ← necesario para el drag & drop  
-                row.innerHTML = `
-            ${thumbHTML(p.imagen)}
-            <span class="producto-nombre-cell">${p.nombre}</span>
-            <span class="producto-desc-cell">${p.descripcion || ''}</span>
-            <span>${fmt(p.precioOriginal)}</span>
-            <span>${fmt(p.precioDescuento)}</span>
-            <span>${p.descuentoPorcentaje}%</span>
-            <span><span class="stock-badge ${p.enStock ? 'en-stock' : 'sin-stock'}">${p.enStock ? 'Con stock' : 'Sin stock'}</span></span>
-            <div class="row-actions">
-                <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${p.visible !== false}">
-                    ${p.visible !== false ? '👁️' : '🙈'}</button>
-                <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${p.enStock}">📦</button>
-                <button class="btn-edit">✏️</button>
-                <button class="btn-delete">🗑️</button>
-            </div>`;
-                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
-                    const btn = e.currentTarget;
-                    const esVisible = btn.dataset.visible === 'true';
-                    await toggleVisible('novedades', btn.dataset.id, esVisible);
-                    cargarNovedades();
-                });
-                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-                    const btn = e.currentTarget;
-                    await toggleStock('promociones', btn.dataset.id, btn.dataset.stock === 'true');
-                    cargarPromociones();
-                });
-                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
-                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
-                lista.appendChild(row);
-            });
-            initDragAndDrop('lista-promociones', 'promociones', cargarPromociones);
-        }
-
+        /* ====== PROMOCIONES - abrir modal ====== */
         function abrirModalPromocion(id = '', p = {}) {
-            document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
-            document.getElementById('promocion-id').value = id;
-            document.getElementById('promocion-nombre').value = p.nombre || '';
-            document.getElementById('promocion-descripcion').value = p.descripcion || '';
-            document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
-            document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
-            document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
-            document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
-            uploaderPromocion.reset();
-            if (p.imagen) uploaderPromocion.setUrl(p.imagen);
-            document.getElementById('modal-promocion').classList.add('active');
+        document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
+        document.getElementById('promocion-id').value = id;
+        document.getElementById('promocion-nombre').value = p.nombre || '';
+        document.getElementById('promocion-descripcion').value = p.descripcion || '';
+        document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
+        document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
+        document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
+        document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
+        uploaderPromocion.reset();
+        const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
+        uploaderPromocion.setUrls(imgs);
+        document.getElementById('modal-promocion').classList.add('active');
         }
 
-        document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
-        document.getElementById('btn-cancelar-promocion').addEventListener('click', () => cerrarModal('modal-promocion'));
-
-        document.getElementById('promocion-precio-original').addEventListener('input', calcularDescuento);
-        document.getElementById('promocion-precio-descuento').addEventListener('input', calcularDescuento);
-
-        function calcularDescuento() {
-            const orig = parseFloat(document.getElementById('promocion-precio-original').value);
-            const desc = parseFloat(document.getElementById('promocion-precio-descuento').value);
-            if (orig > 0 && desc > 0 && desc < orig) {
-                document.getElementById('promocion-descuento-pct').value = Math.round(((orig - desc) / orig) * 100);
-            } else {
-                document.getElementById('promocion-descuento-pct').value = '';
-            }
-        }
-
+        /* ====== PROMOCIONES - guardar ====== */
         document.getElementById('btn-guardar-promocion').addEventListener('click', async () => {
-            const id = document.getElementById('promocion-id').value;
-            const nombre = document.getElementById('promocion-nombre').value.trim();
-            const descripcion = document.getElementById('promocion-descripcion').value.trim();
-            const precioOriginal = parseInt(document.getElementById('promocion-precio-original').value);
-            const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
-            const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
-            const enStock = document.getElementById('promocion-stock').value === 'true';
-            if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
+        const id = document.getElementById('promocion-id').value;
+        const nombre = document.getElementById('promocion-nombre').value.trim();
+        const descripcion = document.getElementById('promocion-descripcion').value.trim();
+        const precioOriginal = parseInt(document.getElementById('promocion-precio-original').value);
+        const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
+        const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
+        const enStock = document.getElementById('promocion-stock').value === 'true';
+        if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
 
-            let imagen = uploaderPromocion.getUrl();
-            const file = uploaderPromocion.getFile();
-            if (file) {
-                try { imagen = await subirImagenCloudinary(file, 'promociones', uploaderPromocion.setEstado); }
-                catch (e) { toast('Error al subir la imagen', 'error'); return; }
-            }
+        let imagenes = [];
+        try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
+        catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-            const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, imagen: imagen || '', tipo: 'promocion' };
-            try {
-                if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
-                else { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
-                cerrarModal('modal-promocion');
-                cargarPromociones();
-            } catch (e) { toast('Error al guardar', 'error'); }
+        const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock,
+            imagenes,
+            imagen: imagenes[0] || '',
+            tipo: 'promocion' };
+        try {
+            if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
+            else { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
+            cerrarModal('modal-promocion'); cargarPromociones();
+        } catch (e) { toast('Error al guardar', 'error'); }
         });
 
-        /* ====== COMBOS ====== */
-        async function cargarCombos() {
-            const lista = document.getElementById('lista-combos');
-            lista.innerHTML = '<div class="loading">Cargando...</div>';
-            const snap = await getDocs(collection(db, 'combos'));
-            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún. Agregá el primero.</div>'; return; }
-            lista.innerHTML = '';
-            // Ordenar por campo 'orden'
-            const docsOrdenados = snap.docs.sort((a, b) => 
-                (a.data().orden ?? 999) - (b.data().orden ?? 999)
-            );
-            docsOrdenados.forEach(d => {
-                const c = d.data();
-                const row = document.createElement('div');
-                row.className = 'producto-row th-combo';
-                row.draggable = true;
-                row.dataset.id = d.id;  // ← necesario para el drag & drop  
-                row.innerHTML = `
-            ${thumbHTML(c.imagen)}
-            <span class="producto-nombre-cell">${c.nombre}</span>
-            <span class="producto-desc-cell">${c.descripcion || ''}</span>
-            <span>${fmt(c.precio)}</span>
-            <span><span class="stock-badge ${c.enStock ? 'en-stock' : 'sin-stock'}">${c.enStock ? 'Con stock' : 'Sin stock'}</span></span>
-            <div class="row-actions">
-                <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${c.visible !== false}">
-                    ${c.visible !== false ? '👁️' : '🙈'}</button>
-                <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${c.enStock}">📦</button>
-                <button class="btn-edit">✏️</button>
-                <button class="btn-delete">🗑️</button>
-            </div>`;
-                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
-                    const btn = e.currentTarget;
-                    const esVisible = btn.dataset.visible === 'true';
-                    await toggleVisible('novedades', btn.dataset.id, esVisible);
-                    cargarNovedades();
-                });
-                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-                    const btn = e.currentTarget;
-                    await toggleStock('combos', btn.dataset.id, btn.dataset.stock === 'true');
-                    cargarCombos();
-                });
-                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
-                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
-                lista.appendChild(row);
-            });
-            initDragAndDrop('lista-combos', 'combos', cargarCombos);
-        }
-
+        /* ====== COMBOS - abrir modal ====== */
         function abrirModalCombo(id = '', c = {}) {
-            document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
-            document.getElementById('combo-id').value = id;
-            document.getElementById('combo-nombre').value = c.nombre || '';
-            document.getElementById('combo-descripcion').value = c.descripcion || '';
-            document.getElementById('combo-precio').value = c.precio || '';
-            document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
-            uploaderCombo.reset();
-            if (c.imagen) uploaderCombo.setUrl(c.imagen);
-            document.getElementById('modal-combo').classList.add('active');
+        document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
+        document.getElementById('combo-id').value = id;
+        document.getElementById('combo-nombre').value = c.nombre || '';
+        document.getElementById('combo-descripcion').value = c.descripcion || '';
+        document.getElementById('combo-precio').value = c.precio || '';
+        document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
+        uploaderCombo.reset();
+        const imgs = c.imagenes || (c.imagen ? [c.imagen] : []);
+        uploaderCombo.setUrls(imgs);
+        document.getElementById('modal-combo').classList.add('active');
         }
 
-        document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
-        document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModal('modal-combo'));
-
+        /* ====== COMBOS - guardar ====== */
         document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
-            const id = document.getElementById('combo-id').value;
-            const nombre = document.getElementById('combo-nombre').value.trim();
-            const descripcion = document.getElementById('combo-descripcion').value.trim();
-            const precio = parseInt(document.getElementById('combo-precio').value);
-            const enStock = document.getElementById('combo-stock').value === 'true';
-            if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
+        const id = document.getElementById('combo-id').value;
+        const nombre = document.getElementById('combo-nombre').value.trim();
+        const descripcion = document.getElementById('combo-descripcion').value.trim();
+        const precio = parseInt(document.getElementById('combo-precio').value);
+        const enStock = document.getElementById('combo-stock').value === 'true';
+        if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
 
-            let imagen = uploaderCombo.getUrl();
-            const file = uploaderCombo.getFile();
-            if (file) {
-                try { imagen = await subirImagenCloudinary(file, 'combos', uploaderCombo.setEstado); }
-                catch (e) { toast('Error al subir la imagen', 'error'); return; }
-            }
+        let imagenes = [];
+        try { imagenes = await uploaderCombo.subirTodas('combos', uploaderCombo.setEstado); }
+        catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-            const data = { nombre, descripcion, precio, enStock, imagen: imagen || '', tipo: 'combo' };
-            try {
-                if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
-                else { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
-                cerrarModal('modal-combo');
-                cargarCombos();
-            } catch (e) { toast('Error al guardar', 'error'); }
+        const data = { nombre, descripcion, precio, enStock,
+            imagenes,
+            imagen: imagenes[0] || '',
+            tipo: 'combo' };
+        try {
+            if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
+            else { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
+            cerrarModal('modal-combo'); cargarCombos();
+        } catch (e) { toast('Error al guardar', 'error'); }
         });
 
         /* ====== DRAG & DROP ORDEN ====== */
