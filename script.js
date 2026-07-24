@@ -214,6 +214,7 @@ function initCarrusel(id) {
 function crearTarjetaProducto(producto, tipo) {
   const tarjeta = document.createElement('div');
   tarjeta.className = 'producto-card' + (!producto.enStock ? ' sin-stock' : '');
+  tarjeta.dataset.categoria = producto.categoria || '';
 
   const badge = tipo === 'novedad'
     ? `<div class="producto-badge badge-nuevo">NUEVO</div>`
@@ -272,6 +273,7 @@ function crearTarjetaProducto(producto, tipo) {
 function crearTarjetaCombo(combo) {
   const tarjeta = document.createElement('div');
   tarjeta.className = 'producto-card combo-card' + (!combo.enStock ? ' sin-stock' : '');
+  tarjeta.dataset.categoria = combo.categoria || '';
   const imagenes = combo.imagenes || (combo.imagen ? [combo.imagen] : []);
   const { html: carHtml, id: carId } = crearCarrusel(imagenes, combo.nombre);
 
@@ -975,6 +977,60 @@ function cerrarModalProducto() {
 }
 
 document.getElementById('btn-volver-modal').addEventListener('click', cerrarModalProducto);
+
+/* ============================================
+   FILTROS POR CATEGORÍA
+   ============================================ */
+
+let filtroActivo = null;
+let todosMostrados = true;
+let todosLosProductos = { novedades: [], promociones: [], combos: [] };
+
+async function cargarFiltros() {
+    const { getDocs: gd, collection: col } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+    const snap = await gd(col(db, 'categorias'));
+    const categorias = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => a.nombre.localeCompare(b.nombre));
+    
+    const container = document.getElementById('filtros-container');
+    container.innerHTML = '';
+
+    // Botón "Todos"
+    const btnTodos = document.createElement('button');
+    btnTodos.textContent = 'Todos';
+    btnTodos.className = 'filtro-btn filtro-btn--active';
+    btnTodos.addEventListener('click', () => aplicarFiltro(null, btnTodos));
+    container.appendChild(btnTodos);
+
+    categorias.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat.nombre;
+        btn.className = 'filtro-btn';
+        btn.addEventListener('click', () => aplicarFiltro(cat.id, btn));
+        container.appendChild(btn);
+    });
+}
+
+function aplicarFiltro(catId, btnActivo) {
+    filtroActivo = catId;
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('filtro-btn--active'));
+    btnActivo.classList.add('filtro-btn--active');
+
+    document.querySelectorAll('.producto-card').forEach(card => {
+        if (!catId) {
+            card.style.display = '';
+        } else {
+            card.style.display = card.dataset.categoria === catId ? '' : 'none';
+        }
+    });
+}
+
+document.getElementById('filtros-btn').addEventListener('click', () => {
+    const bar = document.getElementById('filtros-bar');
+    const visible = bar.style.display !== 'none';
+    bar.style.display = visible ? 'none' : 'block';
+    if (!visible) cargarFiltros();
+});
 
 /* ============================================
    FIN DEL SCRIPT

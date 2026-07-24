@@ -1709,3 +1709,28 @@ html {
 .producto-descripcion {
   flex-grow: 1;  /* empuja el botón hacia abajo */
 }
+
+/* ============================================
+   FILTROS
+   ============================================ */
+.filtro-btn {
+    padding: 8px 20px;
+    border-radius: 32px;
+    border: 2px solid var(--color-primary);
+    background: white;
+    color: var(--color-primary);
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.filtro-btn:hover {
+    background: var(--color-primary);
+    color: white;
+}
+.filtro-btn--active {
+    background: var(--color-primary);
+    color: white;
+}
