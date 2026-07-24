@@ -1328,6 +1328,21 @@
         </div>
     </div>
 
+    <!-- MODAL CATEGORIA -->
+    <div class="modal-overlay" id="modal-categoria">
+        <div class="modal">
+            <h3>Nueva categoría</h3>
+            <div class="form-group">
+                <label>Nombre de la categoría</label>
+                <input type="text" id="categoria-nombre" placeholder="Ej: Perfumes, Cremas, Medicamentos...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btn-cancelar-categoria">Cancelar</button>
+                <button class="btn-save" id="btn-guardar-categoria">Guardar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL CONFIRMAR ELIMINACIÓN -->
     <div class="confirm-overlay" id="confirm-overlay">
         <div class="confirm-box">
@@ -2139,6 +2154,28 @@
         document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
         document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
         document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
+
+        document.getElementById('btn-nueva-categoria').addEventListener('click', () => {
+            document.getElementById('categoria-nombre').value = '';
+            document.getElementById('modal-categoria').classList.add('active');
+        });
+        document.getElementById('btn-cancelar-categoria').addEventListener('click', () => {
+            cerrarModal('modal-categoria');
+        });
+        document.getElementById('btn-guardar-categoria').addEventListener('click', async () => {
+            const nombre = document.getElementById('categoria-nombre').value.trim();
+            if (!nombre) { toast('Escribí un nombre', 'error'); return; }
+            await addDoc(collection(db, 'categorias'), { nombre });
+            toast('Categoría creada', 'success');
+            cerrarModal('modal-categoria');
+            categoriasCache = [];
+            cargarCategorias();
+        });
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (tab.dataset.tab === 'categorias') cargarCategorias();
+            });
+        });
 
         /* ====== CERRAR MODALES CON OVERLAY ====== */
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
