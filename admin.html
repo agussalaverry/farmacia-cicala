@@ -1577,7 +1577,7 @@
         /* ====== CARGAR TODO ====== */
         function cargarTodo() { 
             setTimeout(() => { cargarNovedades(); cargarPromociones(); cargarCombos(); }, 0);
-        }Ñ
+        }
 
         /* ====== NOVEDADES ====== */
         async function cargarNovedades() {
@@ -1629,6 +1629,98 @@
                 lista.appendChild(row);
             });
             initDragAndDrop('lista-novedades', 'novedades', cargarNovedades);
+        }
+
+        /* ====== PROMOCIONES ====== */
+        async function cargarPromociones() {
+            const lista = document.getElementById('lista-promociones');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'promociones'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin promociones aún.</div>'; return; }
+            lista.innerHTML = '';
+            const docsOrdenados = snap.docs.sort((a, b) =>
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
+                const p = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-promocion';
+                row.draggable = true;
+                row.dataset.id = d.id;
+                row.innerHTML = `
+                    ${thumbHTML(p.imagen)}
+                    <span class="producto-nombre-cell">${p.nombre}</span>
+                    <span class="producto-desc-cell">${p.descripcion || ''}</span>
+                    <span>${fmt(p.precioOriginal)}</span>
+                    <span>${fmt(p.precioDescuento)}</span>
+                    <span>${p.descuentoPorcentaje || 0}%</span>
+                    <span><span class="stock-badge ${p.enStock ? 'en-stock' : 'sin-stock'}">${p.enStock ? 'Con stock' : 'Sin stock'}</span></span>
+                    <div class="row-actions">
+                        <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${p.visible !== false}">${p.visible !== false ? '👁️' : '🙈'}</button>
+                        <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${p.enStock}">📦</button>
+                        <button class="btn-edit">✏️</button>
+                        <button class="btn-delete">🗑️</button>
+                    </div>`;
+                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleVisible('promociones', btn.dataset.id, btn.dataset.visible === 'true');
+                    cargarPromociones();
+                });
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('promociones', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarPromociones();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
+                lista.appendChild(row);
+            });
+            initDragAndDrop('lista-promociones', 'promociones', cargarPromociones);
+        }
+
+        /* ====== COMBOS ====== */
+        async function cargarCombos() {
+            const lista = document.getElementById('lista-combos');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'combos'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún.</div>'; return; }
+            lista.innerHTML = '';
+            const docsOrdenados = snap.docs.sort((a, b) =>
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
+                const c = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-combo';
+                row.draggable = true;
+                row.dataset.id = d.id;
+                row.innerHTML = `
+                    ${thumbHTML(c.imagen)}
+                    <span class="producto-nombre-cell">${c.nombre}</span>
+                    <span class="producto-desc-cell">${c.descripcion || ''}</span>
+                    <span>${fmt(c.precio)}</span>
+                    <span><span class="stock-badge ${c.enStock ? 'en-stock' : 'sin-stock'}">${c.enStock ? 'Con stock' : 'Sin stock'}</span></span>
+                    <div class="row-actions">
+                        <button class="btn-toggle-visible" data-id="${d.id}" data-visible="${c.visible !== false}">${c.visible !== false ? '👁️' : '🙈'}</button>
+                        <button class="btn-toggle-stock" data-id="${d.id}" data-stock="${c.enStock}">📦</button>
+                        <button class="btn-edit">✏️</button>
+                        <button class="btn-delete">🗑️</button>
+                    </div>`;
+                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleVisible('combos', btn.dataset.id, btn.dataset.visible === 'true');
+                    cargarCombos();
+                });
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('combos', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarCombos();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
+                lista.appendChild(row);
+            });
+            initDragAndDrop('lista-combos', 'combos', cargarCombos);
         }
 
         /* ====== NOVEDADES - abrir modal ====== */
