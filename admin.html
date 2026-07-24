@@ -1849,7 +1849,7 @@
         try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
         catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-        const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock,
+        const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
             imagenes,
             imagen: imagenes[0] || '',
             tipo: 'promocion' };
