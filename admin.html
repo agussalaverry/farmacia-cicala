@@ -1955,12 +1955,6 @@
                     r.classList.remove('drag-over');
                 });
             });
-            document.getElementById('btn-sort-novedades').addEventListener('click', () =>
-                ordenarAlfabetico('novedades', cargarNovedades));
-            document.getElementById('btn-sort-promociones').addEventListener('click', () =>
-                ordenarAlfabetico('promociones', cargarPromociones));
-            document.getElementById('btn-sort-combos').addEventListener('click', () =>
-                ordenarAlfabetico('combos', cargarCombos));
         }
 
         async function ordenarAlfabetico(coleccion, recargar) {
@@ -2163,11 +2157,13 @@
             categoriasCache = [];
             cargarCategorias();
         });
-        document.querySelectorAll('.admin-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                if (tab.dataset.tab === 'categorias') cargarCategorias();
-            });
-        });
+
+        document.getElementById('btn-sort-novedades').addEventListener('click', () =>
+            ordenarAlfabetico('novedades', cargarNovedades));
+        document.getElementById('btn-sort-promociones').addEventListener('click', () =>
+            ordenarAlfabetico('promociones', cargarPromociones));
+        document.getElementById('btn-sort-combos').addEventListener('click', () =>
+            ordenarAlfabetico('combos', cargarCombos));
 
         /* ====== CERRAR MODALES CON OVERLAY ====== */
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
