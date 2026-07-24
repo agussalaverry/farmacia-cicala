@@ -1171,6 +1171,10 @@
             <div id="preview-list-novedad" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
             <input type="hidden" id="novedad-imagen-url">
             </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btn-cancelar-novedad">Cancelar</button>
+                <button class="btn-save" id="btn-guardar-novedad">Guardar</button>
+            </div>
         </div>
     </div>
 
@@ -1967,6 +1971,13 @@
                 recargar();
             });
         }
+        
+        document.getElementById('btn-cancelar-novedad').addEventListener('click', () => cerrarModal('modal-novedad'));
+        document.getElementById('btn-cancelar-promocion').addEventListener('click', () => cerrarModal('modal-promocion'));
+        document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModal('modal-combo'));
+        document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
+        document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
+        document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
 
         /* ====== CERRAR MODALES CON OVERLAY ====== */
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
