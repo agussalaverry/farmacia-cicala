@@ -2139,7 +2139,7 @@
             await addDoc(collection(db, 'categorias'), { nombre: nombre.trim() });
             toast('Categoría creada', 'success');
             cargarCategorias();
-        });
+        }); 
 
         // Cargar categorías cuando se abre esa tab
         document.querySelectorAll('.admin-tab').forEach(tab => {
