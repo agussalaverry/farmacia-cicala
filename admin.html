@@ -1765,7 +1765,7 @@
         document.getElementById('novedad-descripcion').value = p.descripcion || '';
         document.getElementById('novedad-precio').value = p.precio || '';
         document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
-        await cargarCategorias();
+        await actualizarSelectsCategorias();
         document.getElementById('novedad-categoria').value = p.categoria || '';
         uploaderNovedad.reset();
         // Cargar imágenes existentes (campo 'imagenes' array, o 'imagen' string legacy)
@@ -1810,7 +1810,7 @@
         document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
         document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
         document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
-        await cargarCategorias();
+        await actualizarSelectsCategorias();
         document.getElementById('promocion-categoria').value = p.categoria || '';
         uploaderPromocion.reset();
         const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
@@ -1853,7 +1853,7 @@
         document.getElementById('combo-descripcion').value = c.descripcion || '';
         document.getElementById('combo-precio').value = c.precio || '';
         document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
-        await cargarCategorias();
+        await actualizarSelectsCategorias();
         document.getElementById('combo-categoria').value = c.categoria || '';
         uploaderCombo.reset();
         const imgs = c.imagenes || (c.imagen ? [c.imagen] : []);
@@ -2092,7 +2092,12 @@
             lista.appendChild(el);
         }
 
-        function actualizarSelectsCategorias() {
+        async function actualizarSelectsCategorias() {
+            if (categoriasCache.length === 0) {
+                const snap = await getDocs(collection(db, 'categorias'));
+                categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => a.nombre.localeCompare(b.nombre));
+            }
             ['novedad-categoria', 'promocion-categoria', 'combo-categoria'].forEach(id => {
                 const sel = document.getElementById(id);
                 if (!sel) return;
