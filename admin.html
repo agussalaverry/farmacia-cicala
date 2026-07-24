@@ -2133,14 +2133,6 @@
             });
         };
 
-        document.getElementById('btn-nueva-categoria').addEventListener('click', async () => {
-            const nombre = prompt('Nombre de la nueva categoría:');
-            if (!nombre || !nombre.trim()) return;
-            await addDoc(collection(db, 'categorias'), { nombre: nombre.trim() });
-            toast('Categoría creada', 'success');
-            cargarCategorias();
-        }); 
-
         // Cargar categorías cuando se abre esa tab
         document.querySelectorAll('.admin-tab').forEach(tab => {
             tab.addEventListener('click', () => {
