@@ -1826,6 +1826,7 @@
         try { imagenes = await uploaderNovedad.subirTodas('novedades', uploaderNovedad.setEstado); }
         catch (e) { toast('Error al subir imagen', 'error'); return; }
 
+        const portada = imagenes.find(i => i.esPortada) || imagenes[0];
         const data = {
         nombre, descripcion, precio, enStock, categoria,
         imagenes,
@@ -1874,9 +1875,10 @@
         try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
         catch (e) { toast('Error al subir imagen', 'error'); return; }
 
+        const portada = imagenes.find(i => i.esPortada) || imagenes[0];
         const data = {
         nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
-        imagenes: imagenesData,
+        imagenes,
         imagen: portada?.url || '',
         tipo: 'promocion'
         };
@@ -1917,9 +1919,10 @@
         try { imagenes = await uploaderCombo.subirTodas('combos', uploaderCombo.setEstado); }
         catch (e) { toast('Error al subir imagen', 'error'); return; }
 
+        const portada = imagenes.find(i => i.esPortada) || imagenes[0];
         const data = {
         nombre, descripcion, precio, enStock, categoria,
-        imagenes: imagenesData,
+        imagenes,
         imagen: portada?.url || '',
         tipo: 'combo'
         };
