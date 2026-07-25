@@ -1512,89 +1512,112 @@
 
         /* ====== SETUP UPLOADERS MÚLTIPLES ====== */
         function setupImagenUploadMultiple(inputId, areaId, previewListId, urlInputId) {
-        const input = document.getElementById(inputId);
-        const area = document.getElementById(areaId);
-        const previewList = document.getElementById(previewListId);
-        const urlInput = document.getElementById(urlInputId);
+  const input = document.getElementById(inputId);
+  const area = document.getElementById(areaId);
+  const previewList = document.getElementById(previewListId);
 
-        // Estado interno: array de { file?, url, previewSrc }
-        let imagenes = [];
+  let imagenes = [];
 
-        function renderPreviews() {
-            previewList.innerHTML = '';
-            imagenes.forEach((img, idx) => {
-            const wrap = document.createElement('div');
-            wrap.style.cssText = 'position:relative;display:inline-block;';
-            const im = document.createElement('img');
-            im.src = img.previewSrc;
-            im.style.cssText = 'width:72px;height:72px;object-fit:cover;border-radius:8px;border:2px solid #F2C0D8;';
-            const btn = document.createElement('button');
-            btn.textContent = '✕';
-            btn.type = 'button';
-            btn.style.cssText = 'position:absolute;top:-6px;right:-6px;background:#E53935;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;padding:0;';
-            btn.addEventListener('click', () => { imagenes.splice(idx, 1); renderPreviews(); });
-            wrap.appendChild(im);
-            wrap.appendChild(btn);
-            previewList.appendChild(wrap);
-            });
-        }
+  function renderPreviews() {
+    previewList.innerHTML = '';
+    imagenes.forEach((img, idx) => {
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'position:relative;display:inline-flex;flex-direction:column;gap:4px;align-items:center;width:110px;';
 
-        async function procesarFiles(files) {
-            for (const file of files) {
-            await new Promise(resolve => {
-                abrirRecortador(file, (resultado) => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    imagenes.push({ file: resultado, url: '', previewSrc: e.target.result });
-                    renderPreviews();
-                    resolve();
-                };
-                reader.readAsDataURL(resultado);
-                });
-            });
-            }
-        }
+      const im = document.createElement('img');
+      im.src = img.previewSrc;
+      im.style.cssText = `width:90px;height:90px;object-fit:cover;border-radius:8px;border:3px solid ${img.esPortada ? '#D5006D' : '#F2C0D8'};cursor:pointer;`;
+      im.title = 'Hacer portada';
+      im.addEventListener('click', () => {
+        imagenes.forEach((i, j) => i.esPortada = (j === idx));
+        renderPreviews();
+      });
 
-        input.addEventListener('change', async e => {
-            if (e.target.files.length) await procesarFiles([...e.target.files]);
-            input.value = '';
-        });
+      if (img.esPortada) {
+        const badge = document.createElement('span');
+        badge.textContent = '⭐ Portada';
+        badge.style.cssText = 'position:absolute;top:4px;left:4px;background:#D5006D;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;pointer-events:none;';
+        wrap.appendChild(badge);
+      }
 
-        area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
-        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-        area.addEventListener('drop', async e => {
-            e.preventDefault(); area.classList.remove('dragover');
-            if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files]);
-        });
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.placeholder = 'Ej: Menta';
+      nameInput.value = img.nombre || '';
+      nameInput.style.cssText = 'width:90px;font-size:11px;padding:4px;border:1px solid #F2C0D8;border-radius:6px;font-family:Nunito,sans-serif;text-align:center;';
+      nameInput.addEventListener('input', e => { imagenes[idx].nombre = e.target.value; });
 
-        return {
-            // Sube todas las imágenes pendientes y devuelve array de URLs
-            async subirTodas(prefijo, setEstado) {
-            const urls = [];
-            for (const img of imagenes) {
-                if (img.url) {
-                urls.push(img.url); // ya subida
-                } else if (img.file) {
-                const url = await subirImagenCloudinary(img.file, prefijo, setEstado);
-                img.url = url;
-                urls.push(url);
-                }
-            }
-            return urls;
-            },
-            // Carga URLs existentes al editar un producto
-            setUrls(urls) {
-            imagenes = (urls || []).map(url => ({ file: null, url, previewSrc: url }));
+      const btn = document.createElement('button');
+      btn.textContent = '✕';
+      btn.type = 'button';
+      btn.style.cssText = 'position:absolute;top:-6px;right:4px;background:#E53935;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;padding:0;';
+      btn.addEventListener('click', () => {
+        imagenes.splice(idx, 1);
+        if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
+        renderPreviews();
+      });
+
+      wrap.appendChild(im);
+      wrap.appendChild(nameInput);
+      wrap.appendChild(btn);
+      previewList.appendChild(wrap);
+    });
+  }
+
+  async function procesarFiles(files) {
+    for (const file of files) {
+      await new Promise(resolve => {
+        abrirRecortador(file, resultado => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            const esPortada = imagenes.length === 0;
+            imagenes.push({ file: resultado, url: '', nombre: '', esPortada, previewSrc: e.target.result });
             renderPreviews();
-            },
-            reset() {
-            imagenes = [];
-            renderPreviews();
-            },
-            // Para el toast de estado (reutilizamos el global)
-            setEstado: (msg, cls) => {},
-        };
+            resolve();
+          };
+          reader.readAsDataURL(resultado);
+        });
+      });
+    }
+  }
+
+  input.addEventListener('change', async e => {
+    if (e.target.files.length) await procesarFiles([...e.target.files]);
+    input.value = '';
+  });
+
+  area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+  area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+  area.addEventListener('drop', async e => {
+    e.preventDefault(); area.classList.remove('dragover');
+    if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files]);
+  });
+
+  return {
+    async subirTodas(prefijo, setEstado) {
+      const result = [];
+      for (const img of imagenes) {
+        let url = img.url;
+        if (!url && img.file) {
+          url = await subirImagenCloudinary(img.file, prefijo, setEstado);
+          img.url = url;
         }
+        result.push({ url, nombre: img.nombre || '', esPortada: img.esPortada || false });
+      }
+      return result;
+    },
+    setUrls(imgs) {
+      imagenes = (imgs || []).map((img, idx) => {
+        if (typeof img === 'string') return { file: null, url: img, nombre: '', esPortada: idx === 0, previewSrc: img };
+        return { file: null, url: img.url, nombre: img.nombre || '', esPortada: img.esPortada || false, previewSrc: img.url };
+      });
+      if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
+      renderPreviews();
+    },
+    reset() { imagenes = []; renderPreviews(); },
+    setEstado: () => {},
+  };
+}
 
     let uploaderNovedad, uploaderPromocion, uploaderCombo;
     document.addEventListener('DOMContentLoaded', () => {
@@ -1803,10 +1826,12 @@
         try { imagenes = await uploaderNovedad.subirTodas('novedades', uploaderNovedad.setEstado); }
         catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-        const data = { nombre, descripcion, precio, enStock, categoria,
-            imagenes,
-            imagen: imagenes[0] || '',  // compatibilidad legacy
-            tipo: 'novedad' };
+        const data = {
+        nombre, descripcion, precio, enStock, categoria,
+        imagenes,
+        imagen: portada?.url || '',
+        tipo: 'novedad'
+        };
         try {
             if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
             else { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
@@ -1849,10 +1874,12 @@
         try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
         catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-        const data = { nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
-            imagenes,
-            imagen: imagenes[0] || '',
-            tipo: 'promocion' };
+        const data = {
+        nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
+        imagenes: imagenesData,
+        imagen: portada?.url || '',
+        tipo: 'promocion'
+        };
         try {
             if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
             else { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
@@ -1890,10 +1917,12 @@
         try { imagenes = await uploaderCombo.subirTodas('combos', uploaderCombo.setEstado); }
         catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-        const data = { nombre, descripcion, precio, enStock, categoria,
-            imagenes,
-            imagen: imagenes[0] || '',
-            tipo: 'combo' };
+        const data = {
+        nombre, descripcion, precio, enStock, categoria,
+        imagenes: imagenesData,
+        imagen: portada?.url || '',
+        tipo: 'combo'
+        };
         try {
             if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
             else { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }

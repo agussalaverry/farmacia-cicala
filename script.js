@@ -145,16 +145,26 @@ function renderCombos(combos) {
     combos.forEach(c => combosContainer.appendChild(crearTarjetaCombo(c)));
 }
 
+function normalizarImagenes(imagenes, fallbackNombre = '') {
+  if (!imagenes || imagenes.length === 0) return [{ url: '', nombre: fallbackNombre, esPortada: true }];
+  return imagenes.map((img, idx) => {
+    if (typeof img === 'string') return { url: img, nombre: fallbackNombre, esPortada: idx === 0 };
+    return { url: img.url || '', nombre: img.nombre || fallbackNombre, esPortada: img.esPortada || false };
+  });
+}
+
 /* ====== HELPERS DE CARRUSEL ====== */
 function crearCarrusel(imagenes, altText, heightClass = '') {
-  // imagenes: array de URLs. Si viene vacío, placeholder.
-  const imgs = (imagenes && imagenes.length > 0) ? imagenes : [''];
+  const imgs = (imagenes && imagenes.length > 0) ? imagenes : [{ url: '', nombre: altText, esPortada: true }];
   const id = 'car-' + Math.random().toString(36).slice(2, 8);
 
   const html = `
     <div class="carrusel" id="${id}" data-idx="0">
       <div class="carrusel-track">
-        ${imgs.map(src => `<img src="${src}" alt="${altText}" class="producto-img ${heightClass}" onerror="this.src='';">`).join('')}
+        ${imgs.map(img => {
+          const src = typeof img === 'string' ? img : (img.url || '');
+          return `<img src="${src}" alt="${altText}" class="producto-img ${heightClass}" onerror="this.src='';">`;
+        }).join('')}
       </div>
       ${imgs.length > 1 ? `
         <button class="car-btn car-prev" aria-label="Anterior">&#8249;</button>
@@ -167,7 +177,7 @@ function crearCarrusel(imagenes, altText, heightClass = '') {
   return { html, id, total: imgs.length };
 }
 
-function initCarrusel(id) {
+function initCarrusel(id, onSlide) {
   const el = document.getElementById(id);
   if (!el) return;
   const track = el.querySelector('.carrusel-track');
@@ -182,6 +192,7 @@ function initCarrusel(id) {
     idx = (n + total) % total;
     track.style.transform = `translateX(-${idx * 100}%)`;
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    if (onSlide) onSlide(idx);
   }
 
   function startAuto() {
@@ -196,7 +207,6 @@ function initCarrusel(id) {
     e.stopPropagation(); goTo(idx + 1); startAuto();
   });
 
-  // Swipe táctil
   let startX = 0;
   track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
   track.addEventListener('touchend', e => {
@@ -205,7 +215,6 @@ function initCarrusel(id) {
   }, { passive: true });
 
   startAuto();
-  // Pausar al pasar el mouse
   el.addEventListener('mouseenter', () => clearInterval(timer));
   el.addEventListener('mouseleave', startAuto);
 }
@@ -232,8 +241,8 @@ function crearTarjetaProducto(producto, tipo) {
 
   const precioCarrito = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
   const precioTexto   = tipo === 'novedad' ? formatearPrecio(producto.precio) : formatearPrecio(producto.precioDescuento);
-  const imagenes = producto.imagenes || (producto.imagen ? [producto.imagen] : []);
-  const { html: carHtml, id: carId } = crearCarrusel(imagenes, producto.nombre);
+  const imagenesNorm  = normalizarImagenes(producto.imagenes || (producto.imagen ? [producto.imagen] : []), producto.nombre);
+  const { html: carHtml, id: carId } = crearCarrusel(imagenesNorm, producto.nombre);
 
   tarjeta.innerHTML = `
     <div class="producto-img-container">
@@ -247,25 +256,34 @@ function crearTarjetaProducto(producto, tipo) {
       ${producto.enStock ? 'Agregar al carrito' : 'Sin stock'}
     </button>`;
 
-  // Click en tarjeta → modal (excepto flechas y botón carrito)
+  let idxCard = 0;
+
   tarjeta.addEventListener('click', e => {
     if (e.target.closest('.btn-agregar-carrito') || e.target.closest('.car-btn')) return;
-    abrirModalProducto({ nombre: producto.nombre, descripcion: producto.descripcion,
-      imagenes, precio: precioTexto, enStock: producto.enStock,
-      id: producto.id, precioCarrito, tipo,
+    abrirModalProducto({
+      nombre: producto.nombre,
+      descripcion: producto.descripcion,
+      imagenes: imagenesNorm,
+      precio: precioTexto,
+      enStock: producto.enStock,
+      id: producto.id,
+      precioCarrito,
+      tipo,
       precioOriginal: tipo === 'promocion' ? producto.precioOriginal : null,
-      descuentoPorcentaje: producto.descuentoPorcentaje || null });
+      descuentoPorcentaje: producto.descuentoPorcentaje || null,
+      idxInicial: idxCard
+    });
   });
 
   if (producto.enStock) {
     tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
-      agregarAlCarrito({ id: producto.id, nombre: producto.nombre,
-        precio: precioCarrito, imagen: imagenes[0] || '', tipo });
+      const imgActual = imagenesNorm[idxCard];
+      const nombre = (imgActual && imgActual.nombre) ? imgActual.nombre : producto.nombre;
+      agregarAlCarrito({ id: producto.id, nombre, precio: precioCarrito, imagen: imgActual?.url || '', tipo });
     });
   }
 
-  // Inicializar carrusel DESPUÉS de que el elemento esté en el DOM
-  requestAnimationFrame(() => initCarrusel(carId));
+  requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxCard = nuevoIdx; }));
   return tarjeta;
 }
 
@@ -274,8 +292,9 @@ function crearTarjetaCombo(combo) {
   const tarjeta = document.createElement('div');
   tarjeta.className = 'producto-card combo-card' + (!combo.enStock ? ' sin-stock' : '');
   tarjeta.dataset.categoria = combo.categoria || '';
-  const imagenes = combo.imagenes || (combo.imagen ? [combo.imagen] : []);
-  const { html: carHtml, id: carId } = crearCarrusel(imagenes, combo.nombre);
+
+  const imagenesNorm = normalizarImagenes(combo.imagenes || (combo.imagen ? [combo.imagen] : []), combo.nombre);
+  const { html: carHtml, id: carId } = crearCarrusel(imagenesNorm, combo.nombre);
 
   tarjeta.innerHTML = `
     <div class="producto-img-container">
@@ -291,14 +310,17 @@ function crearTarjetaCombo(combo) {
       ${combo.enStock ? 'Agregar al carrito' : 'Sin stock'}
     </button>`;
 
+  let idxCard = 0;
+
   if (combo.enStock) {
     tarjeta.querySelector('.btn-agregar-carrito').addEventListener('click', () => {
-      agregarAlCarrito({ id: combo.id, nombre: combo.nombre,
-        precio: combo.precio, imagen: imagenes[0] || '', tipo: 'combo' });
+      const imgActual = imagenesNorm[idxCard];
+      const nombre = (imgActual && imgActual.nombre) ? imgActual.nombre : combo.nombre;
+      agregarAlCarrito({ id: combo.id, nombre, precio: combo.precio, imagen: imgActual?.url || '', tipo: 'combo' });
     });
   }
 
-  requestAnimationFrame(() => initCarrusel(carId));
+  requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxCard = nuevoIdx; }));
   return tarjeta;
 }
 
@@ -935,14 +957,20 @@ function abrirModalProducto(p) {
   document.querySelector('.header').style.display = 'none';
   document.querySelector('.secondary-nav').style.display = 'none';
 
-  const imagenes = p.imagenes || (p.imagen ? [p.imagen] : []);
+  const imagenes = p.imagenes || [{ url: '', nombre: p.nombre, esPortada: true }];
   const { html: carHtml, id: carId } = crearCarrusel(imagenes, p.nombre, 'modal-car-img');
 
-  // Inyectar carrusel en el modal
   const modalImgWrap = document.getElementById('modal-img-wrap');
   modalImgWrap.innerHTML = carHtml;
 
-  document.getElementById('modal-nombre').textContent = p.nombre;
+  const modalNombreEl = document.getElementById('modal-nombre');
+
+  function actualizarNombreVariante(idx) {
+    const img = imagenes[idx];
+    modalNombreEl.textContent = (img && img.nombre) ? img.nombre : p.nombre;
+  }
+  actualizarNombreVariante(p.idxInicial || 0);
+
   document.getElementById('modal-descripcion').textContent = p.descripcion;
 
   const precioEl = document.getElementById('modal-precio');
@@ -958,15 +986,36 @@ function abrirModalProducto(p) {
   const btnCarrito = document.getElementById('modal-btn-carrito');
   btnCarrito.textContent = p.enStock ? 'Agregar al carrito' : 'Sin stock';
   btnCarrito.disabled = !p.enStock;
+
+  let idxActual = p.idxInicial || 0;
+
   btnCarrito.onclick = () => {
-    agregarAlCarrito({ id: p.id, nombre: p.nombre,
-      precio: p.precioCarrito, imagen: imagenes[0] || '', tipo: p.tipo });
+    const imgActual = imagenes[idxActual];
+    const nombre = (imgActual && imgActual.nombre) ? imgActual.nombre : p.nombre;
+    agregarAlCarrito({
+      id: p.id,
+      nombre,
+      precio: p.precioCarrito,
+      imagen: imgActual?.url || '',
+      tipo: p.tipo
+    });
     cerrarModalProducto();
   };
 
   document.getElementById('producto-modal').classList.add('active');
   bloquearScroll();
-  requestAnimationFrame(() => initCarrusel(carId));
+
+  requestAnimationFrame(() => {
+    initCarrusel(carId, (nuevoIdx) => {
+      idxActual = nuevoIdx;
+      actualizarNombreVariante(nuevoIdx);
+    });
+    // Ir a la imagen que estaba mostrando la card
+    if (p.idxInicial && p.idxInicial > 0) {
+      const track = document.querySelector(`#${carId} .carrusel-track`);
+      if (track) track.style.transform = `translateX(-${p.idxInicial * 100}%)`;
+    }
+  });
 }
 
 function cerrarModalProducto() {
