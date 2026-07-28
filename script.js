@@ -668,12 +668,12 @@ document.getElementById('producto-modal').classList.add('active');
 bloquearScroll();
 
 }
+
 function cerrarModalProducto() {
     document.querySelector('.header').style.display = '';
     document.querySelector('.secondary-nav').style.display = '';
     document.querySelector('.floating-buttons').style.display = '';
     document.getElementById('producto-modal').classList.remove('active');
-    // Restaurar botón original
     const btnOriginal = document.getElementById('modal-btn-carrito');
     if (btnOriginal) btnOriginal.style.display = '';
     desbloquearScroll();
@@ -925,6 +925,7 @@ let dropdownAbierto = null;
 let scrollY_bloqueado = 0;
 
 function bloquearScroll() {
+    if (document.body.style.position === 'fixed') return;
     scrollY_bloqueado = window.scrollY;
     document.body.style.position = 'fixed';
     document.body.style.top = `-${scrollY_bloqueado}px`;
@@ -937,6 +938,7 @@ function desbloquearScroll() {
     document.body.style.top = '';
     document.body.style.left = '';
     document.body.style.right = '';
+    document.body.style.overflow = '';
     window.scrollTo(0, scrollY_bloqueado);
 }
 
