@@ -925,17 +925,17 @@ let dropdownAbierto = null;
 let scrollY_bloqueado = 0;
 
 function bloquearScroll() {
-    if (document.body.style.position === 'fixed') return;
+    // Si ya está bloqueado, no hacer nada
+    if (document.body.dataset.scrollLocked) return;
     scrollY_bloqueado = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY_bloqueado}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
+    document.body.dataset.scrollLocked = '1';
+    document.body.style.cssText += `position:fixed;top:-${scrollY_bloqueado}px;left:0;right:0;width:100%;overflow:hidden;`;
 }
 
 function desbloquearScroll() {
-    const scrollY = parseInt(document.body.style.top || '0') * -1;
+    if (!document.body.dataset.scrollLocked) return;
+    const scrollY = Math.abs(parseInt(document.body.style.top || '0', 10));
+    document.body.removeAttribute('data-scroll-locked');
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.left = '';
