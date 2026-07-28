@@ -1579,10 +1579,10 @@ html {
 
 @media (min-width: 769px) {
     .producto-modal-overlay.active {
-        background: #FFF8FA;
-        display: block;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        background: var(--color-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .producto-modal-contenido {
@@ -1591,16 +1591,13 @@ html {
         padding: 32px;
         max-width: 700px;
         width: 90%;
-        margin: 40px auto;
         box-shadow: var(--shadow-xl);
-        min-height: unset;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
-    .producto-modal-volver {
-        background: white;
-        position: sticky;
-        top: 0;
-        z-index: 10;
+    .producto-modal-img {
+        max-height: 400px;
     }
 }
 
@@ -1636,9 +1633,7 @@ html {
 }
 
 .producto-modal-img-wrap .carrusel-track img {
-    height: auto;
-    max-height: 500px;
-    object-fit: contain;
+  height: 320px;
 }
 
 /* Flechas */
