@@ -468,6 +468,7 @@ function crearTarjetaCombo(combo) {
 let _modalOnAgregado = null;
 
 function abrirModalProducto(p) {
+    desbloquearScroll();
     document.querySelector('.header').style.display = 'none';
     document.querySelector('.secondary-nav').style.display = 'none';
     if (window.innerWidth <= 768) {
