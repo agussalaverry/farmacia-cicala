@@ -1108,6 +1108,8 @@ function actualizarActivoFiltros(btnActivo) {
 }
 
 function aplicarFiltro(catId) {
+    cerrarModalProducto();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     document.querySelectorAll('.producto-card').forEach(card => {
         card.style.display = (!catId || card.dataset.categoria === catId) ? '' : 'none';
     });
