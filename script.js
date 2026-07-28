@@ -1035,8 +1035,8 @@ navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
         navTabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        // Mostrar la barra secundaria antes de scrollear
-        secondaryNav.style.transform = 'translateY(0)';
+        const secondaryNav = document.querySelector('.secondary-nav');
+        if (secondaryNav) secondaryNav.style.transform = 'translateY(0)';
         scrollToSection(tab.getAttribute('data-section'));
     });
 });
