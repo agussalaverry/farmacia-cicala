@@ -468,7 +468,6 @@ function crearTarjetaCombo(combo) {
 let _modalOnAgregado = null;
 
 function abrirModalProducto(p) {
-    desbloquearScroll();
     document.querySelector('.header').style.display = 'none';
     document.querySelector('.secondary-nav').style.display = 'none';
     if (window.innerWidth <= 768) {
@@ -932,15 +931,18 @@ function bloquearScroll() {
     document.body.style.top = `-${scrollY_bloqueado}px`;
     document.body.style.left = '0';
     document.body.style.right = '0';
+    document.body.style.width = '100%';
 }
 
 function desbloquearScroll() {
+    const scrollY = parseInt(document.body.style.top || '0') * -1;
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.left = '';
     document.body.style.right = '';
+    document.body.style.width = '';
     document.body.style.overflow = '';
-    window.scrollTo(0, scrollY_bloqueado);
+    window.scrollTo(0, scrollY);
 }
 
 function cerrarPortal() {
