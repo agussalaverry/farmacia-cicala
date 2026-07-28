@@ -1112,7 +1112,10 @@ function actualizarActivoFiltros(btnActivo) {
 }
 
 function aplicarFiltro(catId) {
-    cerrarModalProducto();
+    const modal = document.getElementById('producto-modal');
+    if (modal && modal.classList.contains('active')) {
+        cerrarModalProducto();
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     document.querySelectorAll('.producto-card').forEach(card => {
         card.style.display = (!catId || card.dataset.categoria === catId) ? '' : 'none';
