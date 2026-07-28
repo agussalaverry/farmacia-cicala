@@ -456,6 +456,7 @@ let _modalOnAgregado = null;
 function abrirModalProducto(p) {
     document.querySelector('.header').style.display = 'none';
     document.querySelector('.secondary-nav').style.display = 'none';
+    document.querySelector('.floating-buttons').style.display = 'none';
 
     _modalOnAgregado = p.onAgregado || null;
 
@@ -654,6 +655,7 @@ bloquearScroll();
 function cerrarModalProducto() {
     document.querySelector('.header').style.display = '';
     document.querySelector('.secondary-nav').style.display = '';
+    document.querySelector('.floating-buttons').style.display = '';
     document.getElementById('producto-modal').classList.remove('active');
     // Restaurar botón original
     const btnOriginal = document.getElementById('modal-btn-carrito');
@@ -691,6 +693,8 @@ async function cargarProductos() {
             .filter(p => p.visible !== false)
             .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
         renderCombos(combos);
+
+        window.scrollTo(0, 0);
 
     } catch (error) {
         console.error('Error cargando productos:', error);
@@ -777,6 +781,8 @@ function actualizarCarritoUI() {
     const total = carrito.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
     const cantidadTotal = carrito.reduce((sum, i) => sum + i.cantidad, 0);
     cartCount.textContent = cantidadTotal;
+    const cm = document.getElementById('cart-count-m');
+    if (cm) cm.textContent = cantidadTotal;
     cartTotalEl.textContent = formatearPrecio(total);
     renderizarCartItems();
 }
@@ -1012,6 +1018,7 @@ navTabs.forEach(tab => {
         tab.classList.add('active');
         // Mostrar la barra secundaria antes de scrollear
         document.querySelector('.secondary-nav').style.transform = 'translateY(0)';
+        secondaryNav.style.transform = 'translateY(0)';
         scrollToSection(tab.getAttribute('data-section'));
     });
 });
@@ -1064,7 +1071,6 @@ document.addEventListener('DOMContentLoaded', () => {
     actualizarCarritoUI();
     initDropdownsMobile();
 
-    window.scrollTo(0, 0);
 
     let lastScroll = 0;
     const secondaryNav = document.querySelector('.secondary-nav');
@@ -1099,6 +1105,9 @@ document.addEventListener('DOMContentLoaded', () => {
             lb.classList.add('active');
         }
     });
+
+    document.getElementById('filtros-btn-m')?.addEventListener('click', () => document.getElementById('filtros-btn').click());
+    document.getElementById('cart-btn-m')?.addEventListener('click', () => cartPanel.classList.contains('active') ? cerrarCarrito() : abrirCarrito());
 
 /* ============================================
    ESTILOS DINÁMICOS
