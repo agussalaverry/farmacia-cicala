@@ -1009,6 +1009,8 @@ navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
         navTabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
+        // Mostrar la barra secundaria antes de scrollear
+        secondaryNav.style.transform = 'translateY(0)';
         scrollToSection(tab.getAttribute('data-section'));
     });
 });
@@ -1038,12 +1040,11 @@ async function cargarFiltros() {
     });
 }
 
-function aplicarFiltro(catId, btnActivo) {
-    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('filtro-btn--active'));
-    btnActivo.classList.add('filtro-btn--active');
+function aplicarFiltro(catId) {
     document.querySelectorAll('.producto-card').forEach(card => {
         card.style.display = (!catId || card.dataset.categoria === catId) ? '' : 'none';
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 document.getElementById('filtros-btn').addEventListener('click', () => {
@@ -1061,6 +1062,8 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarProductos();
     actualizarCarritoUI();
     initDropdownsMobile();
+
+    window.scrollTo(0, 0);
 
     let lastScroll = 0;
     const secondaryNav = document.querySelector('.secondary-nav');
