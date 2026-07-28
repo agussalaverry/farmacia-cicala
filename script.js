@@ -470,6 +470,9 @@ let _modalOnAgregado = null;
 function abrirModalProducto(p) {
     document.querySelector('.header').style.display = 'none';
     document.querySelector('.secondary-nav').style.display = 'none';
+    if (window.innerWidth <= 768) {
+    document.querySelector('.floating-buttons').style.display = 'none';
+    }
 
     _modalOnAgregado = p.onAgregado || null;
 
@@ -668,6 +671,7 @@ bloquearScroll();
 function cerrarModalProducto() {
     document.querySelector('.header').style.display = '';
     document.querySelector('.secondary-nav').style.display = '';
+    document.querySelector('.floating-buttons').style.display = '';
     document.getElementById('producto-modal').classList.remove('active');
     // Restaurar botón original
     const btnOriginal = document.getElementById('modal-btn-carrito');
