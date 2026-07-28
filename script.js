@@ -71,9 +71,7 @@ function normalizarImagenes(imagenes, fallbackNombre = '') {
  */
 function tieneVariantes(imagenes) {
     if (!imagenes || imagenes.length <= 1) return false;
-    // Las variantes son las imágenes desde la índice 1 en adelante
-    // La portada (índice 0) no cuenta
-    return imagenes.slice(1).every(img => {
+    return imagenes.every(img => {
         const nombre = typeof img === 'string' ? '' : (img.nombre || '');
         return nombre.trim() !== '';
     });
@@ -496,160 +494,136 @@ function abrirModalProducto(p) {
     let idxActual = p.idxInicial || 0;
 
     if (p.conVariantes) {
-    const variantesWrap = document.createElement('div');
-    variantesWrap.className = 'modal-variantes';
+        // ── Botones de variante ──
+        const variantesWrap = document.createElement('div');
+        variantesWrap.className = 'modal-variantes';
 
-    // Empezamos desde índice 1 — la portada no es variante
-    const variantesImagenes = imagenes.slice(1);
+        imagenes.forEach((img, i) => {
+            const nombre = typeof img === 'string' ? '' : (img.nombre || '');
+            const btn = document.createElement('button');
+            btn.className = 'btn-variante';
+            btn.textContent = nombre;
+            btn.addEventListener('click', () => {
+                varianteSeleccionada = nombre;
+                // Marcar activo
+                variantesWrap.querySelectorAll('.btn-variante').forEach(b => b.classList.remove('activa'));
+                btn.classList.add('activa');
+                // Saltar al slide
+                const carEl = document.getElementById(carId);
+                if (carEl && carEl._carruselGoTo) carEl._carruselGoTo(i);
+                // Mostrar botón/contador para esta variante
+                renderAccionModal();
+            });
+            variantesWrap.appendChild(btn);
+        });
 
-    variantesImagenes.forEach((img, i) => {
-        const idxReal = i + 1; // índice real en el array de imágenes
-        const nombre = typeof img === 'string' ? '' : (img.nombre || '');
-        const carritoId = getCarritoId(p.id, nombre);
+        zonaAccion.appendChild(variantesWrap);
 
-        const btn = document.createElement('button');
-        btn.className = 'btn-variante';
-        btn.dataset.carritoId = carritoId;
+        // Zona de botón/contador bajo las variantes
+        const accionWrap = document.createElement('div');
+        accionWrap.id = 'modal-accion-wrap';
+        zonaAccion.appendChild(accionWrap);
 
-        function renderBtnVariante() {
+        function renderAccionModal() {
+            accionWrap.innerHTML = '';
+            if (!varianteSeleccionada) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Agregar al carrito';
+                btn.disabled = true;
+                accionWrap.appendChild(btn);
+                return;
+            }
+            const carritoId = getCarritoId(p.id, varianteSeleccionada);
             const cant = getCantidadEnCarrito(carritoId);
             if (cant > 0) {
-                btn.innerHTML = `<span class="variante-cant">${cant}</span><span class="variante-nombre">${nombre}</span>`;
-                btn.classList.add('tiene-cantidad');
+                const contador = crearBtnContador(carritoId, () => renderAccionModal());
+                accionWrap.appendChild(contador);
             } else {
-                btn.innerHTML = `<span class="variante-nombre">${nombre}</span>`;
-                btn.classList.remove('tiene-cantidad');
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Agregar al carrito';
+                btn.addEventListener('click', () => {
+                    const imgActual = imagenes.find((img) => {
+                        const n = typeof img === 'string' ? '' : (img.nombre || '');
+                        return n === varianteSeleccionada;
+                    });
+                    agregarAlCarrito({
+                        id: carritoId,
+                        nombre: `${p.nombre} — ${varianteSeleccionada}`,
+                        precio: p.precioCarrito,
+                        imagen: imgActual?.url || '',
+                        tipo: p.tipo
+                    });
+                    if (_modalOnAgregado) _modalOnAgregado();
+                    renderAccionModal();
+                });
+                accionWrap.appendChild(btn);
             }
         }
 
-        renderBtnVariante();
+        renderAccionModal();
 
-        btn.addEventListener('click', () => {
-            varianteSeleccionada = nombre;
-            variantesWrap.querySelectorAll('.btn-variante').forEach(b => b.classList.remove('activa'));
-            btn.classList.add('activa');
-            const carEl = document.getElementById(carId);
-            if (carEl && carEl._carruselGoTo) carEl._carruselGoTo(idxReal);
-            renderAccionModal();
-        });
-
-        // Guardar referencia para actualizar desde renderAccionModal
-        btn._renderBtnVariante = renderBtnVariante;
-        variantesWrap.appendChild(btn);
-    });
-
-    zonaAccion.appendChild(variantesWrap);
-
-    const accionWrap = document.createElement('div');
-    accionWrap.id = 'modal-accion-wrap';
-    zonaAccion.appendChild(accionWrap);
-
-    function renderAccionModal() {
-        accionWrap.innerHTML = '';
-        // Actualizar todos los botones de variante
-        variantesWrap.querySelectorAll('.btn-variante').forEach(b => {
-            if (b._renderBtnVariante) b._renderBtnVariante();
-        });
-
-        if (!varianteSeleccionada) {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Elegí una opción';
-            btn.disabled = true;
-            accionWrap.appendChild(btn);
-            return;
-        }
-        const carritoId = getCarritoId(p.id, varianteSeleccionada);
-        const cant = getCantidadEnCarrito(carritoId);
-        if (cant > 0) {
-            const contador = crearBtnContador(carritoId, () => renderAccionModal());
-            accionWrap.appendChild(contador);
-        } else {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Agregar al carrito';
-            btn.addEventListener('click', () => {
-                const imgActual = imagenes.find(img => {
-                    const n = typeof img === 'string' ? '' : (img.nombre || '');
-                    return n === varianteSeleccionada;
-                });
-                agregarAlCarrito({
-                    id: carritoId,
-                    nombre: `${p.nombre} — ${varianteSeleccionada}`,
-                    precio: p.precioCarrito,
-                    imagen: imgActual?.url || '',
-                    tipo: p.tipo
-                });
-                if (_modalOnAgregado) _modalOnAgregado();
-                renderAccionModal();
+        // Sincronizar variante si el carrusel se mueve con flechas
+        requestAnimationFrame(() => {
+            initCarrusel(carId, (nuevoIdx) => {
+                idxActual = nuevoIdx;
+                // Si la imagen tiene nombre, marcar esa variante como seleccionada
+                const img = imagenes[nuevoIdx];
+                const nombre = typeof img === 'string' ? '' : (img.nombre || '');
+                if (nombre) {
+                    varianteSeleccionada = nombre;
+                    variantesWrap.querySelectorAll('.btn-variante').forEach((b, i) => {
+                        b.classList.toggle('activa', i === nuevoIdx);
+                    });
+                    renderAccionModal();
+                }
             });
-            accionWrap.appendChild(btn);
-        }
-    }
+        });
 
-    let varianteSeleccionada = null;
+    } else {
+        // ── Sin variantes ──
+        const carritoId = getCarritoId(p.id, '');
 
-    renderAccionModal();
-
-    requestAnimationFrame(() => {
-        initCarrusel(carId, (nuevoIdx) => {
-            idxActual = nuevoIdx;
-            if (nuevoIdx === 0) return; // portada, no es variante
-            const img = imagenes[nuevoIdx];
-            const nombre = typeof img === 'string' ? '' : (img.nombre || '');
-            if (nombre) {
-                varianteSeleccionada = nombre;
-                variantesWrap.querySelectorAll('.btn-variante').forEach((b, i) => {
-                    b.classList.toggle('activa', i === nuevoIdx - 1);
+        function renderAccionModalSimple() {
+            zonaAccion.innerHTML = '';
+            const cant = getCantidadEnCarrito(carritoId);
+            if (!p.enStock) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Sin stock';
+                btn.disabled = true;
+                zonaAccion.appendChild(btn);
+            } else if (cant > 0) {
+                const contador = crearBtnContador(carritoId, () => renderAccionModalSimple());
+                zonaAccion.appendChild(contador);
+            } else {
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Agregar al carrito';
+                btn.addEventListener('click', () => {
+                    agregarAlCarrito({
+                        id: carritoId,
+                        nombre: p.nombre,
+                        precio: p.precioCarrito,
+                        imagen: imagenes[idxActual]?.url || '',
+                        tipo: p.tipo
+                    });
+                    if (_modalOnAgregado) _modalOnAgregado();
+                    renderAccionModalSimple();
                 });
-                renderAccionModal();
+                zonaAccion.appendChild(btn);
             }
-        });
-});
-
-} else {
-    // ── Sin variantes ──
-    const carritoId = getCarritoId(p.id, '');
-
-    function renderAccionModalSimple() {
-        zonaAccion.innerHTML = '';
-        const cant = getCantidadEnCarrito(carritoId);
-        if (!p.enStock) {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Sin stock';
-            btn.disabled = true;
-            zonaAccion.appendChild(btn);
-        } else if (cant > 0) {
-            const contador = crearBtnContador(carritoId, () => renderAccionModalSimple());
-            zonaAccion.appendChild(contador);
-        } else {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Agregar al carrito';
-            btn.addEventListener('click', () => {
-                agregarAlCarrito({
-                    id: carritoId,
-                    nombre: p.nombre,
-                    precio: p.precioCarrito,
-                    imagen: imagenes[idxActual]?.url || '',
-                    tipo: p.tipo
-                });
-                if (_modalOnAgregado) _modalOnAgregado();
-                renderAccionModalSimple();
-            });
-            zonaAccion.appendChild(btn);
         }
+
+        renderAccionModalSimple();
+        requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxActual = nuevoIdx; }));
     }
 
-    renderAccionModalSimple();
-    requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxActual = nuevoIdx; }));
+    document.getElementById('producto-modal').classList.add('active');
+    bloquearScroll();
 }
 
-document.getElementById('producto-modal').classList.add('active');
-bloquearScroll();
-
-}
 function cerrarModalProducto() {
     document.querySelector('.header').style.display = '';
     document.querySelector('.secondary-nav').style.display = '';
@@ -1186,81 +1160,5 @@ estilosDinamicos.innerHTML = `
         display:flex;align-items:center;justify-content:center;
     }
     .cart-item-remove:hover { background:#CC0000;color:white; }
-        /* Contador igual de alto y ancho que el botón */
-    .btn-contador-wrap { width: 100%; }
-    .btn-contador {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border: 2px solid var(--color-primary);
-        border-radius: 12px;
-        overflow: hidden;
-        height: 54px; /* mismo alto que btn-agregar-carrito */
-        width: 100%;
-    }
-    .contador-btn {
-        width: 54px;
-        height: 100%;
-        background: var(--color-primary);
-        color: white;
-        border: none;
-        font-size: 24px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
-        flex-shrink: 0;
-    }
-    .contador-btn:hover { background: var(--color-primary-dark); }
-    .contador-num {
-        flex: 1;
-        text-align: center;
-        font-size: 20px;
-        font-weight: 800;
-        color: var(--color-primary);
-    }
-
-    /* Botón de variante con cantidad */
-    .btn-variante {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 18px;
-        border: 2px solid var(--color-border);
-        border-radius: 32px;
-        background: white;
-        color: var(--color-text);
-        font-family: var(--font-family);
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .btn-variante:hover { border-color: var(--color-primary); }
-    .btn-variante.activa {
-        border-color: var(--color-primary);
-        background: rgba(239,8,124,0.08);
-        color: var(--color-primary);
-    }
-    .btn-variante.tiene-cantidad {
-        border-color: var(--color-primary);
-        background: rgba(239,8,124,0.05);
-    }
-    .variante-cant {
-        background: var(--color-primary);
-        color: white;
-        border-radius: 50%;
-        width: 22px;
-        height: 22px;
-        font-size: 12px;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-    .variante-nombre { line-height: 1; }
 `;
 document.head.appendChild(estilosDinamicos);
