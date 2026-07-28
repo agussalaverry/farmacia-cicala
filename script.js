@@ -96,22 +96,23 @@ function crearCarrusel(imagenes, altText, heightClass = '') {
     const imgs = (imagenes && imagenes.length > 0) ? imagenes : [{ url: '', nombre: altText, esPortada: true }];
     const id = 'car-' + Math.random().toString(36).slice(2, 8);
 
-    const html = `
-        <div class="carrusel" id="${id}" data-idx="0">
-            <div class="carrusel-track">
-                ${imgs.map(img => {
-                    const src = typeof img === 'string' ? img : (img.url || '');
-                    return `<img src="${src}" alt="${altText}" class="producto-img ${heightClass}" onerror="this.src='';">`;
-                }).join('')}
-            </div>
-            ${imgs.length > 1 ? `
-                <button class="car-btn car-prev" aria-label="Anterior">&#8249;</button>
-                <button class="car-btn car-next" aria-label="Siguiente">&#8250;</button>
-                <div class="car-dots">
-                    ${imgs.map((_, i) => `<span class="car-dot${i === 0 ? ' active' : ''}"></span>`).join('')}
+    const esModal = heightClass === 'modal-car-img';
+        const html = `
+            <div class="carrusel${esModal ? ' carrusel-modal' : ''}" id="${id}" data-idx="0">
+                <div class="carrusel-track">
+                    ${imgs.map((img, i) => {
+                        const src = typeof img === 'string' ? img : (img.url || '');
+                        return `<img src="${src}" alt="${altText}" class="producto-img ${heightClass}${esModal ? ' modal-img-zoomable' : ''}" onerror="this.src='';" data-imgidx="${i}">`;
+                    }).join('')}
                 </div>
-            ` : ''}
-        </div>`;
+                ${imgs.length > 1 ? `
+                    <button class="car-btn car-prev" aria-label="Anterior">&#8249;</button>
+                    <button class="car-btn car-next" aria-label="Siguiente">&#8250;</button>
+                    <div class="car-dots">
+                        ${imgs.map((_, i) => `<span class="car-dot${i === 0 ? ' active' : ''}"></span>`).join('')}
+                    </div>
+                ` : ''}
+            </div>`;
     return { html, id, total: imgs.length };
 }
 
@@ -1010,7 +1011,7 @@ navTabs.forEach(tab => {
         navTabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         // Mostrar la barra secundaria antes de scrollear
-        secondaryNav.style.transform = 'translateY(0)';
+        document.querySelector('.secondary-nav').style.transform = 'translateY(0)';
         scrollToSection(tab.getAttribute('data-section'));
     });
 });
@@ -1082,7 +1083,22 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && portalAbierto) cerrarPortal();
     });
-});
+
+    // Lightbox
+    const lb = document.createElement('div');
+    lb.className = 'lightbox-overlay';
+    lb.innerHTML = `<button class="lightbox-close">✕</button><img src="" alt="">`;
+    document.body.appendChild(lb);
+    const lbImg = lb.querySelector('img');
+    lb.addEventListener('click', () => lb.classList.remove('active'));
+    lb.querySelector('.lightbox-close').addEventListener('click', e => { e.stopPropagation(); lb.classList.remove('active'); });
+
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('modal-img-zoomable') && e.target.src) {
+            lbImg.src = e.target.src;
+            lb.classList.add('active');
+        }
+    });
 
 /* ============================================
    ESTILOS DINÁMICOS
@@ -1265,5 +1281,49 @@ estilosDinamicos.innerHTML = `
         flex-shrink: 0;
     }
     .variante-nombre { line-height: 1; }
+    /* Fondo gris del carrusel modal */
+    .carrusel-modal {
+        background: #e8e8e8;
+        border-radius: 12px;
+    }
+    .carrusel-modal .carrusel-track img {
+        background: #e8e8e8;
+    }
+
+    /* Imagen zoomable en modal */
+    .modal-img-zoomable { cursor: zoom-in; }
+
+    /* Lightbox */
+    .lightbox-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.92);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        cursor: zoom-out;
+    }
+    .lightbox-overlay.active { display: flex; }
+    .lightbox-overlay img {
+        max-width: 95vw;
+        max-height: 95vh;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+    .lightbox-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(255,255,255,0.15);
+        border: none;
+        color: white;
+        font-size: 28px;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
 `;
 document.head.appendChild(estilosDinamicos);
+})();
