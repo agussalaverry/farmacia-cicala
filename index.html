@@ -95,10 +95,7 @@
         </div>
     </header>
 
-    <!-- BARRA DE FILTROS -->
-    <div id="filtros-bar" style="display:none;position:fixed;top:102px;left:0;right:0;z-index:98;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);padding:12px 16px;">
-        <div id="filtros-container" style="display:flex;gap:8px;flex-wrap:wrap;max-width:1200px;margin:0 auto;"></div>
-    </div>
+
 
     <!-- ============================================
          BARRA DE NAVEGACIÓN SECUNDARIA (tabs)
@@ -168,7 +165,9 @@
         <div class="floating-buttons">
 
         <!-- Botón filtros -->
-        <button id="filtros-btn" class="floating-btn" title="Filtrar por categoría" style="font-size:20px;">🏷️</button>
+        <button id="filtros-btn" class="floating-btn" title="Filtrar por categoría">
+            <img src="images/Contacto/filtro.png" alt="Filtros" class="filtros-btn-img">
+        </button>
 
         <!-- Botón 24hs -->
         <a href="https://farmaciasdeturnotandil.com.ar/" target="_blank" class="floating-btn btn-24hs" title="Farmacias de turno">
@@ -253,6 +252,19 @@
 
     <!-- Overlay oscuro para el panel del carrito (opcional, para mejorar UX) -->
     <div id="cart-overlay" class="cart-overlay"></div>
+
+    <!-- ============================================
+         DRAWER LATERAL DE FILTROS
+         ============================================ -->
+    <aside id="filtros-drawer" class="filtros-drawer">
+        <div class="filtros-drawer-header">
+            <h3 class="filtros-drawer-title">Filtros</h3>
+            <button id="close-filtros-btn" class="close-filtros-btn" title="Cerrar filtros">✕</button>
+        </div>
+        <hr class="cart-divider">
+        <div id="filtros-container" class="filtros-drawer-list"></div>
+    </aside>
+    <div id="filtros-overlay" class="filtros-overlay"></div>
 
     <!-- ============================================
          JAVASCRIPT

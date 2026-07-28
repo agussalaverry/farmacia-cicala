@@ -402,12 +402,13 @@ body {
 .productos-section {
     width: 100%;
     margin-bottom: var(--spacing-xxl);
-    scroll-margin-top: 200px;
+    scroll-margin-top: 170px; /* CAMBIO 5: más pegado a la secondary nav */
 }
 
 .section-header {
     text-align: center;
     margin-bottom: var(--spacing-xl);
+    margin-top: 0; /* CAMBIO 5: sin margen superior extra */
     animation: fadeInDown 0.6s ease-out;
 }
 
@@ -1330,12 +1331,12 @@ footer::before {
 
     /* Scroll margin generoso para que los títulos no queden tapados por las barras fijas */
     .productos-section {
-        scroll-margin-top: 185px;
+        scroll-margin-top: 160px; /* CAMBIO 5: reducido */
     }
 
     /* Aire entre la barra fija y el título de sección (aplica a las 3 secciones) */
     .section-header {
-        padding-top: 20px;
+        padding-top: 8px; /* CAMBIO 5: reducido de 20px a 8px */
     }
 
     .section-title {
@@ -1630,15 +1631,17 @@ html {
   border-radius: 12px;
 }
 
-/* Imagen en modal más alta */
+/* Imagen en modal más alta — se aplica al carrusel dentro del modal */
 .modal-car-img {
-  height: 320px !important;
+  height: 320px !important; /* mobile default */
 }
 
-.producto-modal-img-wrap .carrusel-track img {
-    height: auto;
-    max-height: 500px;
-    object-fit: contain;
+/* En PC: imagen del modal más grande, siempre cover */
+@media (min-width: 769px) {
+  .modal-car-img {
+    height: 420px !important;
+    object-fit: cover !important;
+  }
 }
 
 /* Flechas */
@@ -1738,4 +1741,170 @@ html {
 .filtro-btn--active {
     background: var(--color-primary);
     color: white;
+}
+
+/* ============================================
+   DRAWER LATERAL DE FILTROS
+   ============================================ */
+
+/* Imagen dentro del botón flotante de filtros */
+.filtros-btn-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: block;
+}
+
+/* Drawer */
+.filtros-drawer {
+    position: fixed;
+    left: -320px;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--color-white);
+    z-index: 9999;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
+    transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.filtros-drawer.active {
+    left: 0;
+}
+
+/* Header del drawer */
+.filtros-drawer-header {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+    position: relative;
+}
+
+.filtros-drawer-title {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-xxl);
+    font-weight: 700;
+    margin: 0;
+}
+
+.close-filtros-btn {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: var(--color-white);
+    font-size: 28px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-filtros-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Lista de filtros — scrolleable */
+.filtros-drawer-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-md) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Cada filtro como item de lista en el drawer */
+.filtros-drawer-list .filtro-btn {
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    background: white;
+    color: var(--color-text);
+    white-space: normal;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+/* Flecha → solo en PC */
+@media (min-width: 769px) {
+    .filtros-drawer-list .filtro-btn::after {
+        content: '→';
+        opacity: 0;
+        color: var(--color-primary);
+        font-size: 18px;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        transform: translateX(-6px);
+    }
+
+    .filtros-drawer-list .filtro-btn:hover {
+        background: rgba(239, 8, 124, 0.05);
+        color: var(--color-primary);
+        text-decoration: underline;
+    }
+
+    .filtros-drawer-list .filtro-btn:hover::after {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.filtros-drawer-list .filtro-btn--active {
+    background: rgba(239, 8, 124, 0.08);
+    color: var(--color-primary);
+    font-weight: 800;
+}
+
+/* Overlay del drawer de filtros */
+.filtros-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 9998;
+    transition: background-color 0.4s ease;
+    pointer-events: none;
+}
+
+.filtros-overlay.active {
+    background-color: rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+/* Mobile: drawer ocupa todo el ancho */
+@media (max-width: 768px) {
+    .filtros-drawer {
+        width: 100%;
+        left: -100%;
+    }
+
+    .filtros-drawer.active {
+        left: 0;
+    }
+
+    .filtros-drawer-list .filtro-btn {
+        padding: var(--spacing-lg) var(--spacing-lg);
+        font-size: var(--font-size-large);
+    }
 }

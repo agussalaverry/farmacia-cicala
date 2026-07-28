@@ -125,6 +125,7 @@ function initCarrusel(id, onSlide) {
 
     let idx = 0;
     let timer = null;
+    let autoplayStopped = false; // CAMBIO 2: bandera para detener autoplay permanentemente
 
     function goTo(n) {
         idx = (n + total) % total;
@@ -134,19 +135,27 @@ function initCarrusel(id, onSlide) {
     }
 
     function startAuto() {
+        if (autoplayStopped) return; // CAMBIO 2: no reiniciar si fue detenido
         clearInterval(timer);
         timer = setInterval(() => goTo(idx + 1), 5000);
+    }
+
+    // CAMBIO 2: método para detener autoplay permanentemente
+    function stopAutoplay() {
+        autoplayStopped = true;
+        clearInterval(timer);
+        timer = null;
     }
 
     el.querySelector('.car-prev')?.addEventListener('click', e => {
         e.stopPropagation();
         goTo(idx - 1);
-        startAuto(); // reinicia el timer al usar la flecha
+        startAuto(); // reinicia el timer al usar la flecha (solo si no fue detenido)
     });
     el.querySelector('.car-next')?.addEventListener('click', e => {
         e.stopPropagation();
         goTo(idx + 1);
-        startAuto(); // reinicia el timer al usar la flecha
+        startAuto(); // reinicia el timer al usar la flecha (solo si no fue detenido)
     });
 
     let startX = 0;
@@ -158,6 +167,8 @@ function initCarrusel(id, onSlide) {
 
     // Exponer goTo para que la lógica de variantes pueda saltar slides
     el._carruselGoTo = goTo;
+    // CAMBIO 2: exponer stopAutoplay
+    el._stopAutoplay = stopAutoplay;
 
     startAuto();
     el.addEventListener('mouseenter', () => clearInterval(timer));
@@ -183,13 +194,17 @@ function crearBtnContador(carritoId, onCambio) {
             e.stopPropagation();
             actualizarCantidad(carritoId, -1);
             const nueva = getCantidadEnCarrito(carritoId);
-            if (nueva === 0) { if (onCambio) onCambio(0); }
-            else render(nueva);
+            // CAMBIO 3: siempre llamar onCambio para sincronizar variante-cant
+            if (onCambio) onCambio(nueva);
+            if (nueva > 0) render(nueva);
         });
         wrap.querySelector('.contador-mas').addEventListener('click', e => {
             e.stopPropagation();
             actualizarCantidad(carritoId, 1);
-            render(getCantidadEnCarrito(carritoId));
+            const nueva = getCantidadEnCarrito(carritoId);
+            render(nueva);
+            // CAMBIO 3: llamar onCambio también al sumar, para sincronizar variante-cant
+            if (onCambio) onCambio(nueva);
         });
     }
 
@@ -580,14 +595,14 @@ function abrirModalProducto(p) {
                     imagen: imgActual?.url || '',
                     tipo: p.tipo
                 });
+                const carEl = document.getElementById(carId);
+                if (carEl && carEl._stopAutoplay) carEl._stopAutoplay();
                 if (_modalOnAgregado) _modalOnAgregado();
                 renderAccionModal();
             });
             accionWrap.appendChild(btn);
         }
     }
-
-    let varianteSeleccionada = null;
 
     renderAccionModal();
 
@@ -844,6 +859,8 @@ function generarMensajeWhatsApp() {
 
 function abrirCarrito() {
     if (portalAbierto) cerrarPortal();
+    // CAMBIO 4: cerrar filtros si están abiertos
+    cerrarFiltros();
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
     bloquearScroll();
@@ -973,10 +990,19 @@ function scrollToSection(sectionId) {
     const secondaryNav = document.querySelector('.secondary-nav');
     const headerHeight = header ? header.offsetHeight : 100;
     const secondaryHeight = secondaryNav ? secondaryNav.offsetHeight : 44;
-    const extraMargen = window.innerWidth <= 768 ? 24 : 40;
+    const extraMargen = window.innerWidth <= 768 ? 16 : 24;
     const offset = headerHeight + secondaryHeight + extraMargen;
     const top = section.getBoundingClientRect().top + window.scrollY - offset;
+
+    // CAMBIO 5: activar bandera para que el scroll listener no oculte la secondary nav
+    isScrollingToSection = true;
+    secondaryNav.style.transform = 'translateY(0)'; // asegurar que est\u00e9 visible
+    clearTimeout(scrollingTimer);
     window.scrollTo({ top, behavior: 'smooth' });
+    // Desactivar la bandera despu\u00e9s de que el scroll programm\u00e1tico termina (~1.2s)
+    scrollingTimer = setTimeout(() => {
+        isScrollingToSection = false;
+    }, 1200);
 }
 
 /* ============================================
@@ -1016,8 +1042,30 @@ navTabs.forEach(tab => {
 });
 
 /* ============================================
-   FILTROS POR CATEGORÍA
+   FILTROS POR CATEGORÍA (DRAWER)
    ============================================ */
+
+const filtrosDrawer   = document.getElementById('filtros-drawer');
+const filtrosOverlay  = document.getElementById('filtros-overlay');
+const closeFiltrosBtn = document.getElementById('close-filtros-btn');
+let filtrosCargados = false;
+
+function abrirFiltros() {
+    // CAMBIO 4: cerrar carrito si está abierto
+    if (cartPanel.classList.contains('active')) cerrarCarrito();
+    filtrosDrawer.classList.add('active');
+    filtrosOverlay.classList.add('active');
+    bloquearScroll();
+    if (!filtrosCargados) { cargarFiltros(); filtrosCargados = true; }
+}
+
+function cerrarFiltros() {
+    filtrosDrawer.classList.remove('active');
+    filtrosOverlay.classList.remove('active');
+    desbloquearScroll();
+}
+
+let _filtroActivoId = null;
 
 async function cargarFiltros() {
     const { getDocs: gd, collection: col } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
@@ -1026,17 +1074,36 @@ async function cargarFiltros() {
         .sort((a, b) => a.nombre.localeCompare(b.nombre));
     const container = document.getElementById('filtros-container');
     container.innerHTML = '';
+
+    // CAMBIO 4: "Sin filtros" en lugar de "Todos"
     const btnTodos = document.createElement('button');
-    btnTodos.textContent = 'Todos';
+    btnTodos.textContent = 'Sin filtros';
     btnTodos.className = 'filtro-btn filtro-btn--active';
-    btnTodos.addEventListener('click', () => aplicarFiltro(null, btnTodos));
+    btnTodos.addEventListener('click', () => {
+        _filtroActivoId = null;
+        aplicarFiltro(null);
+        actualizarActivoFiltros(btnTodos);
+        cerrarFiltros(); // CAMBIO 4: cerrar al aplicar
+    });
     container.appendChild(btnTodos);
+
     categorias.forEach(cat => {
         const btn = document.createElement('button');
         btn.textContent = cat.nombre;
         btn.className = 'filtro-btn';
-        btn.addEventListener('click', () => aplicarFiltro(cat.id, btn));
+        btn.addEventListener('click', () => {
+            _filtroActivoId = cat.id;
+            aplicarFiltro(cat.id);
+            actualizarActivoFiltros(btn);
+            cerrarFiltros(); // CAMBIO 4: cerrar al aplicar
+        });
         container.appendChild(btn);
+    });
+}
+
+function actualizarActivoFiltros(btnActivo) {
+    document.querySelectorAll('#filtros-container .filtro-btn').forEach(b => {
+        b.classList.toggle('filtro-btn--active', b === btnActivo);
     });
 }
 
@@ -1044,30 +1111,45 @@ function aplicarFiltro(catId) {
     document.querySelectorAll('.producto-card').forEach(card => {
         card.style.display = (!catId || card.dataset.categoria === catId) ? '' : 'none';
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// CAMBIO 4: listener del botón de filtros — abre/cierra drawer
 document.getElementById('filtros-btn').addEventListener('click', () => {
-    const bar = document.getElementById('filtros-bar');
-    const visible = bar.style.display !== 'none';
-    bar.style.display = visible ? 'none' : 'block';
-    if (!visible) cargarFiltros();
+    if (filtrosDrawer.classList.contains('active')) {
+        cerrarFiltros();
+    } else {
+        abrirFiltros();
+    }
 });
+closeFiltrosBtn.addEventListener('click', cerrarFiltros);
+filtrosOverlay.addEventListener('click', cerrarFiltros);
+filtrosDrawer.addEventListener('click', e => e.stopPropagation());
 
 /* ============================================
    INIT
    ============================================ */
+
+// CAMBIO 5: bandera para no ocultar secondary nav durante scroll programmático
+let isScrollingToSection = false;
+let scrollingTimer = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     cargarProductos();
     actualizarCarritoUI();
     initDropdownsMobile();
 
+    // CAMBIO 5: scroll al tope sin smooth para que sea instantáneo al cargar
+    document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo(0, 0);
+    requestAnimationFrame(() => {
+        document.documentElement.style.scrollBehavior = '';
+    });
 
     let lastScroll = 0;
     const secondaryNav = document.querySelector('.secondary-nav');
     window.addEventListener('scroll', () => {
+        // CAMBIO 5: no ocultar la barra durante scroll programmático por tabs
+        if (isScrollingToSection) return;
         const currentScroll = window.scrollY;
         if (currentScroll > lastScroll && currentScroll > 100) {
             secondaryNav.style.transform = 'translateY(-100%)';
