@@ -1170,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastScroll = currentScroll;
     });
 
-    twemoji.parse(document.body);
+    if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
 
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && portalAbierto) cerrarPortal();
