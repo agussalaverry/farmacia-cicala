@@ -653,7 +653,7 @@ body {
     position: fixed;
     bottom: var(--spacing-lg);
     right: var(--spacing-lg);
-    z-index: 500;
+    z-index: 2500;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
@@ -1523,7 +1523,7 @@ html {
     position: fixed;
     inset: 0;
     background: #FFF8FA;
-    z-index: 3000;
+    z-index: 2000;
     overflow-y: auto;
 }
 
@@ -1579,10 +1579,10 @@ html {
 
 @media (min-width: 769px) {
     .producto-modal-overlay.active {
-        background: var(--color-secondary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        background: #FFF8FA;
+        display: block;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .producto-modal-contenido {
@@ -1591,13 +1591,16 @@ html {
         padding: 32px;
         max-width: 700px;
         width: 90%;
+        margin: 40px auto;
         box-shadow: var(--shadow-xl);
-        max-height: 90vh;
-        overflow-y: auto;
+        min-height: unset;
     }
 
-    .producto-modal-img {
-        max-height: 400px;
+    .producto-modal-volver {
+        background: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
 }
 
@@ -1633,7 +1636,9 @@ html {
 }
 
 .producto-modal-img-wrap .carrusel-track img {
-  height: 320px;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
 }
 
 /* Flechas */
