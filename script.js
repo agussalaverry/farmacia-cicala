@@ -471,10 +471,12 @@ function abrirModalProducto(p) {
     document.querySelector('.header').style.display = 'none';
     document.querySelector('.secondary-nav').style.display = 'none';
     if (window.innerWidth <= 768) {
-    document.querySelector('.floating-buttons').style.display = 'none';
+        document.querySelector('.floating-buttons').style.display = 'none';
     }
-
-    _modalOnAgregado = p.onAgregado || null;
+    // NO llamar bloquearScroll aquí
+    document.getElementById('producto-modal').classList.add('active');
+    window.scrollTo(0, 0); // lleva al tope para que el modal sea visible
+    // ... resto del código igual
 
     const imagenes = p.imagenes || [{ url: '', nombre: p.nombre, esPortada: true }];
     const { html: carHtml, id: carId } = crearCarrusel(imagenes, p.nombre, 'modal-car-img');
@@ -676,7 +678,7 @@ function cerrarModalProducto() {
     document.getElementById('producto-modal').classList.remove('active');
     const btnOriginal = document.getElementById('modal-btn-carrito');
     if (btnOriginal) btnOriginal.style.display = '';
-    desbloquearScroll();
+    // NO llamar desbloquearScroll aquí
     _modalOnAgregado = null;
 }
 
