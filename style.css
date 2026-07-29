@@ -1523,9 +1523,10 @@ html {
     display: none;
     position: fixed;
     inset: 0;
-    background: #FFF0F5;
+    background: #FFF8FA;
     z-index: 2000;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .producto-modal-overlay.active {
@@ -1539,6 +1540,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-height: 100vh;
 }
 
 .producto-modal-volver {
@@ -1551,13 +1553,6 @@ html {
     cursor: pointer;
     padding: 12px 0;
     text-align: left;
-}
-
-.producto-modal-img {
-    width: 100%;
-    max-height: 350px;
-    object-fit: cover;
-    border-radius: 16px;
 }
 
 .producto-modal-nombre {
@@ -1578,21 +1573,7 @@ html {
     color: var(--color-primary);
 }
 
-.producto-modal-overlay.active {
-    background: #FFF8FA;
-    display: block;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
 @media (min-width: 769px) {
-    .producto-modal-overlay.active {
-        background: #FFF8FA;
-        display: block;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
     .producto-modal-contenido {
         background: white;
         border-radius: 20px;
@@ -1602,13 +1583,6 @@ html {
         margin: 40px auto;
         box-shadow: var(--shadow-xl);
         min-height: unset;
-    }
-
-    .producto-modal-volver {
-        background: white;
-        position: sticky;
-        top: 0;
-        z-index: 10;
     }
 }
 
