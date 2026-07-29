@@ -468,15 +468,22 @@ function crearTarjetaCombo(combo) {
 let _modalOnAgregado = null;
 
 function abrirModalProducto(p) {
-    document.querySelector('.header').style.display = 'none';
-    document.querySelector('.secondary-nav').style.display = 'none';
-    if (window.innerWidth <= 768) {
-        document.querySelector('.floating-buttons').style.display = 'none';
+    // En mobile: el modal es fullscreen fixed, no necesitamos ocultar nada
+    if (window.innerWidth > 768) {
+        document.querySelector('.header').style.display = 'none';
+        document.querySelector('.secondary-nav').style.display = 'none';
     }
-    // NO llamar bloquearScroll aquí
+    document.querySelector('.floating-buttons').style.display = 'none';
+    
     document.getElementById('producto-modal').classList.add('active');
-    window.scrollTo(0, 0); // lleva al tope para que el modal sea visible
-    // ... resto del código igual
+    
+    // Solo bloquear scroll en desktop (en mobile el modal tiene su propio scroll)
+    if (window.innerWidth > 768) {
+        bloquearScroll();
+    } else {
+        // En mobile: scroll al tope sin bloquear el body
+        window.scrollTo(0, 0);
+    }
 
     const imagenes = p.imagenes || [{ url: '', nombre: p.nombre, esPortada: true }];
     const { html: carHtml, id: carId } = crearCarrusel(imagenes, p.nombre, 'modal-car-img');
@@ -484,7 +491,6 @@ function abrirModalProducto(p) {
     const modalImgWrap = document.getElementById('modal-img-wrap');
     modalImgWrap.innerHTML = carHtml;
 
-    // Precio
     const precioEl = document.getElementById('modal-precio');
     if (p.precioOriginal) {
         precioEl.innerHTML = `
@@ -497,178 +503,160 @@ function abrirModalProducto(p) {
 
     document.getElementById('modal-descripcion').textContent = p.descripcion || '';
 
-    // Zona del botón / variantes / contador
     const modalInfo = document.querySelector('.producto-modal-info');
-
-    // Limpiar zona dinámica anterior
     let zonaAccion = document.getElementById('modal-zona-accion');
     if (zonaAccion) zonaAccion.remove();
     zonaAccion = document.createElement('div');
     zonaAccion.id = 'modal-zona-accion';
     modalInfo.appendChild(zonaAccion);
 
-    // Ocultar el botón original del HTML (lo reemplazamos con zona dinámica)
     const btnOriginal = document.getElementById('modal-btn-carrito');
     if (btnOriginal) btnOriginal.style.display = 'none';
     document.getElementById('modal-nombre').textContent = p.nombre;
 
-    let varianteSeleccionada = null; // nombre de la variante elegida
+    let varianteSeleccionada = null;
     let idxActual = p.idxInicial || 0;
 
     if (p.conVariantes) {
-    const variantesWrap = document.createElement('div');
-    variantesWrap.className = 'modal-variantes';
+        const variantesWrap = document.createElement('div');
+        variantesWrap.className = 'modal-variantes';
+        const variantesImagenes = imagenes.slice(1);
 
-    // Empezamos desde índice 1 — la portada no es variante
-    const variantesImagenes = imagenes.slice(1);
+        variantesImagenes.forEach((img, i) => {
+            const idxReal = i + 1;
+            const nombre = typeof img === 'string' ? '' : (img.nombre || '');
+            const carritoId = getCarritoId(p.id, nombre);
+            const btn = document.createElement('button');
+            btn.className = 'btn-variante';
+            btn.dataset.carritoId = carritoId;
 
-    variantesImagenes.forEach((img, i) => {
-        const idxReal = i + 1; // índice real en el array de imágenes
-        const nombre = typeof img === 'string' ? '' : (img.nombre || '');
-        const carritoId = getCarritoId(p.id, nombre);
+            function renderBtnVariante() {
+                const cant = getCantidadEnCarrito(carritoId);
+                if (cant > 0) {
+                    btn.innerHTML = `<span class="variante-cant">${cant}</span><span class="variante-nombre">${nombre}</span>`;
+                    btn.classList.add('tiene-cantidad');
+                } else {
+                    btn.innerHTML = `<span class="variante-nombre">${nombre}</span>`;
+                    btn.classList.remove('tiene-cantidad');
+                }
+            }
+            renderBtnVariante();
 
-        const btn = document.createElement('button');
-        btn.className = 'btn-variante';
-        btn.dataset.carritoId = carritoId;
+            btn.addEventListener('click', () => {
+                varianteSeleccionada = nombre;
+                variantesWrap.querySelectorAll('.btn-variante').forEach(b => b.classList.remove('activa'));
+                btn.classList.add('activa');
+                const carEl = document.getElementById(carId);
+                if (carEl && carEl._carruselGoTo) carEl._carruselGoTo(idxReal);
+                renderAccionModal();
+            });
 
-        function renderBtnVariante() {
+            btn._renderBtnVariante = renderBtnVariante;
+            variantesWrap.appendChild(btn);
+        });
+
+        zonaAccion.appendChild(variantesWrap);
+        const accionWrap = document.createElement('div');
+        accionWrap.id = 'modal-accion-wrap';
+        zonaAccion.appendChild(accionWrap);
+
+        function renderAccionModal() {
+            accionWrap.innerHTML = '';
+            variantesWrap.querySelectorAll('.btn-variante').forEach(b => {
+                if (b._renderBtnVariante) b._renderBtnVariante();
+            });
+            if (!varianteSeleccionada) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Elegí una opción';
+                btn.disabled = true;
+                accionWrap.appendChild(btn);
+                return;
+            }
+            const carritoId = getCarritoId(p.id, varianteSeleccionada);
             const cant = getCantidadEnCarrito(carritoId);
             if (cant > 0) {
-                btn.innerHTML = `<span class="variante-cant">${cant}</span><span class="variante-nombre">${nombre}</span>`;
-                btn.classList.add('tiene-cantidad');
+                const contador = crearBtnContador(carritoId, () => renderAccionModal());
+                accionWrap.appendChild(contador);
             } else {
-                btn.innerHTML = `<span class="variante-nombre">${nombre}</span>`;
-                btn.classList.remove('tiene-cantidad');
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Agregar al carrito';
+                btn.addEventListener('click', () => {
+                    const imgActual = imagenes.find(img => {
+                        const n = typeof img === 'string' ? '' : (img.nombre || '');
+                        return n === varianteSeleccionada;
+                    });
+                    agregarAlCarrito({
+                        id: carritoId,
+                        nombre: `${p.nombre} — ${varianteSeleccionada}`,
+                        precio: p.precioCarrito,
+                        imagen: imgActual?.url || '',
+                        tipo: p.tipo
+                    });
+                    const carEl = document.getElementById(carId);
+                    if (carEl && carEl._stopAutoplay) carEl._stopAutoplay();
+                    if (_modalOnAgregado) _modalOnAgregado();
+                    renderAccionModal();
+                });
+                accionWrap.appendChild(btn);
             }
         }
 
-        renderBtnVariante();
-
-        btn.addEventListener('click', () => {
-            varianteSeleccionada = nombre;
-            variantesWrap.querySelectorAll('.btn-variante').forEach(b => b.classList.remove('activa'));
-            btn.classList.add('activa');
-            const carEl = document.getElementById(carId);
-            if (carEl && carEl._carruselGoTo) carEl._carruselGoTo(idxReal);
-            renderAccionModal();
-        });
-
-        // Guardar referencia para actualizar desde renderAccionModal
-        btn._renderBtnVariante = renderBtnVariante;
-        variantesWrap.appendChild(btn);
-    });
-
-    zonaAccion.appendChild(variantesWrap);
-
-    const accionWrap = document.createElement('div');
-    accionWrap.id = 'modal-accion-wrap';
-    zonaAccion.appendChild(accionWrap);
-
-    function renderAccionModal() {
-        accionWrap.innerHTML = '';
-        // Actualizar todos los botones de variante
-        variantesWrap.querySelectorAll('.btn-variante').forEach(b => {
-            if (b._renderBtnVariante) b._renderBtnVariante();
-        });
-
-        if (!varianteSeleccionada) {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Elegí una opción';
-            btn.disabled = true;
-            accionWrap.appendChild(btn);
-            return;
-        }
-        const carritoId = getCarritoId(p.id, varianteSeleccionada);
-        const cant = getCantidadEnCarrito(carritoId);
-        if (cant > 0) {
-            const contador = crearBtnContador(carritoId, () => renderAccionModal());
-            accionWrap.appendChild(contador);
-        } else {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Agregar al carrito';
-            btn.addEventListener('click', () => {
-                const imgActual = imagenes.find(img => {
-                    const n = typeof img === 'string' ? '' : (img.nombre || '');
-                    return n === varianteSeleccionada;
-                });
-                agregarAlCarrito({
-                    id: carritoId,
-                    nombre: `${p.nombre} — ${varianteSeleccionada}`,
-                    precio: p.precioCarrito,
-                    imagen: imgActual?.url || '',
-                    tipo: p.tipo
-                });
-                const carEl = document.getElementById(carId);
-                if (carEl && carEl._stopAutoplay) carEl._stopAutoplay();
-                if (_modalOnAgregado) _modalOnAgregado();
-                renderAccionModal();
+        renderAccionModal();
+        requestAnimationFrame(() => {
+            initCarrusel(carId, (nuevoIdx) => {
+                idxActual = nuevoIdx;
+                if (nuevoIdx === 0) return;
+                const img = imagenes[nuevoIdx];
+                const nombre = typeof img === 'string' ? '' : (img.nombre || '');
+                if (nombre) {
+                    varianteSeleccionada = nombre;
+                    variantesWrap.querySelectorAll('.btn-variante').forEach((b, i) => {
+                        b.classList.toggle('activa', i === nuevoIdx - 1);
+                    });
+                    renderAccionModal();
+                }
             });
-            accionWrap.appendChild(btn);
-        }
-    }
+        });
 
-    renderAccionModal();
+    } else {
+        const carritoId = getCarritoId(p.id, '');
 
-    requestAnimationFrame(() => {
-        initCarrusel(carId, (nuevoIdx) => {
-            idxActual = nuevoIdx;
-            if (nuevoIdx === 0) return; // portada, no es variante
-            const img = imagenes[nuevoIdx];
-            const nombre = typeof img === 'string' ? '' : (img.nombre || '');
-            if (nombre) {
-                varianteSeleccionada = nombre;
-                variantesWrap.querySelectorAll('.btn-variante').forEach((b, i) => {
-                    b.classList.toggle('activa', i === nuevoIdx - 1);
+        function renderAccionModalSimple() {
+            zonaAccion.innerHTML = '';
+            const cant = getCantidadEnCarrito(carritoId);
+            if (!p.enStock) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Sin stock';
+                btn.disabled = true;
+                zonaAccion.appendChild(btn);
+            } else if (cant > 0) {
+                const contador = crearBtnContador(carritoId, () => renderAccionModalSimple());
+                zonaAccion.appendChild(contador);
+            } else {
+                const btn = document.createElement('button');
+                btn.className = 'btn-agregar-carrito';
+                btn.textContent = 'Agregar al carrito';
+                btn.addEventListener('click', () => {
+                    agregarAlCarrito({
+                        id: carritoId,
+                        nombre: p.nombre,
+                        precio: p.precioCarrito,
+                        imagen: imagenes[idxActual]?.url || '',
+                        tipo: p.tipo
+                    });
+                    if (_modalOnAgregado) _modalOnAgregado();
+                    renderAccionModalSimple();
                 });
-                renderAccionModal();
+                zonaAccion.appendChild(btn);
             }
-        });
-});
-
-} else {
-    // ── Sin variantes ──
-    const carritoId = getCarritoId(p.id, '');
-
-    function renderAccionModalSimple() {
-        zonaAccion.innerHTML = '';
-        const cant = getCantidadEnCarrito(carritoId);
-        if (!p.enStock) {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Sin stock';
-            btn.disabled = true;
-            zonaAccion.appendChild(btn);
-        } else if (cant > 0) {
-            const contador = crearBtnContador(carritoId, () => renderAccionModalSimple());
-            zonaAccion.appendChild(contador);
-        } else {
-            const btn = document.createElement('button');
-            btn.className = 'btn-agregar-carrito';
-            btn.textContent = 'Agregar al carrito';
-            btn.addEventListener('click', () => {
-                agregarAlCarrito({
-                    id: carritoId,
-                    nombre: p.nombre,
-                    precio: p.precioCarrito,
-                    imagen: imagenes[idxActual]?.url || '',
-                    tipo: p.tipo
-                });
-                if (_modalOnAgregado) _modalOnAgregado();
-                renderAccionModalSimple();
-            });
-            zonaAccion.appendChild(btn);
         }
+
+        renderAccionModalSimple();
+        requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxActual = nuevoIdx; }));
     }
-
-    renderAccionModalSimple();
-    requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxActual = nuevoIdx; }));
-}
-
-document.getElementById('producto-modal').classList.add('active');
-bloquearScroll();
-
 }
 
 function cerrarModalProducto() {
@@ -678,7 +666,9 @@ function cerrarModalProducto() {
     document.getElementById('producto-modal').classList.remove('active');
     const btnOriginal = document.getElementById('modal-btn-carrito');
     if (btnOriginal) btnOriginal.style.display = '';
-    // NO llamar desbloquearScroll aquí
+    if (window.innerWidth > 768) {
+        desbloquearScroll();
+    }
     _modalOnAgregado = null;
 }
 
