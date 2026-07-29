@@ -468,22 +468,12 @@ function crearTarjetaCombo(combo) {
 let _modalOnAgregado = null;
 
 function abrirModalProducto(p) {
-    // En mobile: el modal es fullscreen fixed, no necesitamos ocultar nada
-    if (window.innerWidth > 768) {
-        document.querySelector('.header').style.display = 'none';
-        document.querySelector('.secondary-nav').style.display = 'none';
-    }
+    document.querySelector('.header').style.display = 'none';
+    document.querySelector('.secondary-nav').style.display = 'none';
     document.querySelector('.floating-buttons').style.display = 'none';
     
     document.getElementById('producto-modal').classList.add('active');
-    
-    // Solo bloquear scroll en desktop (en mobile el modal tiene su propio scroll)
-    if (window.innerWidth > 768) {
-        bloquearScroll();
-    } else {
-        // En mobile: scroll al tope sin bloquear el body
-        window.scrollTo(0, 0);
-    }
+    bloquearScroll();
 
     const imagenes = p.imagenes || [{ url: '', nombre: p.nombre, esPortada: true }];
     const { html: carHtml, id: carId } = crearCarrusel(imagenes, p.nombre, 'modal-car-img');
