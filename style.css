@@ -1894,7 +1894,12 @@ html {
    ESTADOS GLOBALES (MODAL ABIERTO)
    ============================================ */
 body.modal-abierto .header,
-body.modal-abierto .secondary-nav,
-body.modal-abierto .floating-buttons {
+body.modal-abierto .secondary-nav {
     display: none !important;
+}
+
+@media (max-width: 768px) {
+    body.modal-abierto .floating-buttons {
+        display: none !important;
+    }
 }

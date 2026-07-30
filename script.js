@@ -679,9 +679,7 @@ function cerrarModalProducto() {
     document.getElementById('producto-modal').classList.remove('active');
     const btnOriginal = document.getElementById('modal-btn-carrito');
     if (btnOriginal) btnOriginal.style.display = '';
-    if (window.innerWidth > 768) {
-        desbloquearScroll();
-    }
+    desbloquearScroll();
     _modalOnAgregado = null;
 }
 
