@@ -1347,8 +1347,8 @@
     <!-- MODAL CONFIRMAR ELIMINACIÓN -->
     <div class="confirm-overlay" id="confirm-overlay">
         <div class="confirm-box">
-            <div class="confirm-icon">🗑️</div>
-            <div class="confirm-title">¿Eliminás este producto?</div>
+            <div class="confirm-icon" id="confirm-icon">🗑️</div>
+            <div class="confirm-title" id="confirm-title">¿Eliminás este producto?</div>
             <div class="confirm-subtitle" id="confirm-subtitle">Esta acción no se puede deshacer.</div>
             <div class="confirm-actions">
                 <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
@@ -1646,9 +1646,14 @@
                 cerrarModal(id);
                 return;
             }
-            if (confirm("¿Estás seguro que quieres salir? Se perderán los cambios no guardados.")) {
-                cerrarModal(id);
-            }
+            mostrarConfirmacionCustom(
+                '⚠️',
+                '¿Estás seguro que quieres salir?',
+                'Se perderán los cambios no guardados.',
+                'Quedarme',
+                'Salir sin guardar',
+                () => { cerrarModal(id); }
+            );
         }
         function thumbHTML(url) {
             return url
@@ -2024,34 +2029,54 @@
             toast(visibleActual ? 'Producto oculto' : 'Producto visible', visibleActual ? 'gray' : 'success');
         }
 
-        /* ====== CONFIRMAR ELIMINACIÓN (modal centrado) ====== */
-        function confirmarEliminacion(nombre, onAceptar) {
+        /* ====== CONFIRMAR ELIMINACIÓN Y SALIDA ====== */
+        function mostrarConfirmacionCustom(icono, titulo, subtitulo, textoCancelar, textoAceptar, onAceptar) {
             const overlay = document.getElementById('confirm-overlay');
-            const subtitle = document.getElementById('confirm-subtitle');
-            const btnDel = document.getElementById('btn-confirm-delete');
+            const iconEl = document.getElementById('confirm-icon');
+            const titleEl = document.getElementById('confirm-title');
+            const subtitleEl = document.getElementById('confirm-subtitle');
             const btnCan = document.getElementById('btn-confirm-cancel');
+            const btnDel = document.getElementById('btn-confirm-delete');
 
-            subtitle.textContent = `"${nombre}" será eliminado permanentemente.`;
-            overlay.classList.add('active');
+            iconEl.textContent = icono;
+            titleEl.textContent = titulo;
+            subtitleEl.textContent = subtitulo;
 
-            // Clonar botones para limpiar listeners anteriores
-            const newDel = btnDel.cloneNode(true);
             const newCan = btnCan.cloneNode(true);
-            btnDel.parentNode.replaceChild(newDel, btnDel);
+            const newDel = btnDel.cloneNode(true);
+
+            newCan.textContent = textoCancelar;
+            newDel.textContent = textoAceptar;
+            newDel.style.background = 'var(--error)';
+
             btnCan.parentNode.replaceChild(newCan, btnCan);
+            btnDel.parentNode.replaceChild(newDel, btnDel);
+
+            overlay.classList.add('active');
 
             newDel.addEventListener('click', async () => {
                 overlay.classList.remove('active');
                 await onAceptar();
             });
+
             newCan.addEventListener('click', () => {
                 overlay.classList.remove('active');
             });
 
-            // Cerrar también al clickear fuera del box
             overlay.onclick = (e) => {
                 if (e.target === overlay) overlay.classList.remove('active');
             };
+        }
+
+        function confirmarEliminacion(nombre, onAceptar) {
+            mostrarConfirmacionCustom(
+                '🗑️',
+                '¿Eliminás este producto?',
+                `"${nombre}" será eliminado permanentemente.`,
+                'Cancelar',
+                'Eliminar',
+                onAceptar
+            );
         }
 
         /* ====== ELIMINAR ====== */
@@ -2065,23 +2090,34 @@
         
         /* ====== CATEGORÍAS ====== */
         let categoriasCache = [];
+        let isCargandoCategorias = false;
 
         async function cargarCategorias() {
-            const lista = document.getElementById('lista-categorias');
-            lista.innerHTML = '<div class="loading">Cargando...</div>';
-            const snap = await getDocs(collection(db, 'categorias'));
-            categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-                .sort((a, b) => a.nombre.localeCompare(b.nombre));
-            
-            actualizarSelectsCategorias();
+            if (isCargandoCategorias) return;
+            isCargandoCategorias = true;
+            try {
+                const lista = document.getElementById('lista-categorias');
+                lista.innerHTML = '<div class="loading">Cargando...</div>';
+                const snap = await getDocs(collection(db, 'categorias'));
+                categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => a.nombre.localeCompare(b.nombre));
+                
+                actualizarSelectsCategorias();
 
-            if (snap.empty) {
-                lista.innerHTML = '<div class="empty-state">Sin categorías. Creá la primera.</div>';
-                return;
-            }
-            lista.innerHTML = '';
-            for (const cat of categoriasCache) {
-                await renderCategoria(cat, lista);
+                if (snap.empty) {
+                    lista.innerHTML = '<div class="empty-state">Sin categorías. Creá la primera.</div>';
+                    return;
+                }
+                
+                // Use a document fragment to prevent duplication visually during awaits
+                const fragment = document.createDocumentFragment();
+                for (const cat of categoriasCache) {
+                    await renderCategoria(cat, fragment);
+                }
+                lista.innerHTML = '';
+                lista.appendChild(fragment);
+            } finally {
+                isCargandoCategorias = false;
             }
         }
 
@@ -2269,10 +2305,6 @@
             ordenarAlfabetico('combos', cargarCombos));
 
         /* ====== CERRAR MODALES CON OVERLAY ====== */
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('mousedown', e => {
-                if (e.target === overlay) overlay.classList.remove('active');
-            });
         });
 
     </script>
