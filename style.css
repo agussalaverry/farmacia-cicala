@@ -1305,6 +1305,17 @@ footer::before {
     box-shadow: 0 -4px 16px rgba(213, 0, 109, 0.15);
 }
 
+.bottom-nav-bar::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background-color: var(--color-primary);
+    z-index: -1;
+}
+
 .bottom-nav-item {
     flex: 1;
     display: flex;
