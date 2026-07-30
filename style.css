@@ -1307,13 +1307,12 @@ footer::before {
 
 .bottom-nav-bar::after {
     content: '';
-    position: fixed;
-    bottom: 0;
+    position: absolute;
+    bottom: -100px;
     left: 0;
     right: 0;
     height: 100px;
     background-color: var(--color-primary);
-    z-index: -1;
 }
 
 .bottom-nav-item {
