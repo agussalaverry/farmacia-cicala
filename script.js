@@ -562,6 +562,7 @@ function abrirModalProducto(p) {
                 variantesWrap.querySelectorAll('.btn-variante').forEach(b => b.classList.remove('activa'));
                 btn.classList.add('activa');
                 const carEl = document.getElementById(carId);
+                if (carEl && carEl._stopAutoplay) carEl._stopAutoplay();
                 if (carEl && carEl._carruselGoTo) carEl._carruselGoTo(idxReal);
                 renderAccionModal();
             });

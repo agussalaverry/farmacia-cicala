@@ -1317,6 +1317,17 @@ footer::before {
     background-color: var(--color-primary);
 }
 
+.bottom-nav-extender {
+    display: none;
+    position: fixed;
+    bottom: -60px;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: var(--color-primary);
+    z-index: 2499;
+}
+
 .bottom-nav-item {
     flex: 1;
     display: flex;
@@ -2070,5 +2081,9 @@ body.modal-abierto .secondary-nav {
 
     body.modal-abierto .bottom-nav-bar {
         display: none !important;
+    }
+
+    .bottom-nav-extender {
+        display: block;
     }
 }
