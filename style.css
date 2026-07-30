@@ -1297,7 +1297,7 @@ footer::before {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #FFB6C1;
+    background-color: var(--color-primary);
     z-index: 2500;
     height: 64px;
     align-items: center;
@@ -1316,7 +1316,7 @@ footer::before {
     font-family: var(--font-family);
     font-size: 13px;
     font-weight: 800;
-    color: var(--color-primary-dark);
+    color: white;
     gap: 6px;
     text-decoration: none;
     transition: background 0.2s;
@@ -1329,7 +1329,7 @@ footer::before {
 .bottom-nav-separator {
     width: 1px;
     height: 36px;
-    background: rgba(213, 0, 109, 0.35);
+    background: rgba(255, 255, 255, 0.4);
     flex-shrink: 0;
 }
 

@@ -1168,10 +1168,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CAMBIO 5: scroll al tope sin smooth para que sea instantáneo al cargar
     document.documentElement.style.scrollBehavior = 'auto';
+    document.body.style.scrollBehavior = 'auto';
     window.scrollTo(0, 0);
-    requestAnimationFrame(() => {
+    setTimeout(() => {
         document.documentElement.style.scrollBehavior = '';
-    });
+        document.body.style.scrollBehavior = '';
+    }, 100);
 
     let lastScroll = 0;
     const secondaryNav = document.querySelector('.secondary-nav');
