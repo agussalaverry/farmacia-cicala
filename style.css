@@ -1889,3 +1889,12 @@ html {
         font-size: var(--font-size-large);
     }
 }
+
+/* ============================================
+   ESTADOS GLOBALES (MODAL ABIERTO)
+   ============================================ */
+body.modal-abierto .header,
+body.modal-abierto .secondary-nav,
+body.modal-abierto .floating-buttons {
+    display: none !important;
+}

@@ -213,6 +213,35 @@ function crearBtnContador(carritoId, onCambio) {
 }
 
 /* ============================================
+   HELPER EVENTOS MOBILE/DESKTOP
+   ============================================ */
+function agregarEventoAbrirModal(elemento, callback) {
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    elemento.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    elemento.addEventListener('touchend', e => {
+        if (e.target.closest('.btn-area-card') || e.target.closest('.car-btn')) return;
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
+        if (Math.abs(touchEndX - touchStartX) > 10 || Math.abs(touchEndY - touchStartY) > 10) {
+            return;
+        }
+        if (e.cancelable) e.preventDefault();
+        callback();
+    });
+
+    elemento.addEventListener('click', e => {
+        if (e.target.closest('.btn-area-card') || e.target.closest('.car-btn')) return;
+        callback();
+    });
+}
+
+/* ============================================
    TARJETA DE PRODUCTO
    ============================================ */
 
@@ -322,9 +351,8 @@ function crearTarjetaProducto(producto, tipo) {
         mostrarBtnPrincipal();
     }
 
-    // Click en la tarjeta abre el modal (excepto en botones)
-    tarjeta.addEventListener('click', e => {
-        if (e.target.closest('.btn-area-card') || e.target.closest('.car-btn')) return;
+    // Click / Tap en la tarjeta abre el modal (excepto en botones)
+    agregarEventoAbrirModal(tarjeta, () => {
         abrirModalProducto({
             nombre: producto.nombre,
             descripcion: producto.descripcion,
@@ -435,8 +463,7 @@ function crearTarjetaCombo(combo) {
         mostrarBtnPrincipal();
     }
 
-    tarjeta.addEventListener('click', e => {
-        if (e.target.closest('.btn-area-card') || e.target.closest('.car-btn')) return;
+    agregarEventoAbrirModal(tarjeta, () => {
         abrirModalProducto({
             nombre: combo.nombre,
             descripcion: combo.descripcion,
@@ -468,9 +495,7 @@ function crearTarjetaCombo(combo) {
 let _modalOnAgregado = null;
 
 function abrirModalProducto(p) {
-    document.querySelector('.header').style.display = 'none';
-    document.querySelector('.secondary-nav').style.display = 'none';
-    document.querySelector('.floating-buttons').style.display = 'none';
+    document.body.classList.add('modal-abierto');
     
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
@@ -650,9 +675,7 @@ function abrirModalProducto(p) {
 }
 
 function cerrarModalProducto() {
-    document.querySelector('.header').style.display = '';
-    document.querySelector('.secondary-nav').style.display = '';
-    document.querySelector('.floating-buttons').style.display = '';
+    document.body.classList.remove('modal-abierto');
     document.getElementById('producto-modal').classList.remove('active');
     const btnOriginal = document.getElementById('modal-btn-carrito');
     if (btnOriginal) btnOriginal.style.display = '';
@@ -662,7 +685,16 @@ function cerrarModalProducto() {
     _modalOnAgregado = null;
 }
 
-document.getElementById('btn-volver-modal').addEventListener('click', cerrarModalProducto);
+const btnVolver = document.getElementById('btn-volver-modal');
+btnVolver.addEventListener('click', (e) => {
+    e.stopPropagation();
+    cerrarModalProducto();
+});
+btnVolver.addEventListener('touchend', (e) => {
+    e.stopPropagation();
+    if (e.cancelable) e.preventDefault();
+    cerrarModalProducto();
+}, { passive: false });
 
 /* ============================================
    CARGAR PRODUCTOS DESDE FIRESTORE
