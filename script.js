@@ -28,23 +28,23 @@ let modalidadSeleccionada = 'retiro';
    DOM
    ============================================ */
 
-const novedadesContainer   = document.getElementById('novedades-container');
+const novedadesContainer = document.getElementById('novedades-container');
 const promocionesContainer = document.getElementById('promociones-container');
-const combosContainer      = document.getElementById('combos-container');
-const cartPanel            = document.getElementById('cart-panel');
-const cartOverlay          = document.getElementById('cart-overlay');
-const cartItemsList        = document.getElementById('cart-items');
-const cartTotalEl          = document.getElementById('cart-total');
-const cartButton           = document.getElementById('cart-button');
-const cartCount            = document.getElementById('cart-count');
-const closeCartBtn         = document.getElementById('close-cart-btn');
-const enviarWhatsappBtn    = document.getElementById('enviar-whatsapp-btn');
-const clearCartBtn         = document.getElementById('clear-cart-btn');
-const btnRetiro            = document.getElementById('btn-retiro');
-const btnEnvio             = document.getElementById('btn-envio');
-const direccionSection     = document.getElementById('direccion-section');
-const direccionInput       = document.getElementById('direccion-input');
-const navTabs              = document.querySelectorAll('.nav-tab');
+const combosContainer = document.getElementById('combos-container');
+const cartPanel = document.getElementById('cart-panel');
+const cartOverlay = document.getElementById('cart-overlay');
+const cartItemsList = document.getElementById('cart-items');
+const cartTotalEl = document.getElementById('cart-total');
+const cartButton = document.getElementById('cart-button');
+const cartCount = document.getElementById('cart-count');
+const closeCartBtn = document.getElementById('close-cart-btn');
+const enviarWhatsappBtn = document.getElementById('enviar-whatsapp-btn');
+const clearCartBtn = document.getElementById('clear-cart-btn');
+const btnRetiro = document.getElementById('btn-retiro');
+const btnEnvio = document.getElementById('btn-envio');
+const direccionSection = document.getElementById('direccion-section');
+const direccionInput = document.getElementById('direccion-input');
+const navTabs = document.querySelectorAll('.nav-tab');
 
 /* ============================================
    UTILIDADES
@@ -100,9 +100,9 @@ function crearCarrusel(imagenes, altText, heightClass = '') {
         <div class="carrusel" id="${id}" data-idx="0">
             <div class="carrusel-track">
                 ${imgs.map(img => {
-                    const src = typeof img === 'string' ? img : (img.url || '');
-                    return `<img src="${src}" alt="${altText}" class="producto-img ${heightClass}" onerror="this.src='';">`;
-                }).join('')}
+        const src = typeof img === 'string' ? img : (img.url || '');
+        return `<img src="${src}" alt="${altText}" class="producto-img ${heightClass}" onerror="this.src='';">`;
+    }).join('')}
             </div>
             ${imgs.length > 1 ? `
                 <button class="car-btn car-prev" aria-label="Anterior">&#8249;</button>
@@ -265,9 +265,9 @@ function crearTarjetaProducto(producto, tipo) {
            </div>`;
 
     const precioCarrito = tipo === 'novedad' ? producto.precio : producto.precioDescuento;
-    const precioTexto   = tipo === 'novedad' ? formatearPrecio(producto.precio) : formatearPrecio(producto.precioDescuento);
-    const imagenesNorm  = normalizarImagenes(producto.imagenes || (producto.imagen ? [producto.imagen] : []), producto.nombre);
-    const conVariantes  = tieneVariantes(imagenesNorm);
+    const precioTexto = tipo === 'novedad' ? formatearPrecio(producto.precio) : formatearPrecio(producto.precioDescuento);
+    const imagenesNorm = normalizarImagenes(producto.imagenes || (producto.imagen ? [producto.imagen] : []), producto.nombre);
+    const conVariantes = tieneVariantes(imagenesNorm);
     const { html: carHtml, id: carId } = crearCarrusel(imagenesNorm, producto.nombre);
 
     const textoBtnPrincipal = !producto.enStock
@@ -389,7 +389,7 @@ function crearTarjetaCombo(combo) {
     tarjeta.dataset.categoria = combo.categoria || '';
 
     const imagenesNorm = normalizarImagenes(combo.imagenes || (combo.imagen ? [combo.imagen] : []), combo.nombre);
-    const conVariantes  = tieneVariantes(imagenesNorm);
+    const conVariantes = tieneVariantes(imagenesNorm);
     const { html: carHtml, id: carId } = crearCarrusel(imagenesNorm, combo.nombre);
 
     const textoBtnPrincipal = !combo.enStock
@@ -496,7 +496,7 @@ let _modalOnAgregado = null;
 
 function abrirModalProducto(p) {
     document.body.classList.add('modal-abierto');
-    
+
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
 
@@ -807,6 +807,8 @@ function actualizarCarritoUI() {
     const total = carrito.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
     const cantidadTotal = carrito.reduce((sum, i) => sum + i.cantidad, 0);
     cartCount.textContent = cantidadTotal;
+    const cartCountMobile = document.getElementById('cart-count-mobile');
+    if (cartCountMobile) cartCountMobile.textContent = cantidadTotal;
     cartTotalEl.textContent = formatearPrecio(total);
     renderizarCartItems();
 }
@@ -1066,8 +1068,8 @@ navTabs.forEach(tab => {
    FILTROS POR CATEGORÍA (DRAWER)
    ============================================ */
 
-const filtrosDrawer   = document.getElementById('filtros-drawer');
-const filtrosOverlay  = document.getElementById('filtros-overlay');
+const filtrosDrawer = document.getElementById('filtros-drawer');
+const filtrosOverlay = document.getElementById('filtros-overlay');
 const closeFiltrosBtn = document.getElementById('close-filtros-btn');
 let filtrosCargados = false;
 
@@ -1186,6 +1188,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
+    const filtrosBtnMobile = document.getElementById('filtros-btn-mobile');
+    const cartBtnMobile = document.getElementById('cart-button-mobile');
+
+    if (filtrosBtnMobile) {
+        filtrosBtnMobile.addEventListener('click', () => {
+            if (filtrosDrawer.classList.contains('active')) cerrarFiltros();
+            else abrirFiltros();
+        });
+    }
+
+    if (cartBtnMobile) {
+        cartBtnMobile.addEventListener('click', () => {
+            cartPanel.classList.contains('active') ? cerrarCarrito() : abrirCarrito();
+        });
+    }
+
 
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && portalAbierto) cerrarPortal();
