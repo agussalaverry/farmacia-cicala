@@ -1320,10 +1320,10 @@ footer::before {
 .bottom-nav-extender {
     display: none;
     position: fixed;
-    bottom: -60px;
+    bottom: -80px;
     left: 0;
     right: 0;
-    height: 60px;
+    height: 80px;
     background-color: var(--color-primary);
     z-index: 2499;
 }
