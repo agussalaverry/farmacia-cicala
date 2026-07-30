@@ -1303,6 +1303,8 @@ footer::before {
     padding-bottom: env(safe-area-inset-bottom);
     align-items: center;
     box-shadow: 0 -4px 16px rgba(213, 0, 109, 0.15);
+    position: fixed;
+    overflow: visible;
 }
 
 .bottom-nav-bar::after {
