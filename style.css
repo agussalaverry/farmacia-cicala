@@ -1302,6 +1302,7 @@ footer::before {
     height: 64px;
     align-items: center;
     box-shadow: 0 -4px 16px rgba(213, 0, 109, 0.15);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .bottom-nav-item {
@@ -1520,7 +1521,7 @@ footer::before {
     }
 
     .main-content {
-        padding-bottom: 80px;
+        padding-bottom: 90px;
     }
 
     .producto-descripcion {
@@ -1533,6 +1534,10 @@ footer::before {
 
     .producto-img {
         height: 110px;
+    }
+
+    footer {
+        margin-bottom: 64px;
     }
 }
 
