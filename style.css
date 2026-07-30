@@ -2050,4 +2050,8 @@ body.modal-abierto .secondary-nav {
     body.modal-abierto .floating-buttons {
         display: none !important;
     }
+
+    body.modal-abierto .bottom-nav-bar {
+        display: none !important;
+    }
 }
