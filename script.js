@@ -727,6 +727,16 @@ async function cargarProductos() {
         console.error('Error cargando productos:', error);
         mostrarErrorCarga();
     }
+
+    // Cargar horarios dinámicos
+    const { getDoc, doc: fsDoc } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+    const horSnap = await getDoc(fsDoc(db, 'config', 'horarios'));
+    if (horSnap.exists()) {
+        const h = horSnap.data();
+        document.getElementById('hor-display-lv').textContent = h.lunesViernes || '—';
+        document.getElementById('hor-display-sab').textContent = h.sabados || '—';
+        document.getElementById('hor-display-dom').textContent = h.domingos || '—';
+    }
 }
 
 function mostrarCargando() {

@@ -265,7 +265,10 @@
             min-height: 34px;
             min-width: 40px;
         }
-        .btn-toggle-visible:hover { opacity: 0.75; }
+
+        .btn-toggle-visible:hover {
+            opacity: 0.75;
+        }
 
         .btn-edit:hover,
         .btn-delete:hover,
@@ -420,8 +423,8 @@
             box-sizing: border-box;
         }
 
-        .table-header > span,
-        .producto-row > span {
+        .table-header>span,
+        .producto-row>span {
             min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1016,10 +1019,14 @@
             opacity: 0.4;
             background: #FFF0F5;
         }
+
         .producto-row.drag-over {
             border-top: 3px solid var(--pink);
         }
-        .producto-row { cursor: grab; }
+
+        .producto-row {
+            cursor: grab;
+        }
 
         /* Toolbar con botón alfabético */
         .btn-sort-alpha {
@@ -1033,8 +1040,14 @@
             font-weight: 700;
             cursor: pointer;
         }
-        .btn-sort-alpha:hover { opacity: 0.8; }
-        .section-toolbar { gap: 12px; }
+
+        .btn-sort-alpha:hover {
+            opacity: 0.8;
+        }
+
+        .section-toolbar {
+            gap: 12px;
+        }
     </style>
 </head>
 
@@ -1076,6 +1089,7 @@
                 <button class="admin-tab" data-tab="promociones">Promociones</button>
                 <button class="admin-tab" data-tab="combos">Combos</button>
                 <button class="admin-tab" data-tab="categorias">Filtros</button>
+                <button class="admin-tab" data-tab="horarios">Horarios</button>
             </div>
 
             <!-- NOVEDADES -->
@@ -1141,6 +1155,32 @@
                     <div class="loading">Cargando...</div>
                 </div>
             </div>
+
+            <!-- HORARIOS -->
+            <div class="admin-section" id="tab-horarios">
+                <div class="section-toolbar">
+                    <h2>Horarios</h2>
+                    <button class="btn-add" id="btn-guardar-horarios">Guardar cambios</button>
+                </div>
+                <div
+                    style="background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;max-width:600px;">
+                    <div id="horarios-loading" class="loading">Cargando...</div>
+                    <div id="horarios-form" style="display:none;">
+                        <div class="form-group">
+                            <label>Lunes a Viernes</label>
+                            <input type="text" id="hor-lunes-viernes" placeholder="8:00–13:00 | 16:00–21:00">
+                        </div>
+                        <div class="form-group">
+                            <label>Sábados</label>
+                            <input type="text" id="hor-sabados" placeholder="9:00–13:00 | 17:00–21:00">
+                        </div>
+                        <div class="form-group">
+                            <label>Domingos</label>
+                            <input type="text" id="hor-domingos" placeholder="Cerrado">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1172,16 +1212,16 @@
             </div>
             <!-- MODAL NOVEDAD — reemplaza el form-group de imagen -->
             <div class="form-group">
-            <label>Imágenes del producto</label>
-            <div class="imagen-upload-area" id="upload-area-novedad">
-                <input type="file" id="novedad-imagen-file" accept="image/*" multiple>
-                <div class="imagen-upload-icon">📷</div>
-                <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
-                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
-            </div>
-            <!-- Previews de imágenes múltiples -->
-            <div id="preview-list-novedad" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
-            <input type="hidden" id="novedad-imagen-url">
+                <label>Imágenes del producto</label>
+                <div class="imagen-upload-area" id="upload-area-novedad">
+                    <input type="file" id="novedad-imagen-file" accept="image/*" multiple>
+                    <div class="imagen-upload-icon">📷</div>
+                    <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
+                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
+                </div>
+                <!-- Previews de imágenes múltiples -->
+                <div id="preview-list-novedad" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
+                <input type="hidden" id="novedad-imagen-url">
             </div>
             <div class="form-group">
                 <label>Categoría</label>
@@ -1235,15 +1275,15 @@
             </div>
             <!-- MODAL PROMOCION — reemplaza el form-group de imagen -->
             <div class="form-group">
-            <label>Imágenes del producto</label>
-            <div class="imagen-upload-area" id="upload-area-promocion">
-                <input type="file" id="promocion-imagen-file" accept="image/*" multiple>
-                <div class="imagen-upload-icon">📷</div>
-                <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
-                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
-            </div>
-            <div id="preview-list-promocion" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
-            <input type="hidden" id="promocion-imagen-url">
+                <label>Imágenes del producto</label>
+                <div class="imagen-upload-area" id="upload-area-promocion">
+                    <input type="file" id="promocion-imagen-file" accept="image/*" multiple>
+                    <div class="imagen-upload-icon">📷</div>
+                    <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
+                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
+                </div>
+                <div id="preview-list-promocion" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
+                <input type="hidden" id="promocion-imagen-url">
             </div>
             <div class="form-group">
                 <label>Categoría</label>
@@ -1286,15 +1326,15 @@
             </div>
             <!-- MODAL COMBO — reemplaza el form-group de imagen -->
             <div class="form-group">
-            <label>Imágenes del producto</label>
-            <div class="imagen-upload-area" id="upload-area-combo">
-                <input type="file" id="combo-imagen-file" accept="image/*" multiple>
-                <div class="imagen-upload-icon">📷</div>
-                <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
-                <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
-            </div>
-            <div id="preview-list-combo" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
-            <input type="hidden" id="combo-imagen-url">
+                <label>Imágenes del producto</label>
+                <div class="imagen-upload-area" id="upload-area-combo">
+                    <input type="file" id="combo-imagen-file" accept="image/*" multiple>
+                    <div class="imagen-upload-icon">📷</div>
+                    <div class="imagen-upload-text">Hacé click o arrastrá imágenes (podés subir varias)</div>
+                    <div class="imagen-upload-sub">JPG, PNG o WEBP — máximo 5MB por imagen</div>
+                </div>
+                <div id="preview-list-combo" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
+                <input type="hidden" id="combo-imagen-url">
             </div>
             <div class="form-group">
                 <label>Categoría</label>
@@ -1513,119 +1553,119 @@
 
         /* ====== SETUP UPLOADERS MÚLTIPLES ====== */
         function setupImagenUploadMultiple(inputId, areaId, previewListId, urlInputId) {
-  const input = document.getElementById(inputId);
-  const area = document.getElementById(areaId);
-  const previewList = document.getElementById(previewListId);
+            const input = document.getElementById(inputId);
+            const area = document.getElementById(areaId);
+            const previewList = document.getElementById(previewListId);
 
-  let imagenes = [];
+            let imagenes = [];
 
-  function renderPreviews() {
-    previewList.innerHTML = '';
-    imagenes.forEach((img, idx) => {
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'position:relative;display:inline-flex;flex-direction:column;gap:4px;align-items:center;width:110px;';
+            function renderPreviews() {
+                previewList.innerHTML = '';
+                imagenes.forEach((img, idx) => {
+                    const wrap = document.createElement('div');
+                    wrap.style.cssText = 'position:relative;display:inline-flex;flex-direction:column;gap:4px;align-items:center;width:110px;';
 
-      const im = document.createElement('img');
-      im.src = img.previewSrc;
-      im.style.cssText = `width:90px;height:90px;object-fit:cover;border-radius:8px;border:3px solid ${img.esPortada ? '#D5006D' : '#F2C0D8'};cursor:pointer;`;
-      im.title = 'Hacer portada';
-      im.addEventListener('click', () => {
-        imagenes.forEach((i, j) => i.esPortada = (j === idx));
-        renderPreviews();
-      });
+                    const im = document.createElement('img');
+                    im.src = img.previewSrc;
+                    im.style.cssText = `width:90px;height:90px;object-fit:cover;border-radius:8px;border:3px solid ${img.esPortada ? '#D5006D' : '#F2C0D8'};cursor:pointer;`;
+                    im.title = 'Hacer portada';
+                    im.addEventListener('click', () => {
+                        imagenes.forEach((i, j) => i.esPortada = (j === idx));
+                        renderPreviews();
+                    });
 
-      if (img.esPortada) {
-        const badge = document.createElement('span');
-        badge.textContent = '⭐ Portada';
-        badge.style.cssText = 'position:absolute;top:4px;left:4px;background:#D5006D;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;pointer-events:none;';
-        wrap.appendChild(badge);
-      }
+                    if (img.esPortada) {
+                        const badge = document.createElement('span');
+                        badge.textContent = '⭐ Portada';
+                        badge.style.cssText = 'position:absolute;top:4px;left:4px;background:#D5006D;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;pointer-events:none;';
+                        wrap.appendChild(badge);
+                    }
 
-      const nameInput = document.createElement('input');
-      nameInput.type = 'text';
-      nameInput.placeholder = 'Ej: Menta';
-      nameInput.value = img.nombre || '';
-      nameInput.style.cssText = 'width:90px;font-size:11px;padding:4px;border:1px solid #F2C0D8;border-radius:6px;font-family:Nunito,sans-serif;text-align:center;';
-      nameInput.addEventListener('input', e => { imagenes[idx].nombre = e.target.value; });
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.placeholder = 'Ej: Menta';
+                    nameInput.value = img.nombre || '';
+                    nameInput.style.cssText = 'width:90px;font-size:11px;padding:4px;border:1px solid #F2C0D8;border-radius:6px;font-family:Nunito,sans-serif;text-align:center;';
+                    nameInput.addEventListener('input', e => { imagenes[idx].nombre = e.target.value; });
 
-      const btn = document.createElement('button');
-      btn.textContent = '✕';
-      btn.type = 'button';
-      btn.style.cssText = 'position:absolute;top:-6px;right:4px;background:#E53935;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;padding:0;';
-      btn.addEventListener('click', () => {
-        imagenes.splice(idx, 1);
-        if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
-        renderPreviews();
-      });
+                    const btn = document.createElement('button');
+                    btn.textContent = '✕';
+                    btn.type = 'button';
+                    btn.style.cssText = 'position:absolute;top:-6px;right:4px;background:#E53935;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;padding:0;';
+                    btn.addEventListener('click', () => {
+                        imagenes.splice(idx, 1);
+                        if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
+                        renderPreviews();
+                    });
 
-      wrap.appendChild(im);
-      wrap.appendChild(nameInput);
-      wrap.appendChild(btn);
-      previewList.appendChild(wrap);
-    });
-  }
+                    wrap.appendChild(im);
+                    wrap.appendChild(nameInput);
+                    wrap.appendChild(btn);
+                    previewList.appendChild(wrap);
+                });
+            }
 
-  async function procesarFiles(files) {
-    for (const file of files) {
-      await new Promise(resolve => {
-        abrirRecortador(file, resultado => {
-          const reader = new FileReader();
-          reader.onload = e => {
-            const esPortada = imagenes.length === 0;
-            imagenes.push({ file: resultado, url: '', nombre: '', esPortada, previewSrc: e.target.result });
-            renderPreviews();
-            resolve();
-          };
-          reader.readAsDataURL(resultado);
-        });
-      });
-    }
-  }
+            async function procesarFiles(files) {
+                for (const file of files) {
+                    await new Promise(resolve => {
+                        abrirRecortador(file, resultado => {
+                            const reader = new FileReader();
+                            reader.onload = e => {
+                                const esPortada = imagenes.length === 0;
+                                imagenes.push({ file: resultado, url: '', nombre: '', esPortada, previewSrc: e.target.result });
+                                renderPreviews();
+                                resolve();
+                            };
+                            reader.readAsDataURL(resultado);
+                        });
+                    });
+                }
+            }
 
-  input.addEventListener('change', async e => {
-    if (e.target.files.length) await procesarFiles([...e.target.files]);
-    input.value = '';
-  });
+            input.addEventListener('change', async e => {
+                if (e.target.files.length) await procesarFiles([...e.target.files]);
+                input.value = '';
+            });
 
-  area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
-  area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-  area.addEventListener('drop', async e => {
-    e.preventDefault(); area.classList.remove('dragover');
-    if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files]);
-  });
+            area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+            area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+            area.addEventListener('drop', async e => {
+                e.preventDefault(); area.classList.remove('dragover');
+                if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files]);
+            });
 
-  return {
-    async subirTodas(prefijo, setEstado) {
-      const result = [];
-      for (const img of imagenes) {
-        let url = img.url;
-        if (!url && img.file) {
-          url = await subirImagenCloudinary(img.file, prefijo, setEstado);
-          img.url = url;
+            return {
+                async subirTodas(prefijo, setEstado) {
+                    const result = [];
+                    for (const img of imagenes) {
+                        let url = img.url;
+                        if (!url && img.file) {
+                            url = await subirImagenCloudinary(img.file, prefijo, setEstado);
+                            img.url = url;
+                        }
+                        result.push({ url, nombre: img.nombre || '', esPortada: img.esPortada || false });
+                    }
+                    return result;
+                },
+                setUrls(imgs) {
+                    imagenes = (imgs || []).map((img, idx) => {
+                        if (typeof img === 'string') return { file: null, url: img, nombre: '', esPortada: idx === 0, previewSrc: img };
+                        return { file: null, url: img.url, nombre: img.nombre || '', esPortada: img.esPortada || false, previewSrc: img.url };
+                    });
+                    if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
+                    renderPreviews();
+                },
+                reset() { imagenes = []; renderPreviews(); },
+                setEstado: () => { },
+            };
         }
-        result.push({ url, nombre: img.nombre || '', esPortada: img.esPortada || false });
-      }
-      return result;
-    },
-    setUrls(imgs) {
-      imagenes = (imgs || []).map((img, idx) => {
-        if (typeof img === 'string') return { file: null, url: img, nombre: '', esPortada: idx === 0, previewSrc: img };
-        return { file: null, url: img.url, nombre: img.nombre || '', esPortada: img.esPortada || false, previewSrc: img.url };
-      });
-      if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
-      renderPreviews();
-    },
-    reset() { imagenes = []; renderPreviews(); },
-    setEstado: () => {},
-  };
-}
 
-    let uploaderNovedad, uploaderPromocion, uploaderCombo;
-    document.addEventListener('DOMContentLoaded', () => {
-        uploaderNovedad   = setupImagenUploadMultiple('novedad-imagen-file',   'upload-area-novedad',   'preview-list-novedad',   'novedad-imagen-url');
-        uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
-        uploaderCombo     = setupImagenUploadMultiple('combo-imagen-file',     'upload-area-combo',     'preview-list-combo',     'combo-imagen-url');
-    });
+        let uploaderNovedad, uploaderPromocion, uploaderCombo;
+        document.addEventListener('DOMContentLoaded', () => {
+            uploaderNovedad = setupImagenUploadMultiple('novedad-imagen-file', 'upload-area-novedad', 'preview-list-novedad', 'novedad-imagen-url');
+            uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
+            uploaderCombo = setupImagenUploadMultiple('combo-imagen-file', 'upload-area-combo', 'preview-list-combo', 'combo-imagen-url');
+        });
 
         /* ====== UTILIDADES ====== */
         function fmt(n) {
@@ -1662,7 +1702,7 @@
         }
 
         /* ====== CARGAR TODO ====== */
-        function cargarTodo() { 
+        function cargarTodo() {
             setTimeout(() => { cargarNovedades(); cargarPromociones(); cargarCombos(); }, 0);
         }
 
@@ -1674,7 +1714,7 @@
             if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin novedades aún. Agregá la primera.</div>'; return; }
             lista.innerHTML = '';
             // Ordenar por campo 'orden'
-            const docsOrdenados = snap.docs.sort((a, b) => 
+            const docsOrdenados = snap.docs.sort((a, b) =>
                 (a.data().orden ?? 999) - (b.data().orden ?? 999)
             );
             docsOrdenados.forEach(d => {
@@ -1812,140 +1852,140 @@
 
         /* ====== NOVEDADES - abrir modal ====== */
         async function abrirModalNovedad(id = '', p = {}) {
-        document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
-        document.getElementById('novedad-id').value = id;
-        document.getElementById('novedad-nombre').value = p.nombre || '';
-        document.getElementById('novedad-descripcion').value = p.descripcion || '';
-        document.getElementById('novedad-precio').value = p.precio || '';
-        document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
-        await actualizarSelectsCategorias();
-        document.getElementById('novedad-categoria').value = p.categoria || '';
-        uploaderNovedad.reset();
-        // Cargar imágenes existentes (campo 'imagenes' array, o 'imagen' string legacy)
-        const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
-        uploaderNovedad.setUrls(imgs);
-        document.getElementById('modal-novedad').classList.add('active');
+            document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
+            document.getElementById('novedad-id').value = id;
+            document.getElementById('novedad-nombre').value = p.nombre || '';
+            document.getElementById('novedad-descripcion').value = p.descripcion || '';
+            document.getElementById('novedad-precio').value = p.precio || '';
+            document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
+            await actualizarSelectsCategorias();
+            document.getElementById('novedad-categoria').value = p.categoria || '';
+            uploaderNovedad.reset();
+            // Cargar imágenes existentes (campo 'imagenes' array, o 'imagen' string legacy)
+            const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
+            uploaderNovedad.setUrls(imgs);
+            document.getElementById('modal-novedad').classList.add('active');
         }
 
         /* ====== NOVEDADES - guardar ====== */
         document.getElementById('btn-guardar-novedad').addEventListener('click', async () => {
-        const id = document.getElementById('novedad-id').value;
-        const nombre = document.getElementById('novedad-nombre').value.trim();
-        const descripcion = document.getElementById('novedad-descripcion').value.trim();
-        const precio = parseInt(document.getElementById('novedad-precio').value);
-        const enStock = document.getElementById('novedad-stock').value === 'true';
-        const categoria = document.getElementById('novedad-categoria').value;
-        if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
+            const id = document.getElementById('novedad-id').value;
+            const nombre = document.getElementById('novedad-nombre').value.trim();
+            const descripcion = document.getElementById('novedad-descripcion').value.trim();
+            const precio = parseInt(document.getElementById('novedad-precio').value);
+            const enStock = document.getElementById('novedad-stock').value === 'true';
+            const categoria = document.getElementById('novedad-categoria').value;
+            if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
 
-        let imagenes = [];
-        try { imagenes = await uploaderNovedad.subirTodas('novedades', uploaderNovedad.setEstado); }
-        catch (e) { toast('Error al subir imagen', 'error'); return; }
+            let imagenes = [];
+            try { imagenes = await uploaderNovedad.subirTodas('novedades', uploaderNovedad.setEstado); }
+            catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-        const portada = imagenes.find(i => i.esPortada) || imagenes[0];
-        const data = {
-        nombre, descripcion, precio, enStock, categoria,
-        imagenes,
-        imagen: portada?.url || '',
-        tipo: 'novedad'
-        };
-        try {
-            if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
-            else { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
-            cerrarModal('modal-novedad'); cargarNovedades();
-        } catch (e) { toast('Error al guardar', 'error'); }
+            const portada = imagenes.find(i => i.esPortada) || imagenes[0];
+            const data = {
+                nombre, descripcion, precio, enStock, categoria,
+                imagenes,
+                imagen: portada?.url || '',
+                tipo: 'novedad'
+            };
+            try {
+                if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
+                else { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
+                cerrarModal('modal-novedad'); cargarNovedades();
+            } catch (e) { toast('Error al guardar', 'error'); }
         });
 
         /* ====== PROMOCIONES - abrir modal ====== */
-        
+
         async function abrirModalPromocion(id = '', p = {}) {
-        document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
-        document.getElementById('promocion-id').value = id;
-        document.getElementById('promocion-nombre').value = p.nombre || '';
-        document.getElementById('promocion-descripcion').value = p.descripcion || '';
-        document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
-        document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
-        document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
-        document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
-        await actualizarSelectsCategorias();
-        document.getElementById('promocion-categoria').value = p.categoria || '';
-        uploaderPromocion.reset();
-        const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
-        uploaderPromocion.setUrls(imgs);
-        document.getElementById('modal-promocion').classList.add('active');
+            document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
+            document.getElementById('promocion-id').value = id;
+            document.getElementById('promocion-nombre').value = p.nombre || '';
+            document.getElementById('promocion-descripcion').value = p.descripcion || '';
+            document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
+            document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
+            document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
+            document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
+            await actualizarSelectsCategorias();
+            document.getElementById('promocion-categoria').value = p.categoria || '';
+            uploaderPromocion.reset();
+            const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
+            uploaderPromocion.setUrls(imgs);
+            document.getElementById('modal-promocion').classList.add('active');
         }
 
         /* ====== PROMOCIONES - guardar ====== */
         document.getElementById('btn-guardar-promocion').addEventListener('click', async () => {
-        const id = document.getElementById('promocion-id').value;
-        const nombre = document.getElementById('promocion-nombre').value.trim();
-        const descripcion = document.getElementById('promocion-descripcion').value.trim();
-        const precioOriginal = parseInt(document.getElementById('promocion-precio-original').value);
-        const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
-        const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
-        const enStock = document.getElementById('promocion-stock').value === 'true';
-        const categoria = document.getElementById('promocion-categoria').value;
-        if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
+            const id = document.getElementById('promocion-id').value;
+            const nombre = document.getElementById('promocion-nombre').value.trim();
+            const descripcion = document.getElementById('promocion-descripcion').value.trim();
+            const precioOriginal = parseInt(document.getElementById('promocion-precio-original').value);
+            const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
+            const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
+            const enStock = document.getElementById('promocion-stock').value === 'true';
+            const categoria = document.getElementById('promocion-categoria').value;
+            if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
 
-        let imagenes = [];
-        try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
-        catch (e) { toast('Error al subir imagen', 'error'); return; }
+            let imagenes = [];
+            try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
+            catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-        const portada = imagenes.find(i => i.esPortada) || imagenes[0];
-        const data = {
-        nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
-        imagenes,
-        imagen: portada?.url || '',
-        tipo: 'promocion'
-        };
-        try {
-            if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
-            else { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
-            cerrarModal('modal-promocion'); cargarPromociones();
-        } catch (e) { toast('Error al guardar', 'error'); }
+            const portada = imagenes.find(i => i.esPortada) || imagenes[0];
+            const data = {
+                nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
+                imagenes,
+                imagen: portada?.url || '',
+                tipo: 'promocion'
+            };
+            try {
+                if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
+                else { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
+                cerrarModal('modal-promocion'); cargarPromociones();
+            } catch (e) { toast('Error al guardar', 'error'); }
         });
 
         /* ====== COMBOS - abrir modal ====== */
         async function abrirModalCombo(id = '', c = {}) {
-        document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
-        document.getElementById('combo-id').value = id;
-        document.getElementById('combo-nombre').value = c.nombre || '';
-        document.getElementById('combo-descripcion').value = c.descripcion || '';
-        document.getElementById('combo-precio').value = c.precio || '';
-        document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
-        await actualizarSelectsCategorias();
-        document.getElementById('combo-categoria').value = c.categoria || '';
-        uploaderCombo.reset();
-        const imgs = c.imagenes || (c.imagen ? [c.imagen] : []);
-        uploaderCombo.setUrls(imgs);
-        document.getElementById('modal-combo').classList.add('active');
+            document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
+            document.getElementById('combo-id').value = id;
+            document.getElementById('combo-nombre').value = c.nombre || '';
+            document.getElementById('combo-descripcion').value = c.descripcion || '';
+            document.getElementById('combo-precio').value = c.precio || '';
+            document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
+            await actualizarSelectsCategorias();
+            document.getElementById('combo-categoria').value = c.categoria || '';
+            uploaderCombo.reset();
+            const imgs = c.imagenes || (c.imagen ? [c.imagen] : []);
+            uploaderCombo.setUrls(imgs);
+            document.getElementById('modal-combo').classList.add('active');
         }
 
         /* ====== COMBOS - guardar ====== */
         document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
-        const id = document.getElementById('combo-id').value;
-        const nombre = document.getElementById('combo-nombre').value.trim();
-        const descripcion = document.getElementById('combo-descripcion').value.trim();
-        const precio = parseInt(document.getElementById('combo-precio').value);
-        const enStock = document.getElementById('combo-stock').value === 'true';
-        const categoria = document.getElementById('combo-categoria').value;
-        if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
+            const id = document.getElementById('combo-id').value;
+            const nombre = document.getElementById('combo-nombre').value.trim();
+            const descripcion = document.getElementById('combo-descripcion').value.trim();
+            const precio = parseInt(document.getElementById('combo-precio').value);
+            const enStock = document.getElementById('combo-stock').value === 'true';
+            const categoria = document.getElementById('combo-categoria').value;
+            if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
 
-        let imagenes = [];
-        try { imagenes = await uploaderCombo.subirTodas('combos', uploaderCombo.setEstado); }
-        catch (e) { toast('Error al subir imagen', 'error'); return; }
+            let imagenes = [];
+            try { imagenes = await uploaderCombo.subirTodas('combos', uploaderCombo.setEstado); }
+            catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-        const portada = imagenes.find(i => i.esPortada) || imagenes[0];
-        const data = {
-        nombre, descripcion, precio, enStock, categoria,
-        imagenes,
-        imagen: portada?.url || '',
-        tipo: 'combo'
-        };
-        try {
-            if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
-            else { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
-            cerrarModal('modal-combo'); cargarCombos();
-        } catch (e) { toast('Error al guardar', 'error'); }
+            const portada = imagenes.find(i => i.esPortada) || imagenes[0];
+            const data = {
+                nombre, descripcion, precio, enStock, categoria,
+                imagenes,
+                imagen: portada?.url || '',
+                tipo: 'combo'
+            };
+            try {
+                if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
+                else { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
+                cerrarModal('modal-combo'); cargarCombos();
+            } catch (e) { toast('Error al guardar', 'error'); }
         });
 
         /* ====== DRAG & DROP ORDEN ====== */
@@ -2022,7 +2062,7 @@
             // Notificación gris para cambio de stock
             toast(stockActual ? 'Sin stock' : 'Con stock', stockActual ? 'gray' : 'success');
         }
-        
+
 
         async function toggleVisible(col, id, visibleActual) {
             await updateDoc(doc(db, col, id), { visible: !visibleActual });
@@ -2088,7 +2128,7 @@
                 recargar();
             });
         }
-        
+
         /* ====== CATEGORÍAS ====== */
         let categoriasCache = [];
         let isCargandoCategorias = false;
@@ -2102,14 +2142,14 @@
                 const snap = await getDocs(collection(db, 'categorias'));
                 categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
                     .sort((a, b) => a.nombre.localeCompare(b.nombre));
-                
+
                 actualizarSelectsCategorias();
 
                 if (snap.empty) {
                     lista.innerHTML = '<div class="empty-state">Sin categorías. Creá la primera.</div>';
                     return;
                 }
-                
+
                 // Use a document fragment to prevent duplication visually during awaits
                 const fragment = document.createDocumentFragment();
                 for (const cat of categoriasCache) {
@@ -2306,6 +2346,36 @@
             ordenarAlfabetico('combos', cargarCombos));
 
         /* ====== CERRAR MODALES CON OVERLAY ====== */
+
+        /* ====== HORARIOS ====== */
+        async function cargarHorarios() {
+            const { getDoc, setDoc, doc: fsDoc } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+            const snap = await getDoc(fsDoc(db, 'config', 'horarios'));
+            const data = snap.exists() ? snap.data() : {};
+            document.getElementById('hor-lunes-viernes').value = data.lunesViernes || '';
+            document.getElementById('hor-sabados').value = data.sabados || '';
+            document.getElementById('hor-domingos').value = data.domingos || '';
+            document.getElementById('horarios-loading').style.display = 'none';
+            document.getElementById('horarios-form').style.display = 'block';
+        }
+
+        document.getElementById('btn-guardar-horarios').addEventListener('click', async () => {
+            const { setDoc, doc: fsDoc } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+            const data = {
+                lunesViernes: document.getElementById('hor-lunes-viernes').value.trim(),
+                sabados: document.getElementById('hor-sabados').value.trim(),
+                domingos: document.getElementById('hor-domingos').value.trim(),
+            };
+            await setDoc(fsDoc(db, 'config', 'horarios'), data);
+            toast('Horarios guardados', 'success');
+        });
+
+        // Cargar al abrir el tab
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (tab.dataset.tab === 'horarios') cargarHorarios();
+            });
+        });
 
     </script>
 </body>
