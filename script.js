@@ -2,8 +2,8 @@
    FARMACIA CICALA - SCRIPT.JS
    ============================================ */
 
+import { getFirestore, collection, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
@@ -729,8 +729,7 @@ async function cargarProductos() {
     }
 
     // Cargar horarios dinámicos
-    const { getDoc, doc: fsDoc } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
-    const horSnap = await getDoc(fsDoc(db, 'config', 'horarios'));
+    const horSnap = await getDoc(doc(db, 'config', 'horarios'));
     if (horSnap.exists()) {
         const h = horSnap.data();
         document.getElementById('hor-display-lv').textContent = h.lunesViernes || '—';
