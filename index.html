@@ -5,16 +5,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Farmacia Cicala - Descuentos y ofertas de la semana en medicamentos, perfumería y herboristería">
-    <meta name="keywords" content="farmacia, descuentos, ofertas, Tandil">
+        content="Farmacia Cicala en Tandil — Descuentos, promociones y novedades en medicamentos, perfumería y herboristería. Quintana 620, Tandil. Tel: +542494014223">
+    <meta name="keywords"
+        content="farmacia cicala, farmacia tandil, farmacia quintana 620, descuentos farmacia tandil, cicala tandil">
     <meta name="author" content="Farmacia Cicala">
-    <title>Farmacia Cicala - Descuentos y Ofertas</title>
+    <meta name="robots" content="index, follow">
 
-    <!-- Enlazar CSS (será creado en la siguiente etapa) -->
+    <!-- Open Graph (para redes sociales y mejor preview en Google) -->
+    <meta property="og:title" content="Farmacia Cicala — Descuentos y Ofertas en Tandil">
+    <meta property="og:description"
+        content="Promociones, novedades y combos en Farmacia Cicala. Quintana 620, Tandil. Pedí por WhatsApp.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_AR">
+
+    <title>Farmacia Cicala — Descuentos y Ofertas | Tandil</title>
+
     <link rel="stylesheet" href="style.css">
-    <!-- Favicon (pequeño logo) -->
     <link rel="icon" type="image/jpeg" href="images/logos/logo para la pestaña.png">
-    <!-- Desactivar scroll automático al volver (evita que vuelva al tope) -->
+
+    <!-- Schema.org: datos estructurados para Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Pharmacy",
+      "name": "Farmacia Cicala",
+      "url": "https://farmaciacicala.vercel.app",
+      "telephone": "+542494014223",
+      "email": "farmaciacicalatandil@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Quintana 620",
+        "addressLocality": "Tandil",
+        "addressRegion": "Buenos Aires",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -37.3214,
+        "longitude": -59.1332
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"]
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Saturday"]
+        }
+      ],
+      "hasMap": "https://maps.google.com/?q=Quintana+620+Tandil"
+    }
+    </script>
+
     <script>
         if (history.scrollRestoration) {
             history.scrollRestoration = 'manual';
