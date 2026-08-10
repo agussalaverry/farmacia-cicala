@@ -2347,13 +2347,16 @@
 
         /* ====== CERRAR MODALES CON OVERLAY ====== */
 
-        /* ====== HORARIOS ====== */
         async function cargarHorarios() {
-            const snap = await getDoc(doc(db, 'config', 'horarios'));
-            const data = snap.exists() ? snap.data() : {};
-            document.getElementById('hor-lunes-viernes').value = data.lunesViernes || '';
-            document.getElementById('hor-sabados').value = data.sabados || '';
-            document.getElementById('hor-domingos').value = data.domingos || '';
+            try {
+                const snap = await getDoc(doc(db, 'config', 'horarios'));
+                const data = snap.exists() ? snap.data() : {};
+                document.getElementById('hor-lunes-viernes').value = data.lunesViernes || '';
+                document.getElementById('hor-sabados').value = data.sabados || '';
+                document.getElementById('hor-domingos').value = data.domingos || '';
+            } catch (e) {
+                console.error('Error cargando horarios:', e);
+            }
             document.getElementById('horarios-loading').style.display = 'none';
             document.getElementById('horarios-form').style.display = 'block';
         }
