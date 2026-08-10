@@ -1401,7 +1401,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
         // Cropper.js importado como módulo ESM para que sea visible en este scope
         import Cropper from "https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.esm.js";
@@ -2349,8 +2349,7 @@
 
         /* ====== HORARIOS ====== */
         async function cargarHorarios() {
-            const { getDoc, setDoc, doc: fsDoc } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
-            const snap = await getDoc(fsDoc(db, 'config', 'horarios'));
+            const snap = await getDoc(doc(db, 'config', 'horarios'));
             const data = snap.exists() ? snap.data() : {};
             document.getElementById('hor-lunes-viernes').value = data.lunesViernes || '';
             document.getElementById('hor-sabados').value = data.sabados || '';
@@ -2360,17 +2359,15 @@
         }
 
         document.getElementById('btn-guardar-horarios').addEventListener('click', async () => {
-            const { setDoc, doc: fsDoc } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
             const data = {
                 lunesViernes: document.getElementById('hor-lunes-viernes').value.trim(),
                 sabados: document.getElementById('hor-sabados').value.trim(),
                 domingos: document.getElementById('hor-domingos').value.trim(),
             };
-            await setDoc(fsDoc(db, 'config', 'horarios'), data);
+            await setDoc(doc(db, 'config', 'horarios'), data);
             toast('Horarios guardados', 'success');
         });
 
-        // Cargar al abrir el tab
         document.querySelectorAll('.admin-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 if (tab.dataset.tab === 'horarios') cargarHorarios();
