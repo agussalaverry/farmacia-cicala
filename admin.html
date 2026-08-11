@@ -1048,6 +1048,19 @@
         .section-toolbar {
             gap: 12px;
         }
+
+        .drag-over-cat {
+            border-top: 3px solid var(--pink) !important;
+        }
+
+        .drag-over-prod {
+            border-top: 2px solid var(--pink) !important;
+            background: #FFF0F5;
+        }
+
+        .cat-card {
+            transition: opacity 0.2s;
+        }
     </style>
 </head>
 
@@ -1890,7 +1903,12 @@
             };
             try {
                 if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
-                else { await addDoc(collection(db, 'novedades'), data); toast('Novedad agregada', 'success'); }
+                // DESPUÉS:
+                else {
+                    const orden = await getOrdenSiguiente('novedades', categoria);
+                    await addDoc(collection(db, 'novedades'), { ...data, orden });
+                    toast('Novedad agregada', 'success');
+                }
                 cerrarModal('modal-novedad'); cargarNovedades();
             } catch (e) { toast('Error al guardar', 'error'); }
         });
@@ -1939,7 +1957,12 @@
             };
             try {
                 if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
-                else { await addDoc(collection(db, 'promociones'), data); toast('Promoción agregada', 'success'); }
+                // DESPUÉS:
+                else {
+                    const orden = await getOrdenSiguiente('promociones', categoria);
+                    await addDoc(collection(db, 'promociones'), { ...data, orden });
+                    toast('Promoción agregada', 'success');
+                }
                 cerrarModal('modal-promocion'); cargarPromociones();
             } catch (e) { toast('Error al guardar', 'error'); }
         });
@@ -1983,10 +2006,25 @@
             };
             try {
                 if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
-                else { await addDoc(collection(db, 'combos'), data); toast('Combo agregado', 'success'); }
+                // DESPUÉS:
+                else {
+                    const orden = await getOrdenSiguiente('combos', categoria);
+                    await addDoc(collection(db, 'combos'), { ...data, orden });
+                    toast('Combo agregado', 'success');
+                }
                 cerrarModal('modal-combo'); cargarCombos();
             } catch (e) { toast('Error al guardar', 'error'); }
         });
+
+        /* ====== ORDEN AUTOMÁTICO AL AGREGAR ====== */
+        async function getOrdenSiguiente(coleccion, categoriaId) {
+            const snap = await getDocs(collection(db, coleccion));
+            const productos = snap.docs
+                .map(d => d.data())
+                .filter(p => (p.categoria || '') === (categoriaId || ''));
+            if (productos.length === 0) return 0;
+            return Math.max(...productos.map(p => p.orden ?? 0)) + 1;
+        }
 
         /* ====== DRAG & DROP ORDEN ====== */
         function initDragAndDrop(listaId, coleccion, recargar) {
@@ -2141,7 +2179,7 @@
                 lista.innerHTML = '<div class="loading">Cargando...</div>';
                 const snap = await getDocs(collection(db, 'categorias'));
                 categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-                    .sort((a, b) => a.nombre.localeCompare(b.nombre));
+                    .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
 
                 actualizarSelectsCategorias();
 
@@ -2150,16 +2188,63 @@
                     return;
                 }
 
-                // Use a document fragment to prevent duplication visually during awaits
-                const fragment = document.createDocumentFragment();
-                for (const cat of categoriasCache) {
-                    await renderCategoria(cat, fragment);
-                }
                 lista.innerHTML = '';
-                lista.appendChild(fragment);
+                for (const cat of categoriasCache) {
+                    await renderCategoria(cat, lista);
+                }
+
+                initDragAndDropCategorias();
             } finally {
                 isCargandoCategorias = false;
             }
+        }
+
+        function initDragAndDropCategorias() {
+            const lista = document.getElementById('lista-categorias');
+            let dragSrcCat = null;
+
+            lista.querySelectorAll('.cat-card').forEach(card => {
+                card.addEventListener('dragstart', e => {
+                    dragSrcCat = card;
+                    card.style.opacity = '0.4';
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('type', 'categoria');
+                });
+                card.addEventListener('dragend', () => {
+                    card.style.opacity = '';
+                    lista.querySelectorAll('.cat-card').forEach(c => c.classList.remove('drag-over-cat'));
+                });
+                card.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    if (dragSrcCat && dragSrcCat !== card) {
+                        lista.querySelectorAll('.cat-card').forEach(c => c.classList.remove('drag-over-cat'));
+                        card.classList.add('drag-over-cat');
+                    }
+                });
+                card.addEventListener('dragleave', () => card.classList.remove('drag-over-cat'));
+                card.addEventListener('drop', async e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    card.classList.remove('drag-over-cat');
+                    if (!dragSrcCat || dragSrcCat === card) return;
+                    const type = e.dataTransfer.getData('type');
+                    if (type !== 'categoria') return;
+
+                    // Reordenar en DOM
+                    const cards = [...lista.querySelectorAll('.cat-card')];
+                    const srcIdx = cards.indexOf(dragSrcCat);
+                    const tgtIdx = cards.indexOf(card);
+                    if (srcIdx < tgtIdx) lista.insertBefore(dragSrcCat, card.nextSibling);
+                    else lista.insertBefore(dragSrcCat, card);
+
+                    // Guardar nuevo orden en Firestore
+                    const newCards = [...lista.querySelectorAll('.cat-card')];
+                    await Promise.all(newCards.map((c, i) =>
+                        updateDoc(doc(db, 'categorias', c.dataset.catId), { orden: i })
+                    ));
+                    toast('Orden de categorías guardado', 'success');
+                });
+            });
         }
 
         async function renderCategoria(cat, lista) {
@@ -2174,37 +2259,49 @@
                     }
                 });
             }
-            productos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            productos.sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
 
             const el = document.createElement('div');
+            el.className = 'cat-card';
             el.dataset.catId = cat.id;
-            el.style.cssText = 'background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:12px;overflow:hidden;';
+            el.draggable = true;
+            el.style.cssText = 'background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:12px;overflow:hidden;cursor:grab;';
 
             const header = document.createElement('div');
-            header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:#FFF0F5;border-left:4px solid var(--pink);';
+            header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#FFF0F5;border-left:4px solid var(--pink);';
             header.innerHTML = `
-                <span style="font-weight:800;font-size:18px;color:var(--pink);">${cat.nombre}</span>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="color:#ccc;font-size:20px;cursor:grab;">⠿</span>
+                    <span style="font-weight:800;font-size:18px;color:var(--pink);">${cat.nombre}</span>
+                </div>
                 <div style="display:flex;gap:8px;align-items:center;">
                     <span class="cat-count" style="font-size:14px;color:#777;">${productos.length} producto${productos.length !== 1 ? 's' : ''}</span>
                     <button class="btn-edit" onclick="event.stopPropagation();editarCategoria('${cat.id}','${cat.nombre}')">✏️</button>
                     <button class="btn-delete" onclick="event.stopPropagation();eliminarCategoria('${cat.id}','${cat.nombre}')">🗑️</button>
-                    <span class="cat-arrow" style="font-size:20px;transition:transform 0.3s;">▼</span>
+                    <span class="cat-arrow" style="font-size:20px;transition:transform 0.3s;cursor:pointer;">▼</span>
                 </div>`;
 
             const body = document.createElement('div');
-            body.style.cssText = 'display:none;padding:12px 20px;min-height:40px;';
+            body.style.cssText = 'display:none;padding:12px 20px;min-height:60px;';
             body.dataset.catId = cat.id;
 
             function renderProductos() {
                 body.innerHTML = '';
+                const dropZoneMsg = document.createElement('div');
+                dropZoneMsg.className = 'drop-zone-msg';
+                dropZoneMsg.style.cssText = 'display:none;text-align:center;padding:16px;color:#ccc;font-size:14px;border:2px dashed #F2C0D8;border-radius:8px;margin-top:8px;';
+                dropZoneMsg.textContent = 'Soltá aquí para mover a esta categoría';
+
                 if (productos.length === 0) {
                     body.innerHTML = '<p style="color:#999;padding:8px 0;">No hay productos en esta categoría.</p>';
                 } else {
-                    productos.forEach(p => {
+                    productos.forEach((p, pIdx) => {
                         const row = document.createElement('div');
                         row.draggable = true;
                         row.dataset.productId = p._id;
                         row.dataset.productCol = p._col;
+                        row.dataset.catId = cat.id;
+                        row.className = 'prod-row-draggable';
                         row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #F5F5F5;cursor:grab;';
                         row.innerHTML = `
                             <span style="color:#ccc;font-size:18px;">⠿</span>
@@ -2215,42 +2312,99 @@
                             </div>
                             <button onclick="quitarDeCategoria('${p._id}','${p._col}')" style="background:#FFEBEE;color:#E53935;border:none;border-radius:8px;padding:6px 12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Quitar</button>`;
 
-                        // Drag from product row
+                        // Drag producto dentro/entre categorías
                         row.addEventListener('dragstart', e => {
+                            e.stopPropagation(); // no activar drag de categoría
+                            e.dataTransfer.setData('type', 'producto');
                             e.dataTransfer.setData('productId', p._id);
                             e.dataTransfer.setData('productCol', p._col);
                             e.dataTransfer.setData('fromCatId', cat.id);
                             row.style.opacity = '0.4';
                         });
-                        row.addEventListener('dragend', () => { row.style.opacity = ''; });
+                        row.addEventListener('dragend', () => {
+                            row.style.opacity = '';
+                            document.querySelectorAll('.prod-row-draggable').forEach(r => r.classList.remove('drag-over-prod'));
+                        });
+                        row.addEventListener('dragover', e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            document.querySelectorAll('.prod-row-draggable').forEach(r => r.classList.remove('drag-over-prod'));
+                            row.classList.add('drag-over-prod');
+                        });
+                        row.addEventListener('dragleave', () => row.classList.remove('drag-over-prod'));
+                        row.addEventListener('drop', async e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            row.classList.remove('drag-over-prod');
+                            const type = e.dataTransfer.getData('type');
+                            if (type !== 'producto') return;
+                            const productId = e.dataTransfer.getData('productId');
+                            const productCol = e.dataTransfer.getData('productCol');
+                            const fromCatId = e.dataTransfer.getData('fromCatId');
+                            if (productId === p._id) return;
+
+                            if (fromCatId === cat.id) {
+                                // Reordenar dentro de la misma categoría
+                                const srcIdx = productos.findIndex(x => x._id === productId);
+                                const tgtIdx = pIdx;
+                                if (srcIdx === -1) return;
+                                const [moved] = productos.splice(srcIdx, 1);
+                                productos.splice(tgtIdx, 0, moved);
+                                await guardarOrdenProductos(productos);
+                                renderProductos();
+                            } else {
+                                // Mover a esta categoría
+                                await updateDoc(doc(db, productCol, productId), { categoria: cat.id });
+                                toast('Producto movido', 'success');
+                                cargarCategorias();
+                            }
+                        });
 
                         body.appendChild(row);
                     });
                 }
+                body.appendChild(dropZoneMsg);
+
+                // Drop zone del body (para cuando la categoría está vacía o se suelta en área libre)
+                body.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const type = e.dataTransfer.getData('type');
+                    dropZoneMsg.style.display = 'block';
+                    body.style.background = '#FFF8FC';
+                });
+                body.addEventListener('dragleave', e => {
+                    if (!body.contains(e.relatedTarget)) {
+                        dropZoneMsg.style.display = 'none';
+                        body.style.background = '';
+                    }
+                });
+                body.addEventListener('drop', async e => {
+                    e.preventDefault();
+                    dropZoneMsg.style.display = 'none';
+                    body.style.background = '';
+                    const type = e.dataTransfer.getData('type');
+                    if (type !== 'producto') return;
+                    const productId = e.dataTransfer.getData('productId');
+                    const productCol = e.dataTransfer.getData('productCol');
+                    const fromCatId = e.dataTransfer.getData('fromCatId');
+                    if (fromCatId === cat.id) return;
+                    await updateDoc(doc(db, productCol, productId), { categoria: cat.id });
+                    toast('Producto movido', 'success');
+                    cargarCategorias();
+                });
+            }
+
+            async function guardarOrdenProductos(prods) {
+                await Promise.all(prods.map((p, i) =>
+                    updateDoc(doc(db, p._col, p._id), { orden: i })
+                ));
+                toast('Orden guardado', 'success');
             }
 
             renderProductos();
 
-            // Drop zone — aceptar productos de otras categorías
-            body.addEventListener('dragover', e => {
-                e.preventDefault();
-                body.style.background = '#FFF0F5';
-            });
-            body.addEventListener('dragleave', () => { body.style.background = ''; });
-            body.addEventListener('drop', async e => {
-                e.preventDefault();
-                body.style.background = '';
-                const productId = e.dataTransfer.getData('productId');
-                const productCol = e.dataTransfer.getData('productCol');
-                const fromCatId = e.dataTransfer.getData('fromCatId');
-                if (!productId || fromCatId === cat.id) return;
-
-                await updateDoc(doc(db, productCol, productId), { categoria: cat.id });
-                toast('Producto movido', 'success');
-                cargarCategorias();
-            });
-
-            header.addEventListener('click', () => {
+            header.addEventListener('click', e => {
+                if (e.target.closest('.btn-edit') || e.target.closest('.btn-delete')) return;
                 const open = body.style.display === 'block';
                 body.style.display = open ? 'none' : 'block';
                 header.querySelector('.cat-arrow').style.transform = open ? '' : 'rotate(180deg)';
