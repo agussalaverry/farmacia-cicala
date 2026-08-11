@@ -175,6 +175,19 @@ function initCarrusel(id, onSlide) {
     el.addEventListener('mouseleave', startAuto);
 }
 
+function ordenarPorCategoria(productos, categorias) {
+    const result = [];
+    // Primero, productos de cada categoría en orden
+    categorias.forEach(cat => {
+        const delaCat = productos.filter(p => p.categoria === cat.id);
+        result.push(...delaCat);
+    });
+    // Al final, sin categoría
+    const sinCat = productos.filter(p => !p.categoria);
+    result.push(...sinCat);
+    return result;
+}
+
 /* ============================================
    BOTÓN CONTADOR (reemplaza "Agregar al carrito")
    ============================================ */
@@ -702,33 +715,38 @@ btnVolver.addEventListener('touchend', (e) => {
 async function cargarProductos() {
     mostrarCargando();
     try {
+        // Cargar categorías ordenadas
+        const categoriasSnap = await getDocs(collection(db, 'categorias'));
+        const categorias = categoriasSnap.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
+
         const novedadesSnap = await getDocs(collection(db, 'novedades'));
         const novedades = novedadesSnap.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .filter(p => p.visible !== false)
             .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
-        renderNovedades(novedades);
+        renderNovedades(novedades, categorias);
 
         const promocionesSnap = await getDocs(collection(db, 'promociones'));
         const promociones = promocionesSnap.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .filter(p => p.visible !== false)
             .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
-        renderPromociones(promociones);
+        renderPromociones(promociones, categorias);
 
         const combosSnap = await getDocs(collection(db, 'combos'));
         const combos = combosSnap.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .filter(p => p.visible !== false)
             .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
-        renderCombos(combos);
+        renderCombos(combos, categorias);
 
     } catch (error) {
         console.error('Error cargando productos:', error);
         mostrarErrorCarga();
     }
 
-    // Cargar horarios dinámicos
     const horSnap = await getDoc(doc(db, 'config', 'horarios'));
     if (horSnap.exists()) {
         const h = horSnap.data();
@@ -752,31 +770,31 @@ function mostrarErrorCarga() {
     combosContainer.innerHTML = msg;
 }
 
-function renderNovedades(novedades) {
+function renderNovedades(novedades, categorias = []) {
     novedadesContainer.innerHTML = '';
     if (novedades.length === 0) {
         novedadesContainer.innerHTML = '<p style="text-align:center;color:#999;font-size:18px;padding:40px 0;">Sin novedades por el momento.</p>';
         return;
     }
-    novedades.forEach(p => novedadesContainer.appendChild(crearTarjetaProducto(p, 'novedad')));
+    ordenarPorCategoria(novedades, categorias).forEach(p => novedadesContainer.appendChild(crearTarjetaProducto(p, 'novedad')));
 }
 
-function renderPromociones(promociones) {
+function renderPromociones(promociones, categorias = []) {
     promocionesContainer.innerHTML = '';
     if (promociones.length === 0) {
         promocionesContainer.innerHTML = '<p style="text-align:center;color:#999;font-size:18px;padding:40px 0;">Sin promociones por el momento.</p>';
         return;
     }
-    promociones.forEach(p => promocionesContainer.appendChild(crearTarjetaProducto(p, 'promocion')));
+    ordenarPorCategoria(promociones, categorias).forEach(p => promocionesContainer.appendChild(crearTarjetaProducto(p, 'promocion')));
 }
 
-function renderCombos(combos) {
+function renderCombos(combos, categorias = []) {
     combosContainer.innerHTML = '';
     if (combos.length === 0) {
         combosContainer.innerHTML = '<p style="text-align:center;color:#999;font-size:18px;padding:40px 0;">Sin combos por el momento.</p>';
         return;
     }
-    combos.forEach(c => combosContainer.appendChild(crearTarjetaCombo(c)));
+    ordenarPorCategoria(combos, categorias).forEach(c => combosContainer.appendChild(crearTarjetaCombo(c)));
 }
 
 /* ============================================
