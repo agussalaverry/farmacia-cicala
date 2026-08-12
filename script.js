@@ -953,7 +953,8 @@ function abrirModalCombo(combo) {
             } else if (cantS1 > 0 && cantS2 > 0) {
                 // Ambos sueltos → convertir automáticamente en combo
                 carrito = carrito.filter(i => i.id !== idS1 && i.id !== idS2);
-                agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                const nombreCombo1 = `${combo.nombre} (${getNombreSueltoP1().split('—')[1]?.trim() || p1.nombre} + ${getNombreSueltoP2().split('—')[1]?.trim() || p2.nombre})`;
+                agregarAlCarrito({ id: idCombo, nombre: nombreCombo1, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
                 actualizarCarritoUI();
                 render();
             } else {
@@ -965,7 +966,8 @@ function abrirModalCombo(combo) {
                     if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
                     if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
                     carrito = carrito.filter(i => i.id !== idS1 && i.id !== idS2);
-                    agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                    const nombreCombo2 = `${combo.nombre} (${getNombreSueltoP1().split('—')[1]?.trim() || p1.nombre} + ${getNombreSueltoP2().split('—')[1]?.trim() || p2.nombre})`;
+                    agregarAlCarrito({ id: idCombo, nombre: nombreCombo2, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
                     actualizarCarritoUI();
                     render();
                 });
@@ -1623,20 +1625,20 @@ estilosDinamicos.innerHTML = `
     .btn-contador-wrap { width:100%; }
     .btn-contador {
         display:flex;align-items:center;justify-content:space-between;
-        border:2px solid var(--color-primary);border-radius:12px;
-        overflow:hidden;height:48px;
+        border:2px solid var(--color-primary);border-radius:32px;
+        overflow:hidden;height:44px;width:100%;
     }
     .contador-btn {
-        width:48px;height:100%;
-        background:var(--color-primary);color:white;
-        border:none;font-size:24px;font-weight:700;
+        width:40px;height:100%;
+        background:transparent;color:var(--color-primary);
+        border:none;font-size:22px;font-weight:700;
         cursor:pointer;display:flex;align-items:center;justify-content:center;
         transition:background 0.2s;flex-shrink:0;
     }
-    .contador-btn:hover { background:var(--color-primary-dark); }
+    .contador-btn:hover { background:rgba(239,8,124,0.1); }
     .contador-num {
         flex:1;text-align:center;
-        font-size:20px;font-weight:800;color:var(--color-primary);
+        font-size:18px;font-weight:800;color:var(--color-primary);
     }
 
     /* Variantes en modal */
@@ -1703,41 +1705,6 @@ estilosDinamicos.innerHTML = `
         display:flex;align-items:center;justify-content:center;
     }
     .cart-item-remove:hover { background:#CC0000;color:white; }
-        /* Contador igual de alto y ancho que el botón */
-    .btn-contador-wrap { width: 100%; }
-    .btn-contador {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border: 2px solid var(--color-primary);
-        border-radius: 12px;
-        overflow: hidden;
-        height: 54px; /* mismo alto que btn-agregar-carrito */
-        width: 100%;
-    }
-    .contador-btn {
-        width: 54px;
-        height: 100%;
-        background: var(--color-primary);
-        color: white;
-        border: none;
-        font-size: 24px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
-        flex-shrink: 0;
-    }
-    .contador-btn:hover { background: var(--color-primary-dark); }
-    .contador-num {
-        flex: 1;
-        text-align: center;
-        font-size: 20px;
-        font-weight: 800;
-        color: var(--color-primary);
-    }
 
     /* Botón de variante con cantidad */
     .btn-variante {
