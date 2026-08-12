@@ -402,12 +402,12 @@ function crearTarjetaCombo(combo) {
     tarjeta.dataset.categoria = combo.categoria || '';
 
     const imagenesNorm = normalizarImagenes(combo.imagenes || (combo.imagen ? [combo.imagen] : []), combo.nombre);
-    const conVariantes = tieneVariantes(imagenesNorm);
     const { html: carHtml, id: carId } = crearCarrusel(imagenesNorm, combo.nombre);
 
-    const textoBtnPrincipal = !combo.enStock
-        ? 'Sin stock'
-        : conVariantes ? 'Ver opciones →' : 'Agregar al carrito';
+    // Precio tachado: suma de los dos productos individuales
+    const p1 = combo.producto1 || {};
+    const p2 = combo.producto2;
+    const precioTachado = (p1.precio || 0) + (p2 ? (p2.precio || 0) : (p1.precio || 0));
 
     tarjeta.innerHTML = `
         <div class="producto-img-container">
@@ -417,89 +417,104 @@ function crearTarjetaCombo(combo) {
         <h3 class="producto-nombre">${combo.nombre}</h3>
         <p class="producto-descripcion">${combo.descripcion || ''}</p>
         <div class="producto-precios">
+            ${precioTachado > combo.precio ? `<span class="precio-original">${formatearPrecio(precioTachado)}</span>` : ''}
             <span class="precio-unico">${formatearPrecio(combo.precio)}</span>
         </div>
         <div class="btn-area-card"></div>`;
 
     const btnArea = tarjeta.querySelector('.btn-area-card');
-
-    function mostrarBtnPrincipal() {
-        btnArea.innerHTML = '';
-        const btn = document.createElement('button');
-        btn.className = 'btn-agregar-carrito';
-        btn.textContent = textoBtnPrincipal;
-        if (!combo.enStock) btn.disabled = true;
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            if (conVariantes) {
-                abrirModalProducto({
-                    nombre: combo.nombre,
-                    descripcion: combo.descripcion,
-                    imagenes: imagenesNorm,
-                    precio: formatearPrecio(combo.precio),
-                    enStock: combo.enStock,
-                    id: combo.id,
-                    precioCarrito: combo.precio,
-                    tipo: 'combo',
-                    idxInicial: 0,
-                    conVariantes: true,
-                    onAgregado: () => mostrarBtnPrincipal()
-                });
-            } else {
-                const carritoId = getCarritoId(combo.id, '');
-                agregarAlCarrito({
-                    id: carritoId,
-                    nombre: combo.nombre,
-                    precio: combo.precio,
-                    imagen: imagenesNorm[0]?.url || '',
-                    tipo: 'combo'
-                });
-                mostrarContadorEnCard(carritoId);
-            }
-        });
-        btnArea.appendChild(btn);
-    }
-
-    function mostrarContadorEnCard(carritoId) {
-        btnArea.innerHTML = '';
-        const contador = crearBtnContador(carritoId, (nueva) => {
-            if (nueva === 0) mostrarBtnPrincipal();
-        });
-        btnArea.appendChild(contador);
-    }
-
-    if (!conVariantes && combo.enStock) {
-        const carritoId = getCarritoId(combo.id, '');
-        if (getCantidadEnCarrito(carritoId) > 0) mostrarContadorEnCard(carritoId);
-        else mostrarBtnPrincipal();
-    } else {
-        mostrarBtnPrincipal();
-    }
+    const btn = document.createElement('button');
+    btn.className = 'btn-agregar-carrito';
+    btn.textContent = combo.enStock ? 'Ver combo →' : 'Sin stock';
+    if (!combo.enStock) btn.disabled = true;
+    btn.addEventListener('click', e => e.stopPropagation());
+    btnArea.appendChild(btn);
 
     agregarEventoAbrirModal(tarjeta, () => {
-        abrirModalProducto({
-            nombre: combo.nombre,
-            descripcion: combo.descripcion,
-            imagenes: imagenesNorm,
-            precio: formatearPrecio(combo.precio),
-            enStock: combo.enStock,
-            id: combo.id,
-            precioCarrito: combo.precio,
-            tipo: 'combo',
-            idxInicial: 0,
-            conVariantes,
-            onAgregado: () => {
-                if (!conVariantes) {
-                    const carritoId = getCarritoId(combo.id, '');
-                    if (getCantidadEnCarrito(carritoId) > 0) mostrarContadorEnCard(carritoId);
-                }
-            }
-        });
+        abrirModalCombo(combo);
     });
 
     requestAnimationFrame(() => initCarrusel(carId));
     return tarjeta;
 }
+
+function mostrarBtnPrincipal() {
+    btnArea.innerHTML = '';
+    const btn = document.createElement('button');
+    btn.className = 'btn-agregar-carrito';
+    btn.textContent = textoBtnPrincipal;
+    if (!combo.enStock) btn.disabled = true;
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (conVariantes) {
+            abrirModalProducto({
+                nombre: combo.nombre,
+                descripcion: combo.descripcion,
+                imagenes: imagenesNorm,
+                precio: formatearPrecio(combo.precio),
+                enStock: combo.enStock,
+                id: combo.id,
+                precioCarrito: combo.precio,
+                tipo: 'combo',
+                idxInicial: 0,
+                conVariantes: true,
+                onAgregado: () => mostrarBtnPrincipal()
+            });
+        } else {
+            const carritoId = getCarritoId(combo.id, '');
+            agregarAlCarrito({
+                id: carritoId,
+                nombre: combo.nombre,
+                precio: combo.precio,
+                imagen: imagenesNorm[0]?.url || '',
+                tipo: 'combo'
+            });
+            mostrarContadorEnCard(carritoId);
+        }
+    });
+    btnArea.appendChild(btn);
+}
+
+function mostrarContadorEnCard(carritoId) {
+    btnArea.innerHTML = '';
+    const contador = crearBtnContador(carritoId, (nueva) => {
+        if (nueva === 0) mostrarBtnPrincipal();
+    });
+    btnArea.appendChild(contador);
+}
+
+if (!conVariantes && combo.enStock) {
+    const carritoId = getCarritoId(combo.id, '');
+    if (getCantidadEnCarrito(carritoId) > 0) mostrarContadorEnCard(carritoId);
+    else mostrarBtnPrincipal();
+} else {
+    mostrarBtnPrincipal();
+}
+
+agregarEventoAbrirModal(tarjeta, () => {
+    abrirModalProducto({
+        nombre: combo.nombre,
+        descripcion: combo.descripcion,
+        imagenes: imagenesNorm,
+        precio: formatearPrecio(combo.precio),
+        enStock: combo.enStock,
+        id: combo.id,
+        precioCarrito: combo.precio,
+        tipo: 'combo',
+        idxInicial: 0,
+        conVariantes,
+        onAgregado: () => {
+            if (!conVariantes) {
+                const carritoId = getCarritoId(combo.id, '');
+                if (getCantidadEnCarrito(carritoId) > 0) mostrarContadorEnCard(carritoId);
+            }
+        }
+    });
+});
+
+requestAnimationFrame(() => initCarrusel(carId));
+return tarjeta;
+
 
 /* ============================================
    MODAL DETALLE PRODUCTO
@@ -702,6 +717,330 @@ function abrirModalProducto(p) {
         renderAccionModalSimple();
         requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxActual = nuevoIdx; }));
     }
+}
+
+function abrirModalCombo(combo) {
+    document.body.classList.add('modal-abierto');
+    history.pushState(null, '', `#combo-${combo.id}`);
+    document.getElementById('producto-modal').classList.add('active');
+    bloquearScroll();
+
+    const p1 = combo.producto1 || {};
+    const p2 = combo.producto2 || null;
+    const imagenesPortada = normalizarImagenes(combo.imagenes || (combo.imagen ? [combo.imagen] : []), combo.nombre);
+
+    // Armar todas las imágenes del carrusel: portada + variantes p1 + variantes p2
+    let todasImagenes = [...imagenesPortada];
+    (p1.variantes || []).forEach(v => { if (v.url) todasImagenes.push({ url: v.url, nombre: v.nombre || '', esPortada: false }); });
+    if (p2) (p2.variantes || []).forEach(v => { if (v.url) todasImagenes.push({ url: v.url, nombre: v.nombre || '', esPortada: false }); });
+
+    const { html: carHtml, id: carId } = crearCarrusel(todasImagenes, combo.nombre, 'modal-car-img');
+    const modalImgWrap = document.getElementById('modal-img-wrap');
+    modalImgWrap.innerHTML = carHtml;
+
+    requestAnimationFrame(() => {
+        const modalImgs = modalImgWrap.querySelectorAll('img');
+        modalImgs.forEach((im, i) => {
+            im.style.cursor = 'zoom-in';
+            im.addEventListener('click', e => {
+                e.stopPropagation();
+                const urls = [...modalImgWrap.querySelectorAll('img')].map(x => x.src);
+                window._abrirLightbox(urls, i);
+            });
+        });
+        initCarrusel(carId);
+    });
+
+    // Precio tachado
+    const precioTachado = (p1.precio || 0) + (p2 ? (p2.precio || 0) : (p1.precio || 0));
+    const precioEl = document.getElementById('modal-precio');
+    if (precioTachado > combo.precio) {
+        precioEl.innerHTML = `
+            <span style="text-decoration:line-through;color:#999;font-size:18px;">${formatearPrecio(precioTachado)}</span>
+            <span style="color:var(--color-primary);font-size:28px;font-weight:800;margin-left:8px;">${formatearPrecio(combo.precio)}</span>`;
+    } else {
+        precioEl.textContent = formatearPrecio(combo.precio);
+    }
+
+    document.getElementById('modal-nombre').textContent = combo.nombre;
+    document.getElementById('modal-descripcion').textContent = combo.descripcion || '';
+
+    const btnOriginal = document.getElementById('modal-btn-carrito');
+    if (btnOriginal) btnOriginal.style.display = 'none';
+
+    const modalInfo = document.querySelector('.producto-modal-info');
+    let zonaAccion = document.getElementById('modal-zona-accion');
+    if (zonaAccion) zonaAccion.remove();
+    zonaAccion = document.createElement('div');
+    zonaAccion.id = 'modal-zona-accion';
+    modalInfo.appendChild(zonaAccion);
+
+    const carEl = () => document.getElementById(carId);
+
+    // Estado selección
+    let varianteP1 = (p1.variantes && p1.variantes.length > 0) ? null : '__sin_variante__';
+    let varianteP2 = p2 ? ((p2.variantes && p2.variantes.length > 0) ? null : '__sin_variante__') : '__sin_variante__';
+
+    function getIdSueltoP1() { return `${combo.id}-p1${varianteP1 && varianteP1 !== '__sin_variante__' ? '-' + varianteP1 : ''}`; }
+    function getIdSueltoP2() { return `${combo.id}-p2${varianteP2 && varianteP2 !== '__sin_variante__' ? '-' + varianteP2 : ''}`; }
+    function getIdCombo() { return `combo-${combo.id}`; }
+
+    function getNombreSueltoP1() { return varianteP1 && varianteP1 !== '__sin_variante__' ? `${p1.nombre} — ${varianteP1}` : p1.nombre; }
+    function getNombreSueltoP2() { return p2 ? (varianteP2 && varianteP2 !== '__sin_variante__' ? `${p2.nombre} — ${varianteP2}` : p2.nombre) : ''; }
+
+    function getImgVariante(producto, nombreVariante) {
+        if (!nombreVariante || nombreVariante === '__sin_variante__') return producto?.variantes?.[0]?.url || '';
+        return (producto?.variantes || []).find(v => v.nombre === nombreVariante)?.url || '';
+    }
+
+    function render() {
+        zonaAccion.innerHTML = '';
+
+        if (!combo.enStock) {
+            const b = document.createElement('button');
+            b.className = 'btn-agregar-carrito'; b.textContent = 'Sin stock'; b.disabled = true;
+            zonaAccion.appendChild(b); return;
+        }
+
+        const esCasoA = !p2; // mismo producto x2
+
+        // ---- CASO A: mismo producto x2 ----
+        if (esCasoA) {
+            // Título producto
+            const tit = document.createElement('p');
+            tit.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;';
+            tit.textContent = p1.nombre;
+            zonaAccion.appendChild(tit);
+
+            // Variantes P1
+            if (p1.variantes && p1.variantes.length > 0) {
+                const varWrap = document.createElement('div');
+                varWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;';
+                p1.variantes.forEach((v, vi) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-variante' + (varianteP1 === v.nombre ? ' activa' : '');
+                    btn.textContent = v.nombre;
+                    btn.addEventListener('click', () => {
+                        varianteP1 = v.nombre;
+                        // Saltar imagen en carrusel
+                        const idx = imagenesPortada.length + vi;
+                        const cel = carEl();
+                        if (cel?._stopAutoplay) cel._stopAutoplay();
+                        if (cel?._carruselGoTo) cel._carruselGoTo(idx);
+                        render();
+                    });
+                    varWrap.appendChild(btn);
+                });
+                zonaAccion.appendChild(varWrap);
+            }
+
+            // Botón "Agregar 1 solo"
+            const idSuelto = getIdSueltoP1();
+            const cantSuelto = getCantidadEnCarrito(idSuelto);
+            const idCombo = getIdCombo();
+            const cantCombo = getCantidadEnCarrito(idCombo);
+
+            // Si hay 2 sueltos o combo en carrito → mostrar combo counter
+            if (cantCombo > 0) {
+                // Contador combo
+                const lblCombo = document.createElement('p');
+                lblCombo.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:6px;margin-top:8px;';
+                lblCombo.textContent = `Combo (x2) — ${formatearPrecio(combo.precio)}`;
+                zonaAccion.appendChild(lblCombo);
+                const ctr = crearBtnContador(idCombo, () => render());
+                zonaAccion.appendChild(ctr);
+            } else {
+                // Botón agregar 1 solo
+                const wrapSuelto = document.createElement('div');
+                wrapSuelto.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
+                if (cantSuelto > 0) {
+                    const ctr = crearBtnContador(idSuelto, (nueva) => {
+                        if (nueva === 0) render();
+                        else if (nueva >= 2) {
+                            // Convertir 2 sueltos en combo
+                            carrito = carrito.filter(i => i.id !== idSuelto);
+                            agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                            render();
+                        } else render();
+                    });
+                    wrapSuelto.appendChild(ctr);
+                } else {
+                    const btn1 = document.createElement('button');
+                    btn1.className = 'btn-agregar-carrito';
+                    btn1.style.cssText = 'flex:1;font-size:15px;';
+                    btn1.textContent = `Agregar 1 — ${formatearPrecio(p1.precio)}`;
+                    btn1.addEventListener('click', () => {
+                        if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
+                        agregarAlCarrito({ id: idSuelto, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
+                        render();
+                    });
+                    wrapSuelto.appendChild(btn1);
+                }
+                zonaAccion.appendChild(wrapSuelto);
+
+                // Botón agregar combo x2
+                const btnCombo = document.createElement('button');
+                btnCombo.className = 'btn-agregar-carrito';
+                btnCombo.style.cssText = 'background:var(--color-success);';
+                btnCombo.textContent = `Agregar combo (x2) — ${formatearPrecio(combo.precio)}`;
+                btnCombo.addEventListener('click', () => {
+                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
+                    // Quitar sueltos si hay
+                    carrito = carrito.filter(i => i.id !== idSuelto);
+                    agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                    actualizarCarritoUI();
+                    render();
+                });
+                zonaAccion.appendChild(btnCombo);
+            }
+
+        } else {
+            // ---- CASO B: dos productos distintos ----
+
+            // PRODUCTO 1
+            const tit1 = document.createElement('p');
+            tit1.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;';
+            tit1.textContent = p1.nombre;
+            zonaAccion.appendChild(tit1);
+
+            if (p1.variantes && p1.variantes.length > 0) {
+                const varWrap1 = document.createElement('div');
+                varWrap1.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
+                p1.variantes.forEach((v, vi) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-variante' + (varianteP1 === v.nombre ? ' activa' : '');
+                    btn.textContent = v.nombre;
+                    btn.addEventListener('click', () => {
+                        varianteP1 = v.nombre;
+                        const idx = imagenesPortada.length + vi;
+                        const cel = carEl();
+                        if (cel?._stopAutoplay) cel._stopAutoplay();
+                        if (cel?._carruselGoTo) cel._carruselGoTo(idx);
+                        render();
+                    });
+                    varWrap1.appendChild(btn);
+                });
+                zonaAccion.appendChild(varWrap1);
+            }
+
+            // Botón agregar p1 suelto
+            const idS1 = getIdSueltoP1();
+            const cantS1 = getCantidadEnCarrito(idS1);
+            const wrapS1 = document.createElement('div');
+            wrapS1.style.cssText = 'margin-bottom:14px;';
+            if (cantS1 > 0) {
+                const ctr = crearBtnContador(idS1, () => render());
+                wrapS1.appendChild(ctr);
+            } else {
+                const btn1 = document.createElement('button');
+                btn1.className = 'btn-agregar-carrito';
+                btn1.style.fontSize = '15px';
+                btn1.textContent = `Agregar solo — ${formatearPrecio(p1.precio)}`;
+                btn1.addEventListener('click', () => {
+                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
+                    agregarAlCarrito({ id: idS1, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
+                    render();
+                });
+                wrapS1.appendChild(btn1);
+            }
+            zonaAccion.appendChild(wrapS1);
+
+            // PRODUCTO 2
+            const tit2 = document.createElement('p');
+            tit2.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;';
+            tit2.textContent = p2.nombre;
+            zonaAccion.appendChild(tit2);
+
+            const p1VariantesCount = (p1.variantes || []).length;
+            if (p2.variantes && p2.variantes.length > 0) {
+                const varWrap2 = document.createElement('div');
+                varWrap2.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
+                p2.variantes.forEach((v, vi) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-variante' + (varianteP2 === v.nombre ? ' activa' : '');
+                    btn.textContent = v.nombre;
+                    btn.addEventListener('click', () => {
+                        varianteP2 = v.nombre;
+                        const idx = imagenesPortada.length + p1VariantesCount + vi;
+                        const cel = carEl();
+                        if (cel?._stopAutoplay) cel._stopAutoplay();
+                        if (cel?._carruselGoTo) cel._carruselGoTo(idx);
+                        render();
+                    });
+                    varWrap2.appendChild(btn);
+                });
+                zonaAccion.appendChild(varWrap2);
+            }
+
+            const idS2 = getIdSueltoP2();
+            const cantS2 = getCantidadEnCarrito(idS2);
+            const wrapS2 = document.createElement('div');
+            wrapS2.style.cssText = 'margin-bottom:14px;';
+            if (cantS2 > 0) {
+                const ctr = crearBtnContador(idS2, () => render());
+                wrapS2.appendChild(ctr);
+            } else {
+                const btn2 = document.createElement('button');
+                btn2.className = 'btn-agregar-carrito';
+                btn2.style.fontSize = '15px';
+                btn2.textContent = `Agregar solo — ${formatearPrecio(p2.precio)}`;
+                btn2.addEventListener('click', () => {
+                    if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
+                    agregarAlCarrito({ id: idS2, nombre: getNombreSueltoP2(), precio: p2.precio, imagen: getImgVariante(p2, varianteP2), tipo: 'combo' });
+                    render();
+                });
+                wrapS2.appendChild(btn2);
+            }
+            zonaAccion.appendChild(wrapS2);
+
+            // Botón combo completo
+            const idCombo = getIdCombo();
+            const cantCombo = getCantidadEnCarrito(idCombo);
+            const hr = document.createElement('hr');
+            hr.style.cssText = 'border:none;border-top:1px solid #F0D0DB;margin:8px 0 12px;';
+            zonaAccion.appendChild(hr);
+
+            if (cantCombo > 0) {
+                const lblCombo = document.createElement('p');
+                lblCombo.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:6px;';
+                lblCombo.textContent = `${combo.nombre} — ${formatearPrecio(combo.precio)}`;
+                zonaAccion.appendChild(lblCombo);
+                const ctr = crearBtnContador(idCombo, (nueva) => {
+                    if (nueva === 0) {
+                        // Restaurar los dos sueltos
+                        if (varianteP1) agregarAlCarrito({ id: idS1, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
+                        if (varianteP2) agregarAlCarrito({ id: idS2, nombre: getNombreSueltoP2(), precio: p2.precio, imagen: getImgVariante(p2, varianteP2), tipo: 'combo' });
+                        render();
+                    } else render();
+                });
+                zonaAccion.appendChild(ctr);
+            } else {
+                // Auto-detectar si ya tiene ambos sueltos
+                const yaAmbosSueltos = cantS1 > 0 && cantS2 > 0;
+                const btnCombo = document.createElement('button');
+                btnCombo.className = 'btn-agregar-carrito';
+                btnCombo.style.background = 'var(--color-success)';
+                btnCombo.textContent = `Agregar combo — ${formatearPrecio(combo.precio)}`;
+                btnCombo.addEventListener('click', () => {
+                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
+                    if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
+                    // Quitar sueltos y agregar combo
+                    carrito = carrito.filter(i => i.id !== idS1 && i.id !== idS2);
+                    agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                    actualizarCarritoUI();
+                    render();
+                });
+                zonaAccion.appendChild(btnCombo);
+
+                // Si ya tienen ambos sueltos, resaltá el botón
+                if (yaAmbosSueltos) {
+                    btnCombo.style.animation = 'pulse-active 0.6s ease-out';
+                }
+            }
+        }
+    }
+
+    render();
 }
 
 function cerrarModalProducto() {
@@ -1288,6 +1627,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const snap = await getDoc(doc(db, coleccion, id));
             if (!snap.exists()) return;
             const p = { id: snap.id, ...snap.data() };
+
+            if (tipo === 'combo') {
+                abrirModalCombo(p);
+                return;
+            }
+
             const imagenesNorm = normalizarImagenes(p.imagenes || (p.imagen ? [p.imagen] : []), p.nombre);
             const conVariantes = tieneVariantes(imagenesNorm);
             const precioCarrito = tipo === 'promocion' ? p.precioDescuento : p.precio;
@@ -1313,10 +1658,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.warn('No se pudo abrir el producto desde el hash:', e);
         }
-    }
 
-    // Esperar a que los productos carguen antes de abrir el modal
-    setTimeout(abrirModalDesdeHash, 1500);
+        // Esperar a que los productos carguen antes de abrir el modal
+        setTimeout(abrirModalDesdeHash, 1500);
+    }
 });
 
 /* ============================================
