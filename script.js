@@ -516,10 +516,11 @@ agregarEventoAbrirModal(tarjeta, () => {
             }
         }
     });
+    requestAnimationFrame(() => initCarrusel(carId));
+    return tarjeta;
 });
 
-requestAnimationFrame(() => initCarrusel(carId));
-return tarjeta;
+
 
 
 /* ============================================
