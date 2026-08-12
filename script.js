@@ -446,6 +446,7 @@ function crearTarjetaCombo(combo) {
    ============================================ */
 
 let _modalOnAgregado = null;
+let _modalRenderActivo = null;
 
 function abrirModalProducto(p) {
     document.body.classList.add('modal-abierto');
@@ -588,6 +589,7 @@ function abrirModalProducto(p) {
             }
         }
 
+        _modalRenderActivo = renderAccionModal;
         renderAccionModal();
         requestAnimationFrame(() => {
             initCarrusel(carId, (nuevoIdx) => {
@@ -639,6 +641,7 @@ function abrirModalProducto(p) {
             }
         }
 
+        _modalRenderActivo = renderAccionModalSimple;
         renderAccionModalSimple();
         requestAnimationFrame(() => initCarrusel(carId, (nuevoIdx) => { idxActual = nuevoIdx; }));
     }
@@ -983,6 +986,7 @@ function abrirModalCombo(combo) {
         }
     }
 
+    _modalRenderActivo = render;
     render();
 }
 
@@ -993,6 +997,7 @@ function cerrarModalProducto() {
     if (btnOriginal) btnOriginal.style.display = '';
     desbloquearScroll();
     _modalOnAgregado = null;
+    _modalRenderActivo = null;
     // Limpiar hash de la URL
     history.replaceState(null, '', window.location.pathname);
 }
@@ -1139,6 +1144,8 @@ function actualizarCarritoUI() {
     if (cartCountMobile) cartCountMobile.textContent = cantidadTotal;
     cartTotalEl.textContent = formatearPrecio(total);
     renderizarCartItems();
+    // Si hay un modal abierto, re-renderizar sus botones para reflejar cambios del carrito
+    if (_modalRenderActivo) _modalRenderActivo();
 }
 
 function renderizarCartItems() {
