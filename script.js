@@ -71,9 +71,8 @@ function normalizarImagenes(imagenes, fallbackNombre = '') {
  */
 function tieneVariantes(imagenes) {
     if (!imagenes || imagenes.length <= 1) return false;
-    // Las variantes son las imágenes desde la índice 1 en adelante
-    // La portada (índice 0) no cuenta
-    return imagenes.slice(1).every(img => {
+    // Solo hay variantes si hay 2+ imágenes Y las que no son portada tienen nombre
+    return imagenes.slice(1).some(img => {
         const nombre = typeof img === 'string' ? '' : (img.nombre || '');
         return nombre.trim() !== '';
     });
@@ -430,7 +429,10 @@ function crearTarjetaCombo(combo) {
         btn.className = 'btn-agregar-carrito';
         btn.textContent = combo.enStock ? 'Ver combo →' : 'Sin stock';
         if (!combo.enStock) btn.disabled = true;
-        btn.addEventListener('click', e => e.stopPropagation());
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            abrirModalCombo(combo);
+        });
         btnArea.appendChild(btn);
     }
 
@@ -825,11 +827,36 @@ function abrirModalCombo(combo) {
         } else {
             // ---- CASO B: dos productos distintos ----
 
-            // PRODUCTO 1
-            const tit1 = document.createElement('p');
-            tit1.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;';
+            // PRODUCTO 1 — fila nombre + botón en la misma línea
+            const fila1 = document.createElement('div');
+            fila1.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;';
+
+            const tit1 = document.createElement('span');
+            tit1.style.cssText = 'font-weight:800;color:var(--color-primary);';
             tit1.textContent = p1.nombre;
-            zonaAccion.appendChild(tit1);
+            fila1.appendChild(tit1);
+
+            const idS1 = getIdSueltoP1();
+            const cantS1 = getCantidadEnCarrito(idS1);
+            const wrapS1 = document.createElement('div');
+
+            if (cantS1 > 0) {
+                const ctr = crearBtnContador(idS1, () => render());
+                wrapS1.appendChild(ctr);
+            } else {
+                const btn1 = document.createElement('button');
+                btn1.className = 'btn-agregar-carrito';
+                btn1.style.cssText = 'font-size:13px;padding:8px 12px;white-space:nowrap;width:auto;';
+                btn1.textContent = `Agregar — ${formatearPrecio(p1.precio)}`;
+                btn1.addEventListener('click', () => {
+                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
+                    agregarAlCarrito({ id: idS1, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
+                    render();
+                });
+                wrapS1.appendChild(btn1);
+            }
+            fila1.appendChild(wrapS1);
+            zonaAccion.appendChild(fila1);
 
             if (p1.variantes && p1.variantes.length > 0) {
                 const varWrap1 = document.createElement('div');
@@ -851,33 +878,36 @@ function abrirModalCombo(combo) {
                 zonaAccion.appendChild(varWrap1);
             }
 
-            // Botón agregar p1 suelto
-            const idS1 = getIdSueltoP1();
-            const cantS1 = getCantidadEnCarrito(idS1);
-            const wrapS1 = document.createElement('div');
-            wrapS1.style.cssText = 'margin-bottom:14px;';
-            if (cantS1 > 0) {
-                const ctr = crearBtnContador(idS1, () => render());
-                wrapS1.appendChild(ctr);
+            // PRODUCTO 2 — fila nombre + botón en la misma línea
+            const fila2 = document.createElement('div');
+            fila2.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;';
+
+            const tit2 = document.createElement('span');
+            tit2.style.cssText = 'font-weight:800;color:var(--color-primary);';
+            tit2.textContent = p2.nombre;
+            fila2.appendChild(tit2);
+
+            const idS2 = getIdSueltoP2();
+            const cantS2 = getCantidadEnCarrito(idS2);
+            const wrapS2 = document.createElement('div');
+
+            if (cantS2 > 0) {
+                const ctr = crearBtnContador(idS2, () => render());
+                wrapS2.appendChild(ctr);
             } else {
-                const btn1 = document.createElement('button');
-                btn1.className = 'btn-agregar-carrito';
-                btn1.style.fontSize = '15px';
-                btn1.textContent = `Agregar solo — ${formatearPrecio(p1.precio)}`;
-                btn1.addEventListener('click', () => {
-                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
-                    agregarAlCarrito({ id: idS1, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
+                const btn2 = document.createElement('button');
+                btn2.className = 'btn-agregar-carrito';
+                btn2.style.cssText = 'font-size:13px;padding:8px 12px;white-space:nowrap;width:auto;';
+                btn2.textContent = `Agregar — ${formatearPrecio(p2.precio)}`;
+                btn2.addEventListener('click', () => {
+                    if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
+                    agregarAlCarrito({ id: idS2, nombre: getNombreSueltoP2(), precio: p2.precio, imagen: getImgVariante(p2, varianteP2), tipo: 'combo' });
                     render();
                 });
-                wrapS1.appendChild(btn1);
+                wrapS2.appendChild(btn2);
             }
-            zonaAccion.appendChild(wrapS1);
-
-            // PRODUCTO 2
-            const tit2 = document.createElement('p');
-            tit2.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;';
-            tit2.textContent = p2.nombre;
-            zonaAccion.appendChild(tit2);
+            fila2.appendChild(wrapS2);
+            zonaAccion.appendChild(fila2);
 
             const p1VariantesCount = (p1.variantes || []).length;
             if (p2.variantes && p2.variantes.length > 0) {
@@ -899,28 +929,6 @@ function abrirModalCombo(combo) {
                 });
                 zonaAccion.appendChild(varWrap2);
             }
-
-            const idS2 = getIdSueltoP2();
-            const cantS2 = getCantidadEnCarrito(idS2);
-            const wrapS2 = document.createElement('div');
-            wrapS2.style.cssText = 'margin-bottom:14px;';
-            if (cantS2 > 0) {
-                const ctr = crearBtnContador(idS2, () => render());
-                wrapS2.appendChild(ctr);
-            } else {
-                const btn2 = document.createElement('button');
-                btn2.className = 'btn-agregar-carrito';
-                btn2.style.fontSize = '15px';
-                btn2.textContent = `Agregar solo — ${formatearPrecio(p2.precio)}`;
-                btn2.addEventListener('click', () => {
-                    if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
-                    agregarAlCarrito({ id: idS2, nombre: getNombreSueltoP2(), precio: p2.precio, imagen: getImgVariante(p2, varianteP2), tipo: 'combo' });
-                    render();
-                });
-                wrapS2.appendChild(btn2);
-            }
-            zonaAccion.appendChild(wrapS2);
-
             // Botón combo completo
             const idCombo = getIdCombo();
             const cantCombo = getCantidadEnCarrito(idCombo);
@@ -942,9 +950,13 @@ function abrirModalCombo(combo) {
                     } else render();
                 });
                 zonaAccion.appendChild(ctr);
+            } else if (cantS1 > 0 && cantS2 > 0) {
+                // Ambos sueltos → convertir automáticamente en combo
+                carrito = carrito.filter(i => i.id !== idS1 && i.id !== idS2);
+                agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                actualizarCarritoUI();
+                render();
             } else {
-                // Auto-detectar si ya tiene ambos sueltos
-                const yaAmbosSueltos = cantS1 > 0 && cantS2 > 0;
                 const btnCombo = document.createElement('button');
                 btnCombo.className = 'btn-agregar-carrito';
                 btnCombo.style.background = 'var(--color-success)';
@@ -952,18 +964,12 @@ function abrirModalCombo(combo) {
                 btnCombo.addEventListener('click', () => {
                     if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
                     if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
-                    // Quitar sueltos y agregar combo
                     carrito = carrito.filter(i => i.id !== idS1 && i.id !== idS2);
                     agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
                     actualizarCarritoUI();
                     render();
                 });
                 zonaAccion.appendChild(btnCombo);
-
-                // Si ya tienen ambos sueltos, resaltá el botón
-                if (yaAmbosSueltos) {
-                    btnCombo.style.animation = 'pulse-active 0.6s ease-out';
-                }
             }
         }
     }
