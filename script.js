@@ -708,8 +708,11 @@ function abrirModalCombo(combo) {
     const carEl = () => document.getElementById(carId);
 
     // Estado selección
-    let varianteP1 = (p1.variantes && p1.variantes.length > 0) ? null : '__sin_variante__';
-    let varianteP2 = p2 ? ((p2.variantes && p2.variantes.length > 0) ? null : '__sin_variante__') : '__sin_variante__';
+    const p1TieneVariantes = p1.variantes && p1.variantes.length > 1 || (p1.variantes && p1.variantes.length === 1 && p1.variantes[0].nombre?.trim() !== '');
+    const p2TieneVariantes = p2 && (p2.variantes && p2.variantes.length > 1 || (p2.variantes && p2.variantes.length === 1 && p2.variantes[0].nombre?.trim() !== ''));
+
+    let varianteP1 = p1TieneVariantes ? null : '__sin_variante__';
+    let varianteP2 = p2 ? (p2TieneVariantes ? null : '__sin_variante__') : '__sin_variante__';
 
     function getIdSueltoP1() { return `${combo.id}-p1${varianteP1 && varianteP1 !== '__sin_variante__' ? '-' + varianteP1 : ''}`; }
     function getIdSueltoP2() { return `${combo.id}-p2${varianteP2 && varianteP2 !== '__sin_variante__' ? '-' + varianteP2 : ''}`; }
