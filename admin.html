@@ -1660,13 +1660,14 @@
                         }
 
                         // Solo mostrar input de nombre si hay más de una imagen
+                        const nameInput = document.createElement('input');
+                        nameInput.type = 'text';
+                        nameInput.placeholder = 'Ej: Menta';
+                        nameInput.value = img.nombre || '';
+                        nameInput.style.cssText = 'width:90px;font-size:11px;padding:4px;border:1px solid #F2C0D8;border-radius:6px;font-family:Nunito,sans-serif;text-align:center;';
+                        nameInput.addEventListener('input', e => { imagenes[idx].nombre = e.target.value; });
+
                         if (imagenes.length > 1) {
-                            const nameInput = document.createElement('input');
-                            nameInput.type = 'text';
-                            nameInput.placeholder = 'Ej: Menta';
-                            nameInput.value = img.nombre || '';
-                            nameInput.style.cssText = 'width:90px;font-size:11px;padding:4px;border:1px solid #F2C0D8;border-radius:6px;font-family:Nunito,sans-serif;text-align:center;';
-                            nameInput.addEventListener('input', e => { imagenes[idx].nombre = e.target.value; });
                             wrap.appendChild(nameInput);
                         }
 
