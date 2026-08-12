@@ -1676,8 +1676,13 @@ estilosDinamicos.innerHTML = `
     /* Modal confirmación */
     .modal-confirmacion-overlay {
         position:fixed;inset:0;background:rgba(0,0,0,0.55);
-        z-index:5000;display:flex;align-items:center;justify-content:center;
+        z-index:10001;display:flex;align-items:center;justify-content:center;
         padding:24px;opacity:0;transition:opacity 0.3s ease;
+    }
+    @media (min-width: 769px) {
+        .modal-confirmacion-overlay {
+            background:rgba(0,0,0,0.18);
+        }
     }
     .modal-confirmacion-overlay.visible { opacity:1; }
     .modal-confirmacion-box {
