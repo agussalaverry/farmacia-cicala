@@ -510,6 +510,10 @@ let _modalOnAgregado = null;
 function abrirModalProducto(p) {
     document.body.classList.add('modal-abierto');
 
+    // Actualizar URL con el hash del producto
+    const hashTipo = p.tipo || 'novedad';
+    history.replaceState(null, '', `#${hashTipo}-${p.id}`);
+
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
 
@@ -708,6 +712,8 @@ function cerrarModalProducto() {
     if (btnOriginal) btnOriginal.style.display = '';
     desbloquearScroll();
     _modalOnAgregado = null;
+    // Limpiar hash de la URL
+    history.replaceState(null, '', window.location.pathname);
 }
 
 const btnVolver = document.getElementById('btn-volver-modal');
@@ -1251,6 +1257,52 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && portalAbierto) cerrarPortal();
     });
+
+    // Abrir modal automáticamente si hay hash en la URL al cargar
+    async function abrirModalDesdeHash() {
+        const hash = window.location.hash.slice(1); // quita el #
+        if (!hash) return;
+
+        const partes = hash.match(/^(novedad|promocion|combo)-(.+)$/);
+        if (!partes) return;
+
+        const tipo = partes[1];
+        const id = partes[2];
+        const coleccion = tipo === 'novedad' ? 'novedades' : tipo === 'promocion' ? 'promociones' : 'combos';
+
+        try {
+            const snap = await getDoc(doc(db, coleccion, id));
+            if (!snap.exists()) return;
+            const p = { id: snap.id, ...snap.data() };
+            const imagenesNorm = normalizarImagenes(p.imagenes || (p.imagen ? [p.imagen] : []), p.nombre);
+            const conVariantes = tieneVariantes(imagenesNorm);
+            const precioCarrito = tipo === 'promocion' ? p.precioDescuento : p.precio;
+            const precioTexto = tipo === 'promocion'
+                ? formatearPrecio(p.precioDescuento)
+                : formatearPrecio(p.precio);
+
+            abrirModalProducto({
+                nombre: p.nombre,
+                descripcion: p.descripcion,
+                imagenes: imagenesNorm,
+                precio: precioTexto,
+                enStock: p.enStock,
+                id: p.id,
+                precioCarrito,
+                tipo,
+                precioOriginal: tipo === 'promocion' ? p.precioOriginal : null,
+                descuentoPorcentaje: p.descuentoPorcentaje || null,
+                idxInicial: 0,
+                conVariantes,
+                onAgregado: () => { }
+            });
+        } catch (e) {
+            console.warn('No se pudo abrir el producto desde el hash:', e);
+        }
+    }
+
+    // Esperar a que los productos carguen antes de abrir el modal
+    setTimeout(abrirModalDesdeHash, 1500);
 });
 
 /* ============================================
