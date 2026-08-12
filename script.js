@@ -660,7 +660,6 @@ function abrirModalCombo(combo) {
     const p2 = combo.producto2 || null;
     const imagenesPortada = normalizarImagenes(combo.imagenes || (combo.imagen ? [combo.imagen] : []), combo.nombre);
 
-    // Armar todas las imágenes del carrusel: portada + variantes p1 + variantes p2
     let todasImagenes = [...imagenesPortada];
     (p1.variantes || []).forEach(v => { if (v.url) todasImagenes.push({ url: v.url, nombre: v.nombre || '', esPortada: false }); });
     if (p2) (p2.variantes || []).forEach(v => { if (v.url) todasImagenes.push({ url: v.url, nombre: v.nombre || '', esPortada: false }); });
@@ -682,7 +681,6 @@ function abrirModalCombo(combo) {
         initCarrusel(carId);
     });
 
-    // Precio tachado
     const precioTachado = (p1.precio || 0) + (p2 ? (p2.precio || 0) : (p1.precio || 0));
     const precioEl = document.getElementById('modal-precio');
     if (precioTachado > combo.precio) {
@@ -708,27 +706,21 @@ function abrirModalCombo(combo) {
 
     const carEl = () => document.getElementById(carId);
 
-    // Estado selección
+    const esCasoA = !p2;
     const p1TieneVariantes = p1.variantes && p1.variantes.length > 1;
-    const p2TieneVariantes = p2 && p2.variantes && p2.variantes.length > 1;
 
-    let varianteP1 = p1TieneVariantes ? null : '__sin_variante__';
-    let varianteP2 = p2 ? (p2TieneVariantes ? null : '__sin_variante__') : '__sin_variante__';
-
-    function getIdSueltoP1() { return `${combo.id}-p1${varianteP1 && varianteP1 !== '__sin_variante__' ? '-' + varianteP1 : ''}`; }
-    function getIdSueltoP2() { return `${combo.id}-p2${varianteP2 && varianteP2 !== '__sin_variante__' ? '-' + varianteP2 : ''}`; }
-    function getIdCombo() {
-        const v1 = varianteP1 && varianteP1 !== '__sin_variante__' ? varianteP1 : '';
-        const v2 = varianteP2 && varianteP2 !== '__sin_variante__' ? varianteP2 : '';
-        return `combo-${combo.id}${v1 ? '-' + v1 : ''}${v2 ? '-' + v2 : ''}`;
-    }
-
-    function getNombreSueltoP1() { return varianteP1 && varianteP1 !== '__sin_variante__' ? `${p1.nombre} — ${varianteP1}` : p1.nombre; }
-    function getNombreSueltoP2() { return p2 ? (varianteP2 && varianteP2 !== '__sin_variante__' ? `${p2.nombre} — ${varianteP2}` : p2.nombre) : ''; }
+    // Estado de cantidades por variante (Caso A)
+    // carritoId -> cantidad ya está en carrito global
 
     function getImgVariante(producto, nombreVariante) {
         if (!nombreVariante || nombreVariante === '__sin_variante__') return producto?.variantes?.[0]?.url || '';
         return (producto?.variantes || []).find(v => v.nombre === nombreVariante)?.url || '';
+    }
+
+    function hr() {
+        const el = document.createElement('hr');
+        el.style.cssText = 'border:none;border-top:2px solid #F0D0DB;margin:16px 0;';
+        return el;
     }
 
     function render() {
@@ -736,140 +728,211 @@ function abrirModalCombo(combo) {
 
         if (!combo.enStock) {
             const b = document.createElement('button');
-            b.className = 'btn-agregar-carrito'; b.textContent = 'Sin stock'; b.disabled = true;
-            zonaAccion.appendChild(b); return;
+            b.className = 'btn-agregar-carrito';
+            b.textContent = 'Sin stock';
+            b.disabled = true;
+            zonaAccion.appendChild(b);
+            return;
         }
 
-        const esCasoA = !p2; // mismo producto x2
-
-        // ---- CASO A: mismo producto x2 ----
         if (esCasoA) {
-            // Título producto
-            const tit = document.createElement('p');
-            tit.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;';
-            tit.textContent = p1.nombre;
-            zonaAccion.appendChild(tit);
+            // ============================================================
+            // CASO A: mismo producto x2
+            // Mostrar variantes con contadores individuales.
+            // Lógica: totalUnidades = suma de todas las variantes en carrito
+            // precio = Math.floor(total/2)*combo.precio + (total%2)*p1.precio
+            // ============================================================
 
-            // Variantes P1
-            if (p1.variantes && p1.variantes.length === 1) {
-                varianteP1 = p1.variantes[0].nombre || '__sin_variante__';
-            } else if (p1.variantes && p1.variantes.length > 1) {
-                const varWrap = document.createElement('div');
-                varWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;';
-                p1.variantes.forEach((v, vi) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-variante' + (varianteP1 === v.nombre ? ' activa' : '');
-                    btn.textContent = v.nombre;
-                    btn.addEventListener('click', () => {
-                        varianteP1 = v.nombre;
-                        const idx = imagenesPortada.length + vi;
-                        const cel = carEl();
-                        if (cel?._stopAutoplay) cel._stopAutoplay();
-                        if (cel?._carruselGoTo) cel._carruselGoTo(idx);
-                        render();
-                    });
-                    varWrap.appendChild(btn);
-                });
-                zonaAccion.appendChild(varWrap);
+            // Separador título
+            zonaAccion.appendChild(hr());
+
+            const titP1 = document.createElement('p');
+            titP1.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:12px;font-size:16px;';
+            titP1.textContent = p1.nombre;
+            zonaAccion.appendChild(titP1);
+
+            const variantes = (p1.variantes && p1.variantes.length > 0) ? p1.variantes : [{ url: '', nombre: '__sin_variante__' }];
+
+            // Función que recalcula el total de unidades de todas las variantes de este combo
+            function getTotalUnidades() {
+                return variantes.reduce((sum, v) => {
+                    const cid = `${combo.id}-p1-${v.nombre || '__sin_variante__'}`;
+                    return sum + getCantidadEnCarrito(cid);
+                }, 0);
             }
 
-            // Botón "Agregar 1 solo"
-            const idSuelto = getIdSueltoP1();
-            const cantSuelto = getCantidadEnCarrito(idSuelto);
-            const idCombo = getIdCombo();
-            const cantCombo = getCantidadEnCarrito(idCombo);
+            // Función que sincroniza el carrito según la nueva cantidad de una variante
+            function onVarianteCambio(nombreVariante, nuevaCant) {
+                // Recalcular precios de todos los items de este combo en el carrito
+                // Obtenemos cantidades actuales de todas las variantes
+                const cantidades = variantes.map(v => {
+                    const cid = `${combo.id}-p1-${v.nombre || '__sin_variante__'}`;
+                    return { cid, nombre: v.nombre, cant: getCantidadEnCarrito(cid), url: v.url || '' };
+                });
 
-            // Si hay 2 sueltos o combo en carrito → mostrar combo counter
-            if (cantCombo > 0) {
-                // Contador combo
-                const lblCombo = document.createElement('p');
-                lblCombo.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:6px;margin-top:8px;';
-                lblCombo.textContent = `Combo (x2) — ${formatearPrecio(combo.precio)}`;
-                zonaAccion.appendChild(lblCombo);
-                const ctr = crearBtnContador(idCombo, () => render());
-                zonaAccion.appendChild(ctr);
-            } else {
-                // Botón agregar 1 solo
-                const wrapSuelto = document.createElement('div');
-                wrapSuelto.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
-                if (cantSuelto > 0) {
-                    const ctr = crearBtnContador(idSuelto, (nueva) => {
-                        if (nueva === 0) render();
-                        else if (nueva >= 2) {
-                            // Convertir 2 sueltos en combo
-                            carrito = carrito.filter(i => i.id !== idSuelto);
-                            agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
-                            render();
-                        } else render();
+                const total = cantidades.reduce((s, x) => s + x.cant, 0);
+
+                // Recalcular precio de cada item:
+                // Los combos se arman de a pares. El precio unitario de cada item depende
+                // de cuántos combos completos hay en el total.
+                // Estrategia: precio promedio por unidad = (combos*combo.precio + sueltos*p1.precio) / total
+                // Pero es más claro actualizar el precio de cada item individualmente:
+                // - pares completos: combo.precio / 2 por unidad
+                // - el suelto (si total es impar): p1.precio
+
+                // Actualizamos el precio de cada item en el carrito
+                cantidades.forEach(item => {
+                    const existing = carrito.find(i => i.id === item.cid);
+                    if (existing) {
+                        // precio por unidad de este item considerando el total global
+                        const precioUnit = calcularPrecioUnitario(item.cant, total);
+                        existing.precio = precioUnit;
+                    }
+                });
+
+                actualizarCarritoUI();
+                render();
+            }
+
+            function calcularPrecioUnitario(cantVariante, totalUnidades) {
+                // Si el total es par: todo al precio combo/2
+                // Si el total es impar: floor(total/2) pares al precio combo/2, 1 suelto al precio unitario
+                // Por simplicidad: precio promedio ponderado por unidad
+                const combosCompletos = Math.floor(totalUnidades / 2);
+                const sueltos = totalUnidades % 2;
+                const costoTotal = combosCompletos * combo.precio + sueltos * p1.precio;
+                return Math.round(costoTotal / totalUnidades);
+            }
+
+            // Renderizar botón por variante
+            variantes.forEach((v, vi) => {
+                const nombreVariante = v.nombre || '__sin_variante__';
+                const carritoId = `${combo.id}-p1-${nombreVariante}`;
+                const cant = getCantidadEnCarrito(carritoId);
+
+                const filaVariante = document.createElement('div');
+                filaVariante.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;';
+
+                if (variantes.length > 1 && nombreVariante !== '__sin_variante__') {
+                    const label = document.createElement('span');
+                    label.style.cssText = 'font-weight:700;font-size:15px;min-width:80px;';
+                    label.textContent = nombreVariante;
+                    filaVariante.appendChild(label);
+                }
+
+                const btnWrap = document.createElement('div');
+                btnWrap.style.cssText = 'flex:1;';
+
+                if (cant > 0) {
+                    const contador = crearBtnContador(carritoId, (nueva) => {
+                        onVarianteCambio(nombreVariante, nueva);
                     });
-                    wrapSuelto.appendChild(ctr);
+                    btnWrap.appendChild(contador);
                 } else {
-                    const btn1 = document.createElement('button');
-                    btn1.className = 'btn-agregar-carrito';
-                    btn1.style.cssText = 'flex:1;font-size:15px;';
-                    btn1.textContent = `Agregar 1 — ${formatearPrecio(p1.precio)}`;
-                    btn1.addEventListener('click', () => {
-                        if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
-                        agregarAlCarrito({ id: idSuelto, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-agregar-carrito';
+                    btn.style.cssText = 'font-size:14px;padding:10px 12px;';
+                    btn.textContent = variantes.length > 1
+                        ? `Agregar — ${formatearPrecio(p1.precio)}`
+                        : `Agregar al carrito — ${formatearPrecio(p1.precio)}`;
+                    btn.addEventListener('click', () => {
+                        const total = getTotalUnidades();
+                        const nuevoCant = 1;
+                        // precio por unidad considerando el nuevo total
+                        const nuevoTotal = total + nuevoCant;
+                        const precioUnit = calcularPrecioUnitario(nuevoCant, nuevoTotal);
+
+                        // Recalcular precio de los existentes también
+                        variantes.forEach(vv => {
+                            const cid = `${combo.id}-p1-${vv.nombre || '__sin_variante__'}`;
+                            const ex = carrito.find(i => i.id === cid);
+                            if (ex) ex.precio = calcularPrecioUnitario(ex.cantidad, nuevoTotal);
+                        });
+
+                        agregarAlCarrito({
+                            id: carritoId,
+                            nombre: nombreVariante !== '__sin_variante__' ? `${p1.nombre} — ${nombreVariante}` : p1.nombre,
+                            precio: precioUnit,
+                            imagen: v.url || '',
+                            tipo: 'combo'
+                        });
+
+                        // Recalcular precio de todos tras agregar
+                        const totalFinal = getTotalUnidades();
+                        variantes.forEach(vv => {
+                            const cid = `${combo.id}-p1-${vv.nombre || '__sin_variante__'}`;
+                            const ex = carrito.find(i => i.id === cid);
+                            if (ex) ex.precio = calcularPrecioUnitario(ex.cantidad, totalFinal);
+                        });
+                        actualizarCarritoUI();
                         render();
                     });
-                    wrapSuelto.appendChild(btn1);
+                    btnWrap.appendChild(btn);
                 }
-                zonaAccion.appendChild(wrapSuelto);
 
-                // Botón agregar combo x2
-                const btnCombo = document.createElement('button');
-                btnCombo.className = 'btn-agregar-carrito';
-                btnCombo.style.cssText = 'background:var(--color-success);';
-                btnCombo.textContent = `Agregar combo (x2) — ${formatearPrecio(combo.precio)}`;
-                btnCombo.addEventListener('click', () => {
-                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
-                    // Quitar sueltos si hay
-                    carrito = carrito.filter(i => i.id !== idSuelto);
-                    agregarAlCarrito({ id: idCombo, nombre: combo.nombre, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
-                    actualizarCarritoUI();
-                    render();
-                });
-                zonaAccion.appendChild(btnCombo);
+                filaVariante.appendChild(btnWrap);
+                zonaAccion.appendChild(filaVariante);
+            });
+
+            // Info de precio combo
+            const totalActual = getTotalUnidades();
+            if (totalActual > 0) {
+                const combosCompletos = Math.floor(totalActual / 2);
+                const sueltos = totalActual % 2;
+                const infoWrap = document.createElement('div');
+                infoWrap.style.cssText = 'margin-top:8px;padding:10px 14px;background:rgba(239,8,124,0.06);border-radius:10px;font-size:14px;color:var(--color-text-light);';
+                let infoText = '';
+                if (combosCompletos > 0) infoText += `${combosCompletos} combo${combosCompletos > 1 ? 's' : ''} × ${formatearPrecio(combo.precio)}`;
+                if (combosCompletos > 0 && sueltos > 0) infoText += ' + ';
+                if (sueltos > 0) infoText += `${sueltos} suelto × ${formatearPrecio(p1.precio)}`;
+                infoWrap.textContent = infoText;
+                zonaAccion.appendChild(infoWrap);
             }
 
         } else {
-            // ---- CASO B: dos productos distintos ----
+            // ============================================================
+            // CASO B: dos productos distintos
+            // ============================================================
 
-            // PRODUCTO 1 — fila nombre + botón en la misma línea
-            const fila1 = document.createElement('div');
-            fila1.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;';
+            let varianteP1 = (p1.variantes && p1.variantes.length === 1)
+                ? (p1.variantes[0].nombre || '__sin_variante__')
+                : null;
+            let varianteP2 = (p2.variantes && p2.variantes.length === 1)
+                ? (p2.variantes[0].nombre || '__sin_variante__')
+                : null;
 
-            const tit1 = document.createElement('span');
-            tit1.style.cssText = 'font-weight:800;color:var(--color-primary);';
-            tit1.textContent = p1.nombre;
-            fila1.appendChild(tit1);
+            // Leer estado previo si ya hay algo seleccionado
+            // (Re-render no puede preservar estado de variante sin closure — usamos dataset)
+            const prevV1 = zonaAccion.dataset.v1 || varianteP1;
+            const prevV2 = zonaAccion.dataset.v2 || varianteP2;
+            if (prevV1) varianteP1 = prevV1;
+            if (prevV2) varianteP2 = prevV2;
 
-            const idS1 = getIdSueltoP1();
-            const cantS1 = getCantidadEnCarrito(idS1);
-            const wrapS1 = document.createElement('div');
-
-            if (cantS1 > 0) {
-                const ctr = crearBtnContador(idS1, () => render());
-                wrapS1.appendChild(ctr);
-            } else {
-                const btn1 = document.createElement('button');
-                btn1.className = 'btn-agregar-carrito';
-                btn1.style.cssText = 'font-size:13px;padding:8px 12px;white-space:nowrap;width:auto;';
-                btn1.textContent = `Agregar — ${formatearPrecio(p1.precio)}`;
-                btn1.addEventListener('click', () => {
-                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
-                    agregarAlCarrito({ id: idS1, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
-                    render();
-                });
-                wrapS1.appendChild(btn1);
+            function getNombreSueltoP1() { return varianteP1 && varianteP1 !== '__sin_variante__' ? `${p1.nombre} — ${varianteP1}` : p1.nombre; }
+            function getNombreSueltoP2() { return varianteP2 && varianteP2 !== '__sin_variante__' ? `${p2.nombre} — ${varianteP2}` : p2.nombre; }
+            function getIdSueltoP1() { return `${combo.id}-p1${varianteP1 && varianteP1 !== '__sin_variante__' ? '-' + varianteP1 : ''}`; }
+            function getIdSueltoP2() { return `${combo.id}-p2${varianteP2 && varianteP2 !== '__sin_variante__' ? '-' + varianteP2 : ''}`; }
+            function getIdCombo() {
+                const v1 = varianteP1 && varianteP1 !== '__sin_variante__' ? varianteP1 : '';
+                const v2 = varianteP2 && varianteP2 !== '__sin_variante__' ? varianteP2 : '';
+                return `combo-${combo.id}${v1 ? '-' + v1 : ''}${v2 ? '-' + v2 : ''}`;
             }
-            fila1.appendChild(wrapS1);
-            zonaAccion.appendChild(fila1);
 
-            if (p1.variantes && p1.variantes.length === 1) {
-                varianteP1 = p1.variantes[0].nombre || '__sin_variante__';
-            } else if (p1.variantes && p1.variantes.length > 1) {
+            function saveState() {
+                zonaAccion.dataset.v1 = varianteP1 || '';
+                zonaAccion.dataset.v2 = varianteP2 || '';
+            }
+
+            // --- SEPARADOR + PRODUCTO 1 ---
+            zonaAccion.appendChild(hr());
+
+            const titP1 = document.createElement('p');
+            titP1.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;font-size:16px;';
+            titP1.textContent = p1.nombre;
+            zonaAccion.appendChild(titP1);
+
+            // Variantes P1
+            if (p1.variantes && p1.variantes.length > 1) {
                 const varWrap1 = document.createElement('div');
                 varWrap1.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
                 p1.variantes.forEach((v, vi) => {
@@ -878,6 +941,7 @@ function abrirModalCombo(combo) {
                     btn.textContent = v.nombre;
                     btn.addEventListener('click', () => {
                         varianteP1 = v.nombre;
+                        saveState();
                         const idx = imagenesPortada.length + vi;
                         const cel = carEl();
                         if (cel?._stopAutoplay) cel._stopAutoplay();
@@ -889,41 +953,36 @@ function abrirModalCombo(combo) {
                 zonaAccion.appendChild(varWrap1);
             }
 
-            // PRODUCTO 2 — fila nombre + botón en la misma línea
-            const fila2 = document.createElement('div');
-            fila2.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;';
-
-            const tit2 = document.createElement('span');
-            tit2.style.cssText = 'font-weight:800;color:var(--color-primary);';
-            tit2.textContent = p2.nombre;
-            fila2.appendChild(tit2);
-
-            const idS2 = getIdSueltoP2();
-            const cantS2 = getCantidadEnCarrito(idS2);
-            const wrapS2 = document.createElement('div');
-
-            if (cantS2 > 0) {
-                const ctr = crearBtnContador(idS2, () => render());
-                wrapS2.appendChild(ctr);
+            // Botón agregar P1 suelto
+            const idS1 = getIdSueltoP1();
+            const cantS1 = getCantidadEnCarrito(idS1);
+            if (cantS1 > 0) {
+                const ctr = crearBtnContador(idS1, () => render());
+                zonaAccion.appendChild(ctr);
             } else {
-                const btn2 = document.createElement('button');
-                btn2.className = 'btn-agregar-carrito';
-                btn2.style.cssText = 'font-size:13px;padding:8px 12px;white-space:nowrap;width:auto;';
-                btn2.textContent = `Agregar — ${formatearPrecio(p2.precio)}`;
-                btn2.addEventListener('click', () => {
-                    if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
-                    agregarAlCarrito({ id: idS2, nombre: getNombreSueltoP2(), precio: p2.precio, imagen: getImgVariante(p2, varianteP2), tipo: 'combo' });
+                const btn1 = document.createElement('button');
+                btn1.className = 'btn-agregar-carrito';
+                btn1.style.cssText = 'font-size:14px;padding:10px 12px;margin-bottom:4px;';
+                btn1.textContent = `Agregar solo — ${formatearPrecio(p1.precio)}`;
+                btn1.addEventListener('click', () => {
+                    if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
+                    agregarAlCarrito({ id: idS1, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
                     render();
                 });
-                wrapS2.appendChild(btn2);
+                zonaAccion.appendChild(btn1);
             }
-            fila2.appendChild(wrapS2);
-            zonaAccion.appendChild(fila2);
 
+            // --- SEPARADOR + PRODUCTO 2 ---
+            zonaAccion.appendChild(hr());
+
+            const titP2 = document.createElement('p');
+            titP2.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:8px;font-size:16px;';
+            titP2.textContent = p2.nombre;
+            zonaAccion.appendChild(titP2);
+
+            // Variantes P2
             const p1VariantesCount = (p1.variantes || []).length;
-            if (p2.variantes && p2.variantes.length === 1) {
-                varianteP2 = p2.variantes[0].nombre || '__sin_variante__';
-            } else if (p2.variantes && p2.variantes.length > 1) {
+            if (p2.variantes && p2.variantes.length > 1) {
                 const varWrap2 = document.createElement('div');
                 varWrap2.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
                 p2.variantes.forEach((v, vi) => {
@@ -932,6 +991,7 @@ function abrirModalCombo(combo) {
                     btn.textContent = v.nombre;
                     btn.addEventListener('click', () => {
                         varianteP2 = v.nombre;
+                        saveState();
                         const idx = imagenesPortada.length + p1VariantesCount + vi;
                         const cel = carEl();
                         if (cel?._stopAutoplay) cel._stopAutoplay();
@@ -943,16 +1003,34 @@ function abrirModalCombo(combo) {
                 zonaAccion.appendChild(varWrap2);
             }
 
-            // Botón combo completo
+            // Botón agregar P2 suelto
+            const idS2 = getIdSueltoP2();
+            const cantS2 = getCantidadEnCarrito(idS2);
+            if (cantS2 > 0) {
+                const ctr = crearBtnContador(idS2, () => render());
+                zonaAccion.appendChild(ctr);
+            } else {
+                const btn2 = document.createElement('button');
+                btn2.className = 'btn-agregar-carrito';
+                btn2.style.cssText = 'font-size:14px;padding:10px 12px;margin-bottom:4px;';
+                btn2.textContent = `Agregar solo — ${formatearPrecio(p2.precio)}`;
+                btn2.addEventListener('click', () => {
+                    if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
+                    agregarAlCarrito({ id: idS2, nombre: getNombreSueltoP2(), precio: p2.precio, imagen: getImgVariante(p2, varianteP2), tipo: 'combo' });
+                    render();
+                });
+                zonaAccion.appendChild(btn2);
+            }
+
+            // --- SEPARADOR + BOTÓN COMBO ---
+            zonaAccion.appendChild(hr());
+
             const idCombo = getIdCombo();
             const cantCombo = getCantidadEnCarrito(idCombo);
-            const hr = document.createElement('hr');
-            hr.style.cssText = 'border:none;border-top:1px solid #F0D0DB;margin:8px 0 12px;';
-            zonaAccion.appendChild(hr);
 
             if (cantCombo > 0) {
                 const lblCombo = document.createElement('p');
-                lblCombo.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:6px;';
+                lblCombo.style.cssText = 'font-weight:800;color:var(--color-primary);margin-bottom:6px;font-size:15px;';
                 lblCombo.textContent = `${combo.nombre} — ${formatearPrecio(combo.precio)}`;
                 zonaAccion.appendChild(lblCombo);
                 const ctr = crearBtnContador(idCombo, (nueva) => {
@@ -964,10 +1042,9 @@ function abrirModalCombo(combo) {
                 });
                 zonaAccion.appendChild(ctr);
             } else if (cantS1 > 0 && cantS2 > 0) {
-                // Ambos sueltos → convertir automáticamente en combo
                 carrito = carrito.filter(i => i.id !== idS1 && i.id !== idS2);
-                const nombreCombo1 = `${combo.nombre} (${getNombreSueltoP1().split('—')[1]?.trim() || p1.nombre} + ${getNombreSueltoP2().split('—')[1]?.trim() || p2.nombre})`;
-                agregarAlCarrito({ id: idCombo, nombre: nombreCombo1, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                const nombreCombo = `${combo.nombre} (${getNombreSueltoP1().split('—')[1]?.trim() || p1.nombre} + ${getNombreSueltoP2().split('—')[1]?.trim() || p2.nombre})`;
+                agregarAlCarrito({ id: idCombo, nombre: nombreCombo, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
                 actualizarCarritoUI();
                 render();
             } else {
@@ -979,8 +1056,8 @@ function abrirModalCombo(combo) {
                     if (!varianteP1) { mostrarConfirmacion(`Elegí una opción para ${p1.nombre}`); return; }
                     if (!varianteP2) { mostrarConfirmacion(`Elegí una opción para ${p2.nombre}`); return; }
                     carrito = carrito.filter(i => i.id !== idS1 && i.id !== idS2);
-                    const nombreCombo2 = `${combo.nombre} (${getNombreSueltoP1().split('—')[1]?.trim() || p1.nombre} + ${getNombreSueltoP2().split('—')[1]?.trim() || p2.nombre})`;
-                    agregarAlCarrito({ id: idCombo, nombre: nombreCombo2, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
+                    const nombreCombo = `${combo.nombre} (${getNombreSueltoP1().split('—')[1]?.trim() || p1.nombre} + ${getNombreSueltoP2().split('—')[1]?.trim() || p2.nombre})`;
+                    agregarAlCarrito({ id: idCombo, nombre: nombreCombo, precio: combo.precio, imagen: imagenesPortada[0]?.url || '', tipo: 'combo' });
                     actualizarCarritoUI();
                     render();
                 });
