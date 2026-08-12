@@ -1682,7 +1682,9 @@
                         });
 
                         wrap.appendChild(im);
-                        wrap.appendChild(nameInput);
+                        if (imagenes.length > 1) {
+                            wrap.appendChild(nameInput);
+                        }
                         wrap.appendChild(btn);
                         previewList.appendChild(wrap);
                     });
