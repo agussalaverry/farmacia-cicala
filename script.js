@@ -951,11 +951,10 @@ function abrirModalCombo(combo) {
                 zonaAccion.appendChild(lblCombo);
                 const ctr = crearBtnContador(idCombo, (nueva) => {
                     if (nueva === 0) {
-                        // Restaurar los dos sueltos
                         if (varianteP1) agregarAlCarrito({ id: idS1, nombre: getNombreSueltoP1(), precio: p1.precio, imagen: getImgVariante(p1, varianteP1), tipo: 'combo' });
                         if (varianteP2) agregarAlCarrito({ id: idS2, nombre: getNombreSueltoP2(), precio: p2.precio, imagen: getImgVariante(p2, varianteP2), tipo: 'combo' });
-                        render();
-                    } else render();
+                    }
+                    render();
                 });
                 zonaAccion.appendChild(ctr);
             } else if (cantS1 > 0 && cantS2 > 0) {
