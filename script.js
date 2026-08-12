@@ -70,12 +70,7 @@ function normalizarImagenes(imagenes, fallbackNombre = '') {
  * Y TODAS tienen nombre cargado.
  */
 function tieneVariantes(imagenes) {
-    if (!imagenes || imagenes.length <= 1) return false;
-    // Solo hay variantes si hay 2+ imágenes Y las que no son portada tienen nombre
-    return imagenes.slice(1).some(img => {
-        const nombre = typeof img === 'string' ? '' : (img.nombre || '');
-        return nombre.trim() !== '';
-    });
+    return imagenes && imagenes.length > 1;
 }
 
 function getCarritoId(productoId, nombreVariante) {
@@ -708,8 +703,8 @@ function abrirModalCombo(combo) {
     const carEl = () => document.getElementById(carId);
 
     // Estado selección
-    const p1TieneVariantes = p1.variantes && p1.variantes.length > 1 || (p1.variantes && p1.variantes.length === 1 && p1.variantes[0].nombre?.trim() !== '');
-    const p2TieneVariantes = p2 && (p2.variantes && p2.variantes.length > 1 || (p2.variantes && p2.variantes.length === 1 && p2.variantes[0].nombre?.trim() !== ''));
+    const p1TieneVariantes = p1.variantes && p1.variantes.length > 1;
+    const p2TieneVariantes = p2 && p2.variantes && p2.variantes.length > 1;
 
     let varianteP1 = p1TieneVariantes ? null : '__sin_variante__';
     let varianteP2 = p2 ? (p2TieneVariantes ? null : '__sin_variante__') : '__sin_variante__';
