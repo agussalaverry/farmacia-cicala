@@ -745,7 +745,9 @@ function abrirModalCombo(combo) {
             zonaAccion.appendChild(tit);
 
             // Variantes P1
-            if (p1.variantes && p1.variantes.length > 0) {
+            if (p1.variantes && p1.variantes.length === 1) {
+                varianteP1 = p1.variantes[0].nombre || '__sin_variante__';
+            } else if (p1.variantes && p1.variantes.length > 1) {
                 const varWrap = document.createElement('div');
                 varWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;';
                 p1.variantes.forEach((v, vi) => {
@@ -754,7 +756,6 @@ function abrirModalCombo(combo) {
                     btn.textContent = v.nombre;
                     btn.addEventListener('click', () => {
                         varianteP1 = v.nombre;
-                        // Saltar imagen en carrusel
                         const idx = imagenesPortada.length + vi;
                         const cel = carEl();
                         if (cel?._stopAutoplay) cel._stopAutoplay();
@@ -860,7 +861,9 @@ function abrirModalCombo(combo) {
             fila1.appendChild(wrapS1);
             zonaAccion.appendChild(fila1);
 
-            if (p1.variantes && p1.variantes.length > 0) {
+            if (p1.variantes && p1.variantes.length === 1) {
+                varianteP1 = p1.variantes[0].nombre || '__sin_variante__';
+            } else if (p1.variantes && p1.variantes.length > 1) {
                 const varWrap1 = document.createElement('div');
                 varWrap1.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
                 p1.variantes.forEach((v, vi) => {
@@ -912,7 +915,9 @@ function abrirModalCombo(combo) {
             zonaAccion.appendChild(fila2);
 
             const p1VariantesCount = (p1.variantes || []).length;
-            if (p2.variantes && p2.variantes.length > 0) {
+            if (p2.variantes && p2.variantes.length === 1) {
+                varianteP2 = p2.variantes[0].nombre || '__sin_variante__';
+            } else if (p2.variantes && p2.variantes.length > 1) {
                 const varWrap2 = document.createElement('div');
                 varWrap2.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
                 p2.variantes.forEach((v, vi) => {
@@ -931,6 +936,7 @@ function abrirModalCombo(combo) {
                 });
                 zonaAccion.appendChild(varWrap2);
             }
+
             // Botón combo completo
             const idCombo = getIdCombo();
             const cantCombo = getCantidadEnCarrito(idCombo);
