@@ -23,6 +23,7 @@ const db = getFirestore(app);
 
 let carrito = [];
 let modalidadSeleccionada = 'retiro';
+let _onCarritoVaciado = [];
 
 /* ============================================
    DOM
@@ -354,6 +355,8 @@ function crearTarjetaProducto(producto, tipo) {
         } else {
             mostrarBtnPrincipal();
         }
+        // Registrar callback para resetear la card al vaciar el carrito
+        _onCarritoVaciado.push(() => mostrarBtnPrincipal());
     } else {
         mostrarBtnPrincipal();
     }
@@ -1133,6 +1136,8 @@ function eliminarDelCarrito(id) {
 function vaciarCarrito() {
     carrito = [];
     actualizarCarritoUI();
+    // Resetear todas las tarjetas de productos al estado inicial
+    _onCarritoVaciado.forEach(cb => cb());
     mostrarConfirmacion('Carrito vaciado', 'rojo');
 }
 
