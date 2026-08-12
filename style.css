@@ -783,6 +783,10 @@ body {
     color: var(--color-white);
     padding: var(--spacing-xl) var(--spacing-lg);
     box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-shrink: 0;
 }
 
 .cart-panel-title {
