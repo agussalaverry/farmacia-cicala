@@ -1500,6 +1500,8 @@ footer::before {
 
     .producto-nombre {
         font-size: 12px;
+        flex-grow: 1;
+        min-height: 2.6em;
     }
 
     .precio-unico,
