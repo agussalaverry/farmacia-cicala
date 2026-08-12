@@ -713,7 +713,11 @@ function abrirModalCombo(combo) {
 
     function getIdSueltoP1() { return `${combo.id}-p1${varianteP1 && varianteP1 !== '__sin_variante__' ? '-' + varianteP1 : ''}`; }
     function getIdSueltoP2() { return `${combo.id}-p2${varianteP2 && varianteP2 !== '__sin_variante__' ? '-' + varianteP2 : ''}`; }
-    function getIdCombo() { return `combo-${combo.id}`; }
+    function getIdCombo() {
+        const v1 = varianteP1 && varianteP1 !== '__sin_variante__' ? varianteP1 : '';
+        const v2 = varianteP2 && varianteP2 !== '__sin_variante__' ? varianteP2 : '';
+        return `combo-${combo.id}${v1 ? '-' + v1 : ''}${v2 ? '-' + v2 : ''}`;
+    }
 
     function getNombreSueltoP1() { return varianteP1 && varianteP1 !== '__sin_variante__' ? `${p1.nombre} — ${varianteP1}` : p1.nombre; }
     function getNombreSueltoP2() { return p2 ? (varianteP2 && varianteP2 !== '__sin_variante__' ? `${p2.nombre} — ${varianteP2}` : p2.nombre) : ''; }
