@@ -402,9 +402,9 @@ function crearTarjetaCombo(combo) {
     tarjeta.dataset.categoria = combo.categoria || '';
 
     const imagenesNorm = normalizarImagenes(combo.imagenes || (combo.imagen ? [combo.imagen] : []), combo.nombre);
+    const conVariantes = tieneVariantes(imagenesNorm);
     const { html: carHtml, id: carId } = crearCarrusel(imagenesNorm, combo.nombre);
 
-    // Precio tachado: suma de los dos productos individuales
     const p1 = combo.producto1 || {};
     const p2 = combo.producto2;
     const precioTachado = (p1.precio || 0) + (p2 ? (p2.precio || 0) : (p1.precio || 0));
@@ -423,12 +423,18 @@ function crearTarjetaCombo(combo) {
         <div class="btn-area-card"></div>`;
 
     const btnArea = tarjeta.querySelector('.btn-area-card');
-    const btn = document.createElement('button');
-    btn.className = 'btn-agregar-carrito';
-    btn.textContent = combo.enStock ? 'Ver combo →' : 'Sin stock';
-    if (!combo.enStock) btn.disabled = true;
-    btn.addEventListener('click', e => e.stopPropagation());
-    btnArea.appendChild(btn);
+
+    function mostrarBtnPrincipal() {
+        btnArea.innerHTML = '';
+        const btn = document.createElement('button');
+        btn.className = 'btn-agregar-carrito';
+        btn.textContent = combo.enStock ? 'Ver combo →' : 'Sin stock';
+        if (!combo.enStock) btn.disabled = true;
+        btn.addEventListener('click', e => e.stopPropagation());
+        btnArea.appendChild(btn);
+    }
+
+    mostrarBtnPrincipal();
 
     agregarEventoAbrirModal(tarjeta, () => {
         abrirModalCombo(combo);
