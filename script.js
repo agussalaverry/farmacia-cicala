@@ -510,9 +510,8 @@ let _modalOnAgregado = null;
 function abrirModalProducto(p) {
     document.body.classList.add('modal-abierto');
 
-    // Actualizar URL con el hash del producto
     const hashTipo = p.tipo || 'novedad';
-    history.replaceState(null, '', `#${hashTipo}-${p.id}`);
+    history.pushState(null, '', `#${hashTipo}-${p.id}`);
 
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
@@ -1237,6 +1236,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
+
+    // Cerrar modal con botón retroceso del navegador (mobile y PC)
+    window.addEventListener('popstate', () => {
+        if (document.getElementById('producto-modal').classList.contains('active')) {
+            cerrarModalProducto();
+        }
+    });
+
+    // Cerrar modal con ESC en PC
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && document.getElementById('producto-modal').classList.contains('active')) {
+            cerrarModalProducto();
+        }
+    });
+
     const filtrosBtnMobile = document.getElementById('filtros-btn-mobile');
     const cartBtnMobile = document.getElementById('cart-button-mobile');
 
