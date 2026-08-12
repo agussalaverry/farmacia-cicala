@@ -1671,6 +1671,7 @@ html {
         overflow-y: auto;
         overscroll-behavior: contain;
         touch-action: pan-y;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom));
     }
 
     /* El input de dirección no propaga el touch al carrito */
@@ -1980,6 +1981,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 0;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
 /* Cada filtro como item de lista en el drawer */
