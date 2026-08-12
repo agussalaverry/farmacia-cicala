@@ -519,6 +519,19 @@ function abrirModalProducto(p) {
     const modalImgWrap = document.getElementById('modal-img-wrap');
     modalImgWrap.innerHTML = carHtml;
 
+    // Lightbox: al tocar la imagen del modal se abre en pantalla completa
+    requestAnimationFrame(() => {
+        const modalImgs = modalImgWrap.querySelectorAll('img');
+        modalImgs.forEach((im, i) => {
+            im.style.cursor = 'zoom-in';
+            im.addEventListener('click', e => {
+                e.stopPropagation();
+                const urls = [...modalImgWrap.querySelectorAll('img')].map(x => x.src);
+                window._abrirLightbox(urls, i);
+            });
+        });
+    });
+
     const precioEl = document.getElementById('modal-precio');
     if (p.precioOriginal) {
         precioEl.innerHTML = `
@@ -1423,3 +1436,200 @@ estilosDinamicos.innerHTML = `
     .variante-nombre { line-height: 1; }
 `;
 document.head.appendChild(estilosDinamicos);
+
+/* ============================================
+   LIGHTBOX PARA MODAL DE DETALLE
+   ============================================ */
+
+(function () {
+    // Crear elementos del lightbox
+    const overlay = document.createElement('div');
+    overlay.id = 'lightbox-overlay';
+    overlay.style.cssText = `
+    display:none;position:fixed;inset:0;z-index:99999;
+    background:rgba(0,0,0,0.92);
+    flex-direction:column;align-items:center;justify-content:center;
+    touch-action:none;
+  `;
+
+    const btnClose = document.createElement('button');
+    btnClose.innerHTML = '✕';
+    btnClose.style.cssText = `
+    position:absolute;top:16px;left:16px;z-index:100001;
+    background:rgba(255,255,255,0.15);border:none;color:white;
+    width:44px;height:44px;border-radius:50%;font-size:22px;font-weight:700;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+  `;
+
+    const imgEl = document.createElement('img');
+    imgEl.style.cssText = `
+    max-width:90vw;max-height:85vh;object-fit:contain;
+    border-radius:8px;transition:transform 0.2s ease;
+    transform-origin:center center;cursor:grab;user-select:none;
+  `;
+
+    const btnPrev = document.createElement('button');
+    btnPrev.innerHTML = '&#8249;';
+    btnPrev.style.cssText = `
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    background:rgba(255,255,255,0.2);border:none;color:white;
+    width:48px;height:48px;border-radius:50%;font-size:36px;font-weight:300;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    z-index:100001;line-height:1;
+  `;
+
+    const btnNext = document.createElement('button');
+    btnNext.innerHTML = '&#8250;';
+    btnNext.style.cssText = `
+    position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    background:rgba(255,255,255,0.2);border:none;color:white;
+    width:48px;height:48px;border-radius:50%;font-size:36px;font-weight:300;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    z-index:100001;line-height:1;
+  `;
+
+    const dotsWrap = document.createElement('div');
+    dotsWrap.style.cssText = `
+    position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+    display:flex;gap:8px;
+  `;
+
+    overlay.appendChild(btnClose);
+    overlay.appendChild(btnPrev);
+    overlay.appendChild(imgEl);
+    overlay.appendChild(btnNext);
+    overlay.appendChild(dotsWrap);
+    document.body.appendChild(overlay);
+
+    // Estado
+    let imgs = [];
+    let idx = 0;
+    let scale = 1;
+    let lastTouchDist = 0;
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let imgOffset = { x: 0, y: 0 };
+
+    function resetTransform() {
+        scale = 1;
+        imgOffset = { x: 0, y: 0 };
+        imgEl.style.transform = 'translate(0px,0px) scale(1)';
+        imgEl.style.cursor = 'grab';
+    }
+
+    function applyTransform() {
+        imgEl.style.transform = `translate(${imgOffset.x}px,${imgOffset.y}px) scale(${scale})`;
+    }
+
+    function goTo(n) {
+        idx = (n + imgs.length) % imgs.length;
+        imgEl.src = imgs[idx];
+        resetTransform();
+        updateDots();
+        btnPrev.style.display = imgs.length > 1 ? 'flex' : 'none';
+        btnNext.style.display = imgs.length > 1 ? 'flex' : 'none';
+    }
+
+    function updateDots() {
+        dotsWrap.innerHTML = '';
+        if (imgs.length <= 1) return;
+        imgs.forEach((_, i) => {
+            const d = document.createElement('span');
+            d.style.cssText = `width:8px;height:8px;border-radius:50%;background:${i === idx ? 'white' : 'rgba(255,255,255,0.4)'};display:inline-block;`;
+            d.addEventListener('click', e => { e.stopPropagation(); goTo(i); });
+            dotsWrap.appendChild(d);
+        });
+    }
+
+    function openLightbox(imageList, startIdx) {
+        imgs = imageList;
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        goTo(startIdx);
+    }
+
+    function closeLightbox() {
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        resetTransform();
+    }
+
+    // Cerrar
+    btnClose.addEventListener('click', e => { e.stopPropagation(); closeLightbox(); });
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeLightbox(); });
+
+    // Flechas
+    btnPrev.addEventListener('click', e => { e.stopPropagation(); goTo(idx - 1); });
+    btnNext.addEventListener('click', e => { e.stopPropagation(); goTo(idx + 1); });
+
+    // Swipe mobile
+    let swipeStartX = 0;
+    imgEl.addEventListener('touchstart', e => {
+        if (e.touches.length === 1) swipeStartX = e.touches[0].clientX;
+        if (e.touches.length === 2) {
+            lastTouchDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+        }
+    }, { passive: true });
+
+    imgEl.addEventListener('touchmove', e => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const dist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            scale = Math.min(4, Math.max(1, scale * (dist / lastTouchDist)));
+            lastTouchDist = dist;
+            imgEl.style.cursor = scale > 1 ? 'move' : 'grab';
+            applyTransform();
+        }
+    }, { passive: false });
+
+    imgEl.addEventListener('touchend', e => {
+        if (e.changedTouches.length === 1 && scale === 1) {
+            const diff = swipeStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) goTo(idx + (diff > 0 ? 1 : -1));
+        }
+        if (scale < 1.05) resetTransform();
+    }, { passive: true });
+
+    // Zoom con rueda del mouse (desktop)
+    imgEl.addEventListener('wheel', e => {
+        e.preventDefault();
+        scale = Math.min(4, Math.max(1, scale - e.deltaY * 0.002));
+        imgEl.style.cursor = scale > 1 ? 'move' : 'grab';
+        applyTransform();
+    }, { passive: false });
+
+    // Drag para mover imagen cuando hay zoom (desktop)
+    imgEl.addEventListener('mousedown', e => {
+        if (scale <= 1) return;
+        isDragging = true;
+        dragStart = { x: e.clientX - imgOffset.x, y: e.clientY - imgOffset.y };
+        imgEl.style.cursor = 'grabbing';
+        e.preventDefault();
+    });
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        imgOffset = { x: e.clientX - dragStart.x, y: e.clientY - dragStart.y };
+        applyTransform();
+    });
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        imgEl.style.cursor = scale > 1 ? 'move' : 'grab';
+    });
+
+    // ESC para cerrar
+    document.addEventListener('keydown', e => {
+        if (overlay.style.display === 'none') return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') goTo(idx - 1);
+        if (e.key === 'ArrowRight') goTo(idx + 1);
+    });
+
+    // Exponer función global para que abrirModalProducto la use
+    window._abrirLightbox = openLightbox;
+})();
