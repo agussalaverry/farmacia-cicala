@@ -761,47 +761,23 @@ function abrirModalCombo(combo) {
                 }, 0);
             }
 
-            // Función que sincroniza el carrito según la nueva cantidad de una variante
             function onVarianteCambio(nombreVariante, nuevaCant) {
-                // Recalcular precios de todos los items de este combo en el carrito
-                // Obtenemos cantidades actuales de todas las variantes
-                const cantidades = variantes.map(v => {
+                const total = getTotalUnidades();
+                variantes.forEach(v => {
                     const cid = `${combo.id}-p1-${v.nombre || '__sin_variante__'}`;
-                    return { cid, nombre: v.nombre, cant: getCantidadEnCarrito(cid), url: v.url || '' };
-                });
-
-                const total = cantidades.reduce((s, x) => s + x.cant, 0);
-
-                // Recalcular precio de cada item:
-                // Los combos se arman de a pares. El precio unitario de cada item depende
-                // de cuántos combos completos hay en el total.
-                // Estrategia: precio promedio por unidad = (combos*combo.precio + sueltos*p1.precio) / total
-                // Pero es más claro actualizar el precio de cada item individualmente:
-                // - pares completos: combo.precio / 2 por unidad
-                // - el suelto (si total es impar): p1.precio
-
-                // Actualizamos el precio de cada item en el carrito
-                cantidades.forEach(item => {
-                    const existing = carrito.find(i => i.id === item.cid);
-                    if (existing) {
-                        // precio por unidad de este item considerando el total global
-                        const precioUnit = calcularPrecioUnitario(item.cant, total);
-                        existing.precio = precioUnit;
+                    const ex = carrito.find(i => i.id === cid);
+                    if (ex) {
+                        ex.precio = total % 2 === 0
+                            ? Math.round(combo.precio / 2)
+                            : p1.precio;
                     }
                 });
-
                 actualizarCarritoUI();
                 render();
             }
 
             function calcularPrecioUnitario(cantVariante, totalUnidades) {
-                // Si el total es par: todo al precio combo/2
-                // Si el total es impar: floor(total/2) pares al precio combo/2, 1 suelto al precio unitario
-                // Por simplicidad: precio promedio ponderado por unidad
-                const combosCompletos = Math.floor(totalUnidades / 2);
-                const sueltos = totalUnidades % 2;
-                const costoTotal = combosCompletos * combo.precio + sueltos * p1.precio;
-                return Math.round(costoTotal / totalUnidades);
+                return p1.precio;
             }
 
             // Renderizar botón por variante
@@ -836,33 +812,22 @@ function abrirModalCombo(combo) {
                         ? `Agregar — ${formatearPrecio(p1.precio)}`
                         : `Agregar al carrito — ${formatearPrecio(p1.precio)}`;
                     btn.addEventListener('click', () => {
-                        const total = getTotalUnidades();
-                        const nuevoCant = 1;
-                        // precio por unidad considerando el nuevo total
-                        const nuevoTotal = total + nuevoCant;
-                        const precioUnit = calcularPrecioUnitario(nuevoCant, nuevoTotal);
-
-                        // Recalcular precio de los existentes también
-                        variantes.forEach(vv => {
-                            const cid = `${combo.id}-p1-${vv.nombre || '__sin_variante__'}`;
-                            const ex = carrito.find(i => i.id === cid);
-                            if (ex) ex.precio = calcularPrecioUnitario(ex.cantidad, nuevoTotal);
-                        });
-
                         agregarAlCarrito({
                             id: carritoId,
                             nombre: nombreVariante !== '__sin_variante__' ? `${p1.nombre} — ${nombreVariante}` : p1.nombre,
-                            precio: precioUnit,
+                            precio: p1.precio,
                             imagen: v.url || '',
                             tipo: 'combo'
                         });
-
-                        // Recalcular precio de todos tras agregar
-                        const totalFinal = getTotalUnidades();
+                        const total = getTotalUnidades();
                         variantes.forEach(vv => {
                             const cid = `${combo.id}-p1-${vv.nombre || '__sin_variante__'}`;
                             const ex = carrito.find(i => i.id === cid);
-                            if (ex) ex.precio = calcularPrecioUnitario(ex.cantidad, totalFinal);
+                            if (ex) {
+                                ex.precio = total % 2 === 0
+                                    ? Math.round(combo.precio / 2)
+                                    : p1.precio;
+                            }
                         });
                         actualizarCarritoUI();
                         render();
