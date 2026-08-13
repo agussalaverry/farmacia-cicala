@@ -750,21 +750,45 @@ function abrirModalCombo(combo) {
                 const precioUnitario = p1.precio;
                 const precioPorUnidadEnCombo = Math.round(combo.precio / 2);
 
+                // Distribuir precios: de a pares → precio combo, sobrante → precio unitario
+                let unidadesAsignadas = 0;
+                const pares = Math.floor(total / 2) * 2;
+
                 variantes.forEach(v => {
                     const cid = `${combo.id}-p1-${v.nombre || '__sin_variante__'}`;
                     const item = carrito.find(i => i.id === cid);
                     if (!item) return;
-                    item.precio = total >= 2 ? precioPorUnidadEnCombo : precioUnitario;
+
+                    // Cuántas de esta variante van a precio combo vs unitario
+                    const cantEsta = item.cantidad;
+                    const yaAsignadas = unidadesAsignadas;
+                    const enComboEsta = Math.max(0, Math.min(cantEsta, pares - yaAsignadas));
+                    const sueltasEsta = cantEsta - enComboEsta;
+
+                    // Precio promedio para esta variante
+                    if (enComboEsta > 0 && sueltasEsta === 0) {
+                        item.precio = precioPorUnidadEnCombo;
+                    } else if (enComboEsta === 0) {
+                        item.precio = precioUnitario;
+                    } else {
+                        // mixto: guardamos precio unitario y ajustamos el subtotal manualmente
+                        // Para simplificar, guardamos precio promedio ponderado
+                        item.precio = Math.round((enComboEsta * precioPorUnidadEnCombo + sueltasEsta * precioUnitario) / cantEsta);
+                    }
+                    unidadesAsignadas += cantEsta;
                 });
+
                 actualizarCarritoUI();
             }
+
+            // Variante seleccionada actualmente (para el botón agregar)
+            let varianteSeleccionada = variantes.length === 1 ? variantes[0] : null;
 
             function renderCasoA() {
                 zonaAccion.innerHTML = '';
 
                 const total = getTotalUnidades();
                 const precioUnitario = p1.precio;
-                const precioPorUnidadEnCombo = Math.round(combo.precio / 2);
 
                 // Info de precios
                 const infoPrecios = document.createElement('div');
@@ -772,17 +796,17 @@ function abrirModalCombo(combo) {
 
                 if (total === 0) {
                     infoPrecios.innerHTML = `
-                <div style="font-size:15px;color:#666;margin-bottom:4px;">
-                    <span style="font-weight:700;color:var(--color-primary);">Precio unitario:</span> ${formatearPrecio(precioUnitario)}
-                </div>
-                <div style="font-size:15px;color:#666;">
-                    <span style="font-weight:700;color:var(--color-primary);">2 unidades (combo):</span> ${formatearPrecio(combo.precio)}
-                </div>`;
+                    <div style="font-size:15px;color:#666;margin-bottom:4px;">
+                        <span style="font-weight:700;color:var(--color-primary);">Precio unitario:</span> ${formatearPrecio(precioUnitario)}
+                    </div>
+                    <div style="font-size:15px;color:#666;">
+                        <span style="font-weight:700;color:var(--color-primary);">2 unidades (combo):</span> ${formatearPrecio(combo.precio)}
+                    </div>`;
                 } else if (total === 1) {
                     infoPrecios.innerHTML = `
-                <div style="font-size:14px;color:#888;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;">
-                    Agregá 1 más para precio combo (${formatearPrecio(combo.precio)})
-                </div>`;
+                    <div style="font-size:14px;color:#888;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;">
+                        Agregá 1 más para precio combo (${formatearPrecio(combo.precio)})
+                    </div>`;
                 } else {
                     const pares = Math.floor(total / 2);
                     const sueltas = total % 2;
@@ -790,60 +814,51 @@ function abrirModalCombo(combo) {
                     if (pares > 0) resumen += `${pares * 2} unid. × combo = ${formatearPrecio(combo.precio * pares)}`;
                     if (sueltas > 0) resumen += (pares > 0 ? ' + ' : '') + `1 suelta = ${formatearPrecio(precioUnitario)}`;
                     infoPrecios.innerHTML = `
-                <div style="font-size:14px;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;color:#555;">${resumen}</div>`;
+                    <div style="font-size:14px;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;color:#555;">${resumen}</div>`;
                 }
                 zonaAccion.appendChild(infoPrecios);
 
-                // Pills
-                const pillsWrap = document.createElement('div');
-                pillsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;';
+                // Pills de selección (sin contador adentro)
+                if (variantes.length > 1) {
+                    const pillsWrap = document.createElement('div');
+                    pillsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;';
 
-                variantes.forEach((v, i) => {
-                    const nombreVariante = v.nombre || '__sin_variante__';
-                    const cid = `${combo.id}-p1-${nombreVariante}`;
-                    const cant = getCantidadEnCarrito(cid);
+                    variantes.forEach((v) => {
+                        const nombreVariante = v.nombre || '__sin_variante__';
+                        const esSeleccionada = varianteSeleccionada && varianteSeleccionada.nombre === v.nombre;
 
-                    const pill = document.createElement('button');
-                    pill.style.cssText = `
-                display:inline-flex;align-items:center;gap:6px;
-                padding:8px 18px;border:2px solid ${cant > 0 ? 'var(--color-primary)' : '#E8C1D1'};
-                border-radius:32px;font-family:var(--font-family);font-size:15px;font-weight:700;
-                cursor:pointer;transition:all 0.2s;background:white;
-                color:${cant > 0 ? 'var(--color-primary)' : '#2D2D2D'};`;
+                        const pill = document.createElement('button');
+                        pill.style.cssText = `
+                        display:inline-flex;align-items:center;gap:6px;
+                        padding:8px 18px;border:2px solid ${esSeleccionada ? 'var(--color-primary)' : '#E8C1D1'};
+                        border-radius:32px;font-family:var(--font-family);font-size:15px;font-weight:700;
+                        cursor:pointer;transition:all 0.2s;
+                        background:${esSeleccionada ? 'rgba(239,8,124,0.08)' : 'white'};
+                        color:${esSeleccionada ? 'var(--color-primary)' : '#2D2D2D'};`;
+                        pill.textContent = nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre;
 
-                    if (cant > 0) {
-                        pill.innerHTML = `
-                    <span style="background:var(--color-primary);color:white;border-radius:50%;
-                        width:22px;height:22px;font-size:12px;font-weight:800;
-                        display:flex;align-items:center;justify-content:center;flex-shrink:0;">${cant}</span>
-                    <span>${nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre}</span>`;
-                    } else {
-                        pill.innerHTML = `<span>${nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre}</span>`;
-                    }
-
-                    pill.addEventListener('click', () => {
-                        agregarAlCarrito({
-                            id: cid,
-                            nombre: nombreVariante !== '__sin_variante__' ? `${p1.nombre} — ${nombreVariante}` : p1.nombre,
-                            precio: p1.precio,
-                            imagen: v.url || '',
-                            tipo: 'combo'
+                        pill.addEventListener('click', () => {
+                            varianteSeleccionada = v;
+                            // Navegar al slide correspondiente
+                            const idxReal = variantes.indexOf(v) + 1;
+                            const carEl = document.getElementById(carId);
+                            if (carEl?._stopAutoplay) carEl._stopAutoplay();
+                            if (carEl?._carruselGoTo) carEl._carruselGoTo(idxReal);
+                            renderCasoA();
                         });
-                        recalcularPrecios();
-                        renderCasoA();
+
+                        pillsWrap.appendChild(pill);
                     });
 
-                    pillsWrap.appendChild(pill);
-                });
+                    zonaAccion.appendChild(pillsWrap);
+                }
 
-                zonaAccion.appendChild(pillsWrap);
-
-                // Contadores debajo de pills (solo variantes con cantidad)
+                // Contadores por variante (solo si tienen cantidad)
                 const tieneAlgo = variantes.some(v => getCantidadEnCarrito(`${combo.id}-p1-${v.nombre || '__sin_variante__'}`) > 0);
 
                 if (tieneAlgo) {
                     const contadoresWrap = document.createElement('div');
-                    contadoresWrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+                    contadoresWrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
 
                     variantes.forEach(v => {
                         const nombreVariante = v.nombre || '__sin_variante__';
@@ -870,9 +885,38 @@ function abrirModalCombo(combo) {
 
                     zonaAccion.appendChild(contadoresWrap);
                 }
+
+                // Botón único "Agregar al carrito"
+                const btnAgregar = document.createElement('button');
+                btnAgregar.className = 'btn-agregar-carrito';
+
+                if (!varianteSeleccionada && variantes.length > 1) {
+                    btnAgregar.textContent = 'Elegí una opción';
+                    btnAgregar.disabled = true;
+                } else {
+                    btnAgregar.textContent = 'Agregar al carrito';
+                    btnAgregar.addEventListener('click', () => {
+                        const v = varianteSeleccionada || variantes[0];
+                        const nombreVariante = v.nombre || '__sin_variante__';
+                        const cid = `${combo.id}-p1-${nombreVariante}`;
+                        agregarAlCarrito({
+                            id: cid,
+                            nombre: nombreVariante !== '__sin_variante__' ? `${p1.nombre} — ${nombreVariante}` : p1.nombre,
+                            precio: p1.precio,
+                            imagen: v.url || '',
+                            tipo: 'combo'
+                        });
+                        recalcularPrecios();
+                        renderCasoA();
+                    });
+                }
+
+                zonaAccion.appendChild(btnAgregar);
             }
+
             _modalRenderActivo = renderCasoA;
             renderCasoA();
+
 
         } else {
             // ============================================================
