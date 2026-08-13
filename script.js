@@ -1816,7 +1816,7 @@ estilosDinamicos.innerHTML = `
         color:white;padding:14px 28px;border-radius:12px;
         font-size:18px;font-weight:700;
         box-shadow:0 4px 16px rgba(0,0,0,0.2);
-        z-index:3000;opacity:0;
+        z-index:10002;opacity:0;
         transition:opacity 0.3s ease,transform 0.3s ease;
         pointer-events:none;
     }
