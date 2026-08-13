@@ -749,40 +749,26 @@ function abrirModalCombo(combo) {
                 const total = getTotalUnidades();
                 const precioUnitario = p1.precio;
                 const precioPorUnidadEnCombo = Math.round(combo.precio / 2);
-
-                // Distribuir precios: de a pares → precio combo, sobrante → precio unitario
-                let unidadesAsignadas = 0;
+                let asignadas = 0;
                 const pares = Math.floor(total / 2) * 2;
 
                 variantes.forEach(v => {
                     const cid = `${combo.id}-p1-${v.nombre || '__sin_variante__'}`;
                     const item = carrito.find(i => i.id === cid);
                     if (!item) return;
-
-                    // Cuántas de esta variante van a precio combo vs unitario
-                    const cantEsta = item.cantidad;
-                    const yaAsignadas = unidadesAsignadas;
-                    const enComboEsta = Math.max(0, Math.min(cantEsta, pares - yaAsignadas));
-                    const sueltasEsta = cantEsta - enComboEsta;
-
-                    // Precio promedio para esta variante
-                    if (enComboEsta > 0 && sueltasEsta === 0) {
-                        item.precio = precioPorUnidadEnCombo;
-                    } else if (enComboEsta === 0) {
-                        item.precio = precioUnitario;
-                    } else {
-                        // mixto: guardamos precio unitario y ajustamos el subtotal manualmente
-                        // Para simplificar, guardamos precio promedio ponderado
-                        item.precio = Math.round((enComboEsta * precioPorUnidadEnCombo + sueltasEsta * precioUnitario) / cantEsta);
-                    }
-                    unidadesAsignadas += cantEsta;
+                    const cant = item.cantidad;
+                    const enCombo = Math.max(0, Math.min(cant, pares - asignadas));
+                    const sueltas = cant - enCombo;
+                    if (enCombo > 0 && sueltas === 0) item.precio = precioPorUnidadEnCombo;
+                    else if (enCombo === 0) item.precio = precioUnitario;
+                    else item.precio = Math.round((enCombo * precioPorUnidadEnCombo + sueltas * precioUnitario) / cant);
+                    asignadas += cant;
                 });
-
                 actualizarCarritoUI();
             }
 
-            // Variante seleccionada actualmente (para el botón agregar)
-            let varianteSeleccionada = variantes.length === 1 ? variantes[0] : null;
+            // Variante activa (la que está "enfocada" para el botón agregar)
+            let varianteActiva = variantes.length === 1 ? variantes[0] : null;
 
             function renderCasoA() {
                 zonaAccion.innerHTML = '';
@@ -793,20 +779,19 @@ function abrirModalCombo(combo) {
                 // Info de precios
                 const infoPrecios = document.createElement('div');
                 infoPrecios.style.cssText = 'margin-bottom:16px;';
-
                 if (total === 0) {
                     infoPrecios.innerHTML = `
-                    <div style="font-size:15px;color:#666;margin-bottom:4px;">
-                        <span style="font-weight:700;color:var(--color-primary);">Precio unitario:</span> ${formatearPrecio(precioUnitario)}
-                    </div>
-                    <div style="font-size:15px;color:#666;">
-                        <span style="font-weight:700;color:var(--color-primary);">2 unidades (combo):</span> ${formatearPrecio(combo.precio)}
-                    </div>`;
+                        <div style="font-size:15px;color:#666;margin-bottom:4px;">
+                            <span style="font-weight:700;color:var(--color-primary);">Precio unitario:</span> ${formatearPrecio(precioUnitario)}
+                        </div>
+                        <div style="font-size:15px;color:#666;">
+                            <span style="font-weight:700;color:var(--color-primary);">2 unidades (combo):</span> ${formatearPrecio(combo.precio)}
+                        </div>`;
                 } else if (total === 1) {
                     infoPrecios.innerHTML = `
-                    <div style="font-size:14px;color:#888;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;">
-                        Agregá 1 más para precio combo (${formatearPrecio(combo.precio)})
-                    </div>`;
+                        <div style="font-size:14px;color:#888;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;">
+                            Agregá 1 más para precio combo (${formatearPrecio(combo.precio)})
+                        </div>`;
                 } else {
                     const pares = Math.floor(total / 2);
                     const sueltas = total % 2;
@@ -814,60 +799,87 @@ function abrirModalCombo(combo) {
                     if (pares > 0) resumen += `${pares * 2} unid. × combo = ${formatearPrecio(combo.precio * pares)}`;
                     if (sueltas > 0) resumen += (pares > 0 ? ' + ' : '') + `1 suelta = ${formatearPrecio(precioUnitario)}`;
                     infoPrecios.innerHTML = `
-                    <div style="font-size:14px;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;color:#555;">${resumen}</div>`;
+                        <div style="font-size:14px;background:rgba(239,8,124,0.06);padding:8px 12px;border-radius:8px;color:#555;">${resumen}</div>`;
                 }
                 zonaAccion.appendChild(infoPrecios);
 
-                // Pills de selección (sin contador adentro)
-                if (variantes.length > 1) {
-                    const pillsWrap = document.createElement('div');
-                    pillsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;';
+                // Pills — actúan como selector Y muestran cantidad
+                const pillsWrap = document.createElement('div');
+                pillsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;';
 
-                    variantes.forEach((v) => {
-                        const nombreVariante = v.nombre || '__sin_variante__';
-                        const esSeleccionada = varianteSeleccionada && varianteSeleccionada.nombre === v.nombre;
+                variantes.forEach((v) => {
+                    const nombreVariante = v.nombre || '__sin_variante__';
+                    const cid = `${combo.id}-p1-${nombreVariante}`;
+                    const cant = getCantidadEnCarrito(cid);
+                    const esActiva = varianteActiva && varianteActiva.nombre === v.nombre;
 
-                        const pill = document.createElement('button');
-                        pill.style.cssText = `
+                    const pill = document.createElement('button');
+                    pill.style.cssText = `
                         display:inline-flex;align-items:center;gap:6px;
-                        padding:8px 18px;border:2px solid ${esSeleccionada ? 'var(--color-primary)' : '#E8C1D1'};
+                        padding:8px 18px;
+                        border:2px solid ${(esActiva || cant > 0) ? 'var(--color-primary)' : '#E8C1D1'};
                         border-radius:32px;font-family:var(--font-family);font-size:15px;font-weight:700;
                         cursor:pointer;transition:all 0.2s;
-                        background:${esSeleccionada ? 'rgba(239,8,124,0.08)' : 'white'};
-                        color:${esSeleccionada ? 'var(--color-primary)' : '#2D2D2D'};`;
+                        background:${esActiva ? 'rgba(239,8,124,0.08)' : 'white'};
+                        color:${(esActiva || cant > 0) ? 'var(--color-primary)' : '#2D2D2D'};`;
+
+                    if (cant > 0) {
+                        pill.innerHTML = `
+                            <span style="background:var(--color-primary);color:white;border-radius:50%;
+                                width:22px;height:22px;font-size:12px;font-weight:800;
+                                display:flex;align-items:center;justify-content:center;flex-shrink:0;">${cant}</span>
+                            <span>${nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre}</span>`;
+                    } else {
                         pill.textContent = nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre;
+                    }
 
-                        pill.addEventListener('click', () => {
-                            varianteSeleccionada = v;
-                            // Navegar al slide correspondiente
-                            const idxReal = variantes.indexOf(v) + 1;
-                            const carEl = document.getElementById(carId);
-                            if (carEl?._stopAutoplay) carEl._stopAutoplay();
-                            if (carEl?._carruselGoTo) carEl._carruselGoTo(idxReal);
-                            renderCasoA();
-                        });
-
-                        pillsWrap.appendChild(pill);
+                    pill.addEventListener('click', () => {
+                        varianteActiva = v;
+                        const idxReal = variantes.indexOf(v) + 1;
+                        const carEl = document.getElementById(carId);
+                        if (carEl?._stopAutoplay) carEl._stopAutoplay();
+                        if (carEl?._carruselGoTo) carEl._carruselGoTo(idxReal);
+                        renderCasoA();
                     });
 
-                    zonaAccion.appendChild(pillsWrap);
-                }
+                    pillsWrap.appendChild(pill);
+                });
 
-                // Contadores por variante (solo si tienen cantidad)
-                const tieneAlgo = variantes.some(v => getCantidadEnCarrito(`${combo.id}-p1-${v.nombre || '__sin_variante__'}`) > 0);
+                zonaAccion.appendChild(pillsWrap);
 
-                if (tieneAlgo) {
-                    const contadoresWrap = document.createElement('div');
-                    contadoresWrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
+                // Botón inferior — cambia según variante activa y su cantidad
+                if (!varianteActiva && variantes.length > 1) {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-agregar-carrito';
+                    btn.textContent = 'Elegí una opción';
+                    btn.disabled = true;
+                    zonaAccion.appendChild(btn);
+                } else {
+                    const v = varianteActiva || variantes[0];
+                    const nombreVariante = v.nombre || '__sin_variante__';
+                    const cid = `${combo.id}-p1-${nombreVariante}`;
+                    const cant = getCantidadEnCarrito(cid);
 
-                    variantes.forEach(v => {
-                        const nombreVariante = v.nombre || '__sin_variante__';
-                        const cid = `${combo.id}-p1-${nombreVariante}`;
-                        const cant = getCantidadEnCarrito(cid);
-                        if (cant === 0) return;
-
-                        const fila = document.createElement('div');
-                        fila.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;';
+                    if (cant === 0) {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-agregar-carrito';
+                        btn.textContent = 'Agregar al carrito';
+                        btn.addEventListener('click', () => {
+                            agregarAlCarrito({
+                                id: cid,
+                                nombre: nombreVariante !== '__sin_variante__' ? `${p1.nombre} — ${nombreVariante}` : p1.nombre,
+                                precio: p1.precio,
+                                imagen: v.url || '',
+                                tipo: 'combo'
+                            });
+                            recalcularPrecios();
+                            renderCasoA();
+                        });
+                        zonaAccion.appendChild(btn);
+                    } else {
+                        // Contador grande para la variante activa
+                        const filaContador = document.createElement('div');
+                        filaContador.style.cssText = 'display:flex;align-items:center;gap:12px;';
 
                         const label = document.createElement('span');
                         label.style.cssText = 'font-size:15px;font-weight:700;color:#2D2D2D;flex:1;';
@@ -877,46 +889,17 @@ function abrirModalCombo(combo) {
                             recalcularPrecios();
                             renderCasoA();
                         });
+                        contador.style.flex = '2';
 
-                        fila.appendChild(label);
-                        fila.appendChild(contador);
-                        contadoresWrap.appendChild(fila);
-                    });
-
-                    zonaAccion.appendChild(contadoresWrap);
+                        filaContador.appendChild(label);
+                        filaContador.appendChild(contador);
+                        zonaAccion.appendChild(filaContador);
+                    }
                 }
-
-                // Botón único "Agregar al carrito"
-                const btnAgregar = document.createElement('button');
-                btnAgregar.className = 'btn-agregar-carrito';
-
-                if (!varianteSeleccionada && variantes.length > 1) {
-                    btnAgregar.textContent = 'Elegí una opción';
-                    btnAgregar.disabled = true;
-                } else {
-                    btnAgregar.textContent = 'Agregar al carrito';
-                    btnAgregar.addEventListener('click', () => {
-                        const v = varianteSeleccionada || variantes[0];
-                        const nombreVariante = v.nombre || '__sin_variante__';
-                        const cid = `${combo.id}-p1-${nombreVariante}`;
-                        agregarAlCarrito({
-                            id: cid,
-                            nombre: nombreVariante !== '__sin_variante__' ? `${p1.nombre} — ${nombreVariante}` : p1.nombre,
-                            precio: p1.precio,
-                            imagen: v.url || '',
-                            tipo: 'combo'
-                        });
-                        recalcularPrecios();
-                        renderCasoA();
-                    });
-                }
-
-                zonaAccion.appendChild(btnAgregar);
             }
 
             _modalRenderActivo = renderCasoA;
             renderCasoA();
-
 
         } else {
             // ============================================================
