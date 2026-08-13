@@ -1788,10 +1788,12 @@
                 setTimeout(() => t.classList.remove('visible'), 2500);
             }
             function cerrarModal(id) {
-                document.getElementById(id).classList.remove('active');
+                if (!id) return;
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active');
             }
             function cerrarModalSeguro(id) {
-                if (id === 'cropper-modal' || id === 'modal-categoria' || id.startsWith('confirm')) {
+                if (!id || id === 'cropper-modal' || id.startsWith('confirm')) {
                     cerrarModal(id);
                     return;
                 }
@@ -1801,7 +1803,8 @@
                     'Se perderán los cambios no guardados.',
                     'Quedarme',
                     'Salir sin guardar',
-                    () => { cerrarModal(id); }
+                    () => { cerrarModal(id); },
+                    false
                 );
             }
             function thumbHTML(url) {
@@ -2255,13 +2258,15 @@
             }
 
             /* ====== CONFIRMAR ELIMINACIÓN Y SALIDA ====== */
-            function mostrarConfirmacionCustom(icono, titulo, subtitulo, textoCancelar, textoAceptar, onAceptar) {
+            function mostrarConfirmacionCustom(icono, titulo, subtitulo, textoCancelar, textoAceptar, onAceptar, esEliminar = false) {
                 const overlay = document.getElementById('confirm-overlay');
                 const iconEl = document.getElementById('confirm-icon');
                 const titleEl = document.getElementById('confirm-title');
                 const subtitleEl = document.getElementById('confirm-subtitle');
                 const btnCan = document.getElementById('btn-confirm-cancel');
                 const btnDel = document.getElementById('btn-confirm-delete');
+
+                if (!overlay || !btnCan || !btnDel) return;
 
                 iconEl.textContent = icono;
                 titleEl.textContent = titulo;
@@ -2272,22 +2277,32 @@
 
                 newCan.textContent = textoCancelar;
                 newDel.textContent = textoAceptar;
-                newDel.style.background = 'var(--pink)';
-                newDel.style.color = '#fff';
+
+                if (esEliminar) {
+                    newDel.style.background = 'var(--red)';
+                    newDel.style.color = '#fff';
+                } else {
+                    newDel.style.background = 'var(--pink)';
+                    newDel.style.color = '#fff';
+                }
 
                 btnCan.parentNode.replaceChild(newCan, btnCan);
                 btnDel.parentNode.replaceChild(newDel, btnDel);
 
                 overlay.classList.add('active');
 
-                newDel.addEventListener('click', async () => {
+                newDel.onclick = async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     overlay.classList.remove('active');
-                    await onAceptar();
-                });
+                    if (onAceptar) await onAceptar();
+                };
 
-                newCan.addEventListener('click', () => {
+                newCan.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     overlay.classList.remove('active');
-                });
+                };
 
                 overlay.onclick = (e) => {
                     if (e.target === overlay) overlay.classList.remove('active');
@@ -2301,7 +2316,8 @@
                     `"${nombre}" será eliminado permanentemente.`,
                     'Cancelar',
                     'Eliminar',
-                    onAceptar
+                    onAceptar,
+                    true
                 );
             }
 
@@ -2604,9 +2620,18 @@
                 });
             });
 
-            document.getElementById('btn-cancelar-novedad').addEventListener('click', () => cerrarModalSeguro('modal-novedad'));
-            document.getElementById('btn-cancelar-promocion').addEventListener('click', () => cerrarModalSeguro('modal-promocion'));
-            document.getElementById('btn-cancelar-combo').addEventListener('click', () => cerrarModalSeguro('modal-combo'));
+            document.getElementById('btn-cancelar-novedad').addEventListener('click', (e) => {
+                e.preventDefault();
+                cerrarModalSeguro('modal-novedad');
+            });
+            document.getElementById('btn-cancelar-promocion').addEventListener('click', (e) => {
+                e.preventDefault();
+                cerrarModalSeguro('modal-promocion');
+            });
+            document.getElementById('btn-cancelar-combo').addEventListener('click', (e) => {
+                e.preventDefault();
+                cerrarModalSeguro('modal-combo');
+            });
             document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
             document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
             document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
@@ -2623,7 +2648,8 @@
                 document.getElementById('categoria-nombre').value = nombre;
                 document.getElementById('modal-categoria').classList.add('active');
             };
-            document.getElementById('btn-cancelar-categoria').addEventListener('click', () => {
+            document.getElementById('btn-cancelar-categoria').addEventListener('click', (e) => {
+                e.preventDefault();
                 cerrarModalSeguro('modal-categoria');
             });
             document.getElementById('btn-guardar-categoria').addEventListener('click', async () => {
@@ -2650,6 +2676,28 @@
                 ordenarAlfabetico('combos', cargarCombos));
 
             /* ====== CERRAR MODALES CON OVERLAY ====== */
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        cerrarModalSeguro(overlay.id);
+                    }
+                });
+            });
+
+            /* ESCAPE TECLA PARA CERRAR MODAL SEGURAMENTE */
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const confirmOverlay = document.getElementById('confirm-overlay');
+                    if (confirmOverlay && confirmOverlay.classList.contains('active')) {
+                        confirmOverlay.classList.remove('active');
+                        return;
+                    }
+                    const activeModal = document.querySelector('.modal-overlay.active');
+                    if (activeModal) {
+                        cerrarModalSeguro(activeModal.id);
+                    }
+                }
+            });
 
             async function cargarHorarios() {
                 try {
