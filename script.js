@@ -1282,8 +1282,6 @@ function actualizarCarritoUI() {
     renderizarCartItems();
     // Si hay un modal abierto, re-renderizar sus botones para reflejar cambios del carrito
     if (_modalRenderActivo) _modalRenderActivo();
-    const cartCountModal = document.getElementById('cart-count-modal');
-    if (cartCountModal) cartCountModal.textContent = cantidadTotal;
 }
 
 function renderizarCartItems() {
@@ -1383,8 +1381,7 @@ function generarMensajeWhatsApp() {
     let mensaje = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
     carrito.forEach(item => {
         const subtotal = item.precio * item.cantidad;
-        const cantTexto = item.desglose ? '' : ` x${item.cantidad}`;
-        mensaje += `• ${item.nombre}${cantTexto} - ${formatearPrecio(subtotal)}\n`;
+        mensaje += `• ${item.nombre} x${item.cantidad} - ${formatearPrecio(subtotal)}\n`;
     });
     const total = carrito.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
     mensaje += `\nTotal: ${formatearPrecio(total)}\n\n`;
@@ -1405,17 +1402,16 @@ function generarMensajeWhatsApp() {
 
 function abrirCarrito() {
     if (portalAbierto) cerrarPortal();
+    // CAMBIO 4: cerrar filtros si están abiertos
     cerrarFiltros();
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
-    document.body.classList.add('carrito-abierto'); // ← agregar
     bloquearScroll();
 }
 
 function cerrarCarrito() {
     cartPanel.classList.remove('active');
     cartOverlay.classList.remove('active');
-    document.body.classList.remove('carrito-abierto'); // ← agregar
     desbloquearScroll();
 }
 
@@ -1716,24 +1712,6 @@ document.addEventListener('DOMContentLoaded', () => {
             secondaryNav.style.transform = 'translateY(0)';
         }
         lastScroll = currentScroll;
-        // Actualizar tab activo según sección visible
-        const secciones = ['novedades', 'promociones', 'combos'];
-        const header = document.querySelector('.header');
-        const secondaryNav2 = document.querySelector('.secondary-nav');
-        const offset = (header?.offsetHeight || 100) + (secondaryNav2?.offsetHeight || 44) + 40;
-
-        let seccionActiva = null;
-        for (const id of secciones) {
-            const sec = document.getElementById(id);
-            if (!sec) continue;
-            const top = sec.getBoundingClientRect().top;
-            if (top <= offset) seccionActiva = id;
-        }
-        if (seccionActiva) {
-            navTabs.forEach(t => {
-                t.classList.toggle('active', t.getAttribute('data-section') === seccionActiva);
-            });
-        }
     });
 
     if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
@@ -1823,13 +1801,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Esperar a que los productos carguen antes de abrir el modal
         setTimeout(abrirModalDesdeHash, 1500);
-    }
-    // Carrito en modal — solo mobile
-    const btnCarritoModal = document.getElementById('btn-carrito-modal');
-    if (btnCarritoModal) {
-        btnCarritoModal.addEventListener('click', () => {
-            abrirCarrito();
-        });
     }
 });
 

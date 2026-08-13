@@ -95,7 +95,6 @@
 
 html {
     scroll-behavior: smooth;
-    background-color: #EF087C;
 }
 
 body {
@@ -103,7 +102,7 @@ body {
     font-size: var(--font-size-base);
     line-height: 1.6;
     color: var(--color-text);
-    background-color: #EF087C;
+    background-color: #FFF8FA;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -410,7 +409,6 @@ body {
     margin: 0 auto;
     margin-top: 190px;
     width: 100%;
-    background-color: #FFF8FA;
 }
 
 /* ============================================
@@ -769,7 +767,7 @@ body {
     max-width: 420px;
     height: 100vh;
     background-color: var(--color-white);
-    z-index: 20000;
+    z-index: 9999;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
     transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
@@ -1185,7 +1183,7 @@ body {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0);
-    z-index: 19999;
+    z-index: 9998;
     transition: background-color 0.4s ease;
     pointer-events: none;
 }
@@ -1534,11 +1532,9 @@ footer::before {
 
     /* ---- CARRITO: pantalla completa, sin scroll detrás ---- */
     .cart-panel {
-        overflow-y: auto;
+        max-width: 100%;
+        /* El scroll se bloquea en body desde JS, el panel tiene su propio scroll */
         overscroll-behavior: contain;
-        touch-action: pan-y;
-        min-height: 100dvh;
-        padding-bottom: calc(80px + env(safe-area-inset-bottom));
     }
 
     .producto-modal-contenido .btn-agregar-carrito {
@@ -1713,7 +1709,6 @@ html {
     max-width: 600px;
     margin: 0 auto;
     padding: 16px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom)); /* Previene que la botonera quede oculta por el safe area fijo */
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -2101,44 +2096,3 @@ body.modal-abierto .secondary-nav {
         display: block;
     }
 }
-
-/* Botón carrito en modal — solo desktop lo oculta */
-#btn-carrito-modal {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    #btn-carrito-modal {
-        display: block;
-        position: relative;
-    }
-}
-
-@media (max-width: 768px) {
-    .cart-overlay.active {
-        background-color: rgba(0, 0, 0, 0.7);
-    }
-}
-
-body.modal-abierto {
-    background-color: #EF087C !important;
-}
-
-@media (max-width: 768px) {
-    .cart-panel::after {
-        content: '';
-        display: block;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 100px;
-        background: white;
-        z-index: -1;
-    }
-
-    body.carrito-abierto {
-        background-color: #EF087C;
-    }
-}
-
