@@ -1334,37 +1334,11 @@ function renderizarCartItems() {
                 </div>`;
 
             el.querySelector('.qty-minus-desglose').addEventListener('click', () => {
-                // Quitar una unidad del primer desglose disponible
-                const keys = Object.keys(item.desglose);
-                for (const k of keys) {
-                    if (item.desglose[k] > 0) {
-                        item.desglose[k]--;
-                        if (item.desglose[k] === 0) delete item.desglose[k];
-                        break;
-                    }
-                }
-                const nuevaTotal = Object.values(item.desglose).reduce((s, v) => s + v, 0);
-                if (nuevaTotal === 0) {
-                    carrito = carrito.filter(i => i.id !== item.id);
-                } else {
-                    const p = Math.floor(nuevaTotal / 2);
-                    const s = nuevaTotal % 2;
-                    item.precio = p * item._precioCombo + s * item._precioUnitario;
-                }
-                actualizarCarritoUI();
+                mostrarConfirmacion('Volvé al producto para cambiar las unidades', 'verde');
             });
 
             el.querySelector('.qty-plus-desglose').addEventListener('click', () => {
-                // Sumar al primer desglose disponible
-                const keys = Object.keys(item.desglose);
-                if (keys.length > 0) {
-                    item.desglose[keys[0]]++;
-                }
-                const nuevaTotal = Object.values(item.desglose).reduce((s, v) => s + v, 0);
-                const p = Math.floor(nuevaTotal / 2);
-                const s = nuevaTotal % 2;
-                item.precio = p * item._precioCombo + s * item._precioUnitario;
-                actualizarCarritoUI();
+                mostrarConfirmacion('Volvé al producto para cambiar las unidades', 'verde');
             });
 
             el.querySelector('.cart-item-remove').addEventListener('click', () => eliminarDelCarrito(item.id));
