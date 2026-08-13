@@ -1405,17 +1405,22 @@ function generarMensajeWhatsApp() {
 
 function abrirCarrito() {
     if (portalAbierto) cerrarPortal();
-    // CAMBIO 4: cerrar filtros si están abiertos
     cerrarFiltros();
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
-    bloquearScroll();
+    // Solo bloquear scroll si el modal de producto NO está abierto
+    if (!document.getElementById('producto-modal').classList.contains('active')) {
+        bloquearScroll();
+    }
 }
 
 function cerrarCarrito() {
     cartPanel.classList.remove('active');
     cartOverlay.classList.remove('active');
-    desbloquearScroll();
+    // Solo desbloquear scroll si el modal de producto NO está abierto
+    if (!document.getElementById('producto-modal').classList.contains('active')) {
+        desbloquearScroll();
+    }
 }
 
 /* ============================================
