@@ -2137,16 +2137,17 @@ body.modal-abierto {
     body.carrito-abierto {
         background-color: #EF087C;
     }
+}
 
-    body.carrito-abierto::after {
-        content: '';
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: env(safe-area-inset-bottom);
-        background: #EF087C;
-        z-index: 20001;
-        pointer-events: none;
-    }
+/* Fix global para safe-area-inset-bottom en iOS/Chrome Mobile */
+html::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-bottom);
+    background-color: #EF087C;
+    z-index: 99999;
+    pointer-events: none;
 }
