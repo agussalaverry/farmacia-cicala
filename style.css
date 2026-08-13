@@ -2131,4 +2131,9 @@ body.modal-abierto {
         background: white;
         z-index: -1;
     }
+
+    /* Fondo rosa en safe area inferior cuando el carrito está abierto */
+    body.carrito-abierto {
+        background-color: #EF087C;
+    }
 }

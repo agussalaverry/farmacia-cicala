@@ -1408,19 +1408,15 @@ function abrirCarrito() {
     cerrarFiltros();
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
-    // Solo bloquear scroll si el modal de producto NO está abierto
-    if (!document.getElementById('producto-modal').classList.contains('active')) {
-        bloquearScroll();
-    }
+    document.body.classList.add('carrito-abierto'); // ← agregar
+    bloquearScroll();
 }
 
 function cerrarCarrito() {
     cartPanel.classList.remove('active');
     cartOverlay.classList.remove('active');
-    // Solo desbloquear scroll si el modal de producto NO está abierto
-    if (!document.getElementById('producto-modal').classList.contains('active')) {
-        desbloquearScroll();
-    }
+    document.body.classList.remove('carrito-abierto'); // ← agregar
+    desbloquearScroll();
 }
 
 /* ============================================
