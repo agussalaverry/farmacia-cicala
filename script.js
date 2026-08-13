@@ -738,36 +738,79 @@ function abrirModalCombo(combo) {
         if (esCasoA) {
             const variantes = (p1.variantes && p1.variantes.length > 0) ? p1.variantes : [{ url: '', nombre: '__sin_variante__' }];
 
-            function getTotalUnidades() {
-                return variantes.reduce((sum, v) => {
-                    const cid = `${combo.id}-p1-${v.nombre || '__sin_variante__'}`;
-                    return sum + getCantidadEnCarrito(cid);
-                }, 0);
+            // ID único del ítem agrupado en carrito
+            const carritoIdAgrupado = `${combo.id}-agrupado`;
+
+            function getCantidadVariante(nombreVariante) {
+                const item = carrito.find(i => i.id === carritoIdAgrupado);
+                if (!item || !item.desglose) return 0;
+                return item.desglose[nombreVariante] || 0;
             }
 
-            function recalcularPrecios() {
-                const total = getTotalUnidades();
-                const precioUnitario = p1.precio;
-                const precioPorUnidadEnCombo = Math.round(combo.precio / 2);
-                let asignadas = 0;
-                const pares = Math.floor(total / 2) * 2;
+            function getTotalUnidades() {
+                const item = carrito.find(i => i.id === carritoIdAgrupado);
+                if (!item || !item.desglose) return 0;
+                return Object.values(item.desglose).reduce((s, v) => s + v, 0);
+            }
 
-                variantes.forEach(v => {
-                    const cid = `${combo.id}-p1-${v.nombre || '__sin_variante__'}`;
-                    const item = carrito.find(i => i.id === cid);
-                    if (!item) return;
-                    const cant = item.cantidad;
-                    const enCombo = Math.max(0, Math.min(cant, pares - asignadas));
-                    const sueltas = cant - enCombo;
-                    if (enCombo > 0 && sueltas === 0) item.precio = precioPorUnidadEnCombo;
-                    else if (enCombo === 0) item.precio = precioUnitario;
-                    else item.precio = Math.round((enCombo * precioPorUnidadEnCombo + sueltas * precioUnitario) / cant);
-                    asignadas += cant;
-                });
+            function getNombreAgrupado(desglose) {
+                const partes = variantes
+                    .filter(v => desglose[v.nombre || '__sin_variante__'] > 0)
+                    .map(v => {
+                        const n = v.nombre || '__sin_variante__';
+                        const cant = desglose[n];
+                        return cant > 1 ? `${n} x${cant}` : n;
+                    });
+                return `${p1.nombre}${partes.length ? ' (' + partes.join(' + ') + ')' : ''}`;
+            }
+
+            function calcularPrecioTotal(desglose) {
+                const total = Object.values(desglose).reduce((s, v) => s + v, 0);
+                const pares = Math.floor(total / 2);
+                const sueltas = total % 2;
+                return pares * combo.precio + sueltas * p1.precio;
+            }
+
+            function agregarVariante(v) {
+                const nombreVariante = v.nombre || '__sin_variante__';
+                let item = carrito.find(i => i.id === carritoIdAgrupado);
+                if (!item) {
+                    item = {
+                        id: carritoIdAgrupado,
+                        nombre: '',
+                        precio: 0,
+                        cantidad: 1,
+                        imagen: combo.imagenes?.[0]?.url || combo.imagen || '',
+                        tipo: 'combo',
+                        desglose: {}
+                    };
+                    carrito.push(item);
+                }
+                if (!item.desglose) item.desglose = {};
+                item.desglose[nombreVariante] = (item.desglose[nombreVariante] || 0) + 1;
+                item.nombre = getNombreAgrupado(item.desglose);
+                item.precio = calcularPrecioTotal(item.desglose);
+                item.cantidad = 1; // siempre 1, el precio ya incluye todo
+                actualizarCarritoUI();
+                mostrarConfirmacion('Agregado al carrito');
+            }
+
+            function quitarVariante(nombreVariante) {
+                const item = carrito.find(i => i.id === carritoIdAgrupado);
+                if (!item || !item.desglose) return;
+                if (item.desglose[nombreVariante] > 0) item.desglose[nombreVariante]--;
+                if (item.desglose[nombreVariante] === 0) delete item.desglose[nombreVariante];
+                const total = Object.values(item.desglose).reduce((s, v) => s + v, 0);
+                if (total === 0) {
+                    carrito = carrito.filter(i => i.id !== carritoIdAgrupado);
+                } else {
+                    item.nombre = getNombreAgrupado(item.desglose);
+                    item.precio = calcularPrecioTotal(item.desglose);
+                }
                 actualizarCarritoUI();
             }
 
-            // Variante activa (la que está "enfocada" para el botón agregar)
+            // Variante activa para el contador de abajo
             let varianteActiva = variantes.length === 1 ? variantes[0] : null;
 
             function renderCasoA() {
@@ -803,51 +846,52 @@ function abrirModalCombo(combo) {
                 }
                 zonaAccion.appendChild(infoPrecios);
 
-                // Pills — actúan como selector Y muestran cantidad
-                const pillsWrap = document.createElement('div');
-                pillsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;';
+                // Pills
+                if (variantes.length > 1) {
+                    const pillsWrap = document.createElement('div');
+                    pillsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;';
 
-                variantes.forEach((v) => {
-                    const nombreVariante = v.nombre || '__sin_variante__';
-                    const cid = `${combo.id}-p1-${nombreVariante}`;
-                    const cant = getCantidadEnCarrito(cid);
-                    const esActiva = varianteActiva && varianteActiva.nombre === v.nombre;
+                    variantes.forEach((v) => {
+                        const nombreVariante = v.nombre || '__sin_variante__';
+                        const cant = getCantidadVariante(nombreVariante);
+                        const esActiva = varianteActiva && varianteActiva.nombre === v.nombre;
 
-                    const pill = document.createElement('button');
-                    pill.style.cssText = `
-                        display:inline-flex;align-items:center;gap:6px;
-                        padding:8px 18px;
-                        border:2px solid ${(esActiva || cant > 0) ? 'var(--color-primary)' : '#E8C1D1'};
-                        border-radius:32px;font-family:var(--font-family);font-size:15px;font-weight:700;
-                        cursor:pointer;transition:all 0.2s;
-                        background:${esActiva ? 'rgba(239,8,124,0.08)' : 'white'};
-                        color:${(esActiva || cant > 0) ? 'var(--color-primary)' : '#2D2D2D'};`;
+                        const pill = document.createElement('button');
+                        pill.style.cssText = `
+                            display:inline-flex;align-items:center;gap:6px;
+                            padding:8px 18px;
+                            border:2px solid ${(esActiva || cant > 0) ? 'var(--color-primary)' : '#E8C1D1'};
+                            border-radius:32px;font-family:var(--font-family);font-size:15px;font-weight:700;
+                            cursor:pointer;transition:all 0.2s;
+                            background:${esActiva ? 'rgba(239,8,124,0.08)' : 'white'};
+                            color:${(esActiva || cant > 0) ? 'var(--color-primary)' : '#2D2D2D'};`;
 
-                    if (cant > 0) {
-                        pill.innerHTML = `
-                            <span style="background:var(--color-primary);color:white;border-radius:50%;
-                                width:22px;height:22px;font-size:12px;font-weight:800;
-                                display:flex;align-items:center;justify-content:center;flex-shrink:0;">${cant}</span>
-                            <span>${nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre}</span>`;
-                    } else {
-                        pill.textContent = nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre;
-                    }
+                        if (cant > 0) {
+                            pill.innerHTML = `
+                                <span style="background:var(--color-primary);color:white;border-radius:50%;
+                                    width:22px;height:22px;font-size:12px;font-weight:800;
+                                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">${cant}</span>
+                                <span>${nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre}</span>`;
+                        } else {
+                            pill.textContent = nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre;
+                        }
 
-                    pill.addEventListener('click', () => {
-                        varianteActiva = v;
-                        const idxReal = variantes.indexOf(v) + 1;
-                        const carEl = document.getElementById(carId);
-                        if (carEl?._stopAutoplay) carEl._stopAutoplay();
-                        if (carEl?._carruselGoTo) carEl._carruselGoTo(idxReal);
-                        renderCasoA();
+                        pill.addEventListener('click', () => {
+                            varianteActiva = v;
+                            const idxReal = variantes.indexOf(v) + 1;
+                            const carEl = document.getElementById(carId);
+                            if (carEl?._stopAutoplay) carEl._stopAutoplay();
+                            if (carEl?._carruselGoTo) carEl._carruselGoTo(idxReal);
+                            renderCasoA();
+                        });
+
+                        pillsWrap.appendChild(pill);
                     });
 
-                    pillsWrap.appendChild(pill);
-                });
+                    zonaAccion.appendChild(pillsWrap);
+                }
 
-                zonaAccion.appendChild(pillsWrap);
-
-                // Botón inferior — cambia según variante activa y su cantidad
+                // Botón/contador inferior
                 if (!varianteActiva && variantes.length > 1) {
                     const btn = document.createElement('button');
                     btn.className = 'btn-agregar-carrito';
@@ -857,43 +901,39 @@ function abrirModalCombo(combo) {
                 } else {
                     const v = varianteActiva || variantes[0];
                     const nombreVariante = v.nombre || '__sin_variante__';
-                    const cid = `${combo.id}-p1-${nombreVariante}`;
-                    const cant = getCantidadEnCarrito(cid);
+                    const cant = getCantidadVariante(nombreVariante);
 
                     if (cant === 0) {
                         const btn = document.createElement('button');
                         btn.className = 'btn-agregar-carrito';
                         btn.textContent = 'Agregar al carrito';
                         btn.addEventListener('click', () => {
-                            agregarAlCarrito({
-                                id: cid,
-                                nombre: nombreVariante !== '__sin_variante__' ? `${p1.nombre} — ${nombreVariante}` : p1.nombre,
-                                precio: p1.precio,
-                                imagen: v.url || '',
-                                tipo: 'combo'
-                            });
-                            recalcularPrecios();
+                            agregarVariante(v);
                             renderCasoA();
                         });
                         zonaAccion.appendChild(btn);
                     } else {
-                        // Contador grande para la variante activa
-                        const filaContador = document.createElement('div');
-                        filaContador.style.cssText = 'display:flex;align-items:center;gap:12px;';
+                        // Contador sin nombre
+                        const contWrap = document.createElement('div');
+                        contWrap.style.cssText = 'display:flex;align-items:center;';
+                        const contador = document.createElement('div');
+                        contador.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border:2px solid var(--color-primary);border-radius:32px;overflow:hidden;height:44px;width:100%;';
+                        contador.innerHTML = `
+                            <button class="contador-btn contador-menos" style="width:44px;height:100%;background:transparent;color:var(--color-primary);border:none;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
+                            <span style="flex:1;text-align:center;font-size:18px;font-weight:800;color:var(--color-primary);">${cant}</span>
+                            <button class="contador-btn contador-mas" style="width:44px;height:100%;background:transparent;color:var(--color-primary);border:none;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>`;
 
-                        const label = document.createElement('span');
-                        label.style.cssText = 'font-size:15px;font-weight:700;color:#2D2D2D;flex:1;';
-                        label.textContent = nombreVariante !== '__sin_variante__' ? nombreVariante : p1.nombre;
-
-                        const contador = crearBtnContador(cid, () => {
-                            recalcularPrecios();
+                        contador.querySelector('.contador-menos').addEventListener('click', () => {
+                            quitarVariante(nombreVariante);
                             renderCasoA();
                         });
-                        contador.style.flex = '2';
+                        contador.querySelector('.contador-mas').addEventListener('click', () => {
+                            agregarVariante(v);
+                            renderCasoA();
+                        });
 
-                        filaContador.appendChild(label);
-                        filaContador.appendChild(contador);
-                        zonaAccion.appendChild(filaContador);
+                        contWrap.appendChild(contador);
+                        zonaAccion.appendChild(contWrap);
                     }
                 }
             }
