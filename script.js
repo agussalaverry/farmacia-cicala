@@ -782,7 +782,9 @@ function abrirModalCombo(combo) {
                         cantidad: 1,
                         imagen: combo.imagenes?.[0]?.url || combo.imagen || '',
                         tipo: 'combo',
-                        desglose: {}
+                        desglose: {},
+                        _precioCombo: combo.precio,
+                        _precioUnitario: p1.precio
                     };
                     carrito.push(item);
                 }
@@ -1289,29 +1291,109 @@ function renderizarCartItems() {
     }
     cartItemsList.innerHTML = '';
     carrito.forEach(item => {
-        const subtotal = item.precio * item.cantidad;
         const el = document.createElement('div');
         el.className = 'cart-item';
-        const imgHTML = item.imagen
-            ? `<img src="${item.imagen}" alt="${item.nombre}" class="cart-item-img">`
-            : '';
-        el.innerHTML = `
-            <div class="cart-item-top">
-                ${imgHTML}
-                <div class="cart-item-body">
-                    <div class="cart-item-nombre">${item.nombre}</div>
-                    <div class="cart-item-controls">
-                        <button class="qty-btn qty-minus" data-id="${item.id}">−</button>
-                        <span class="qty-cantidad">${item.cantidad}</span>
-                        <button class="qty-btn qty-plus" data-id="${item.id}">+</button>
-                        <span class="cart-item-subtotal">${formatearPrecio(subtotal)}</span>
-                        <button class="cart-item-remove" data-id="${item.id}">×</button>
+
+        // ── ÍTEM CON DESGLOSE (Caso A: combo de variantes del mismo producto) ──
+        if (item.desglose) {
+            const totalUnidades = Object.values(item.desglose).reduce((s, v) => s + v, 0);
+            const pares = Math.floor(totalUnidades / 2);
+            const sueltas = totalUnidades % 2;
+
+            // Recalcular precio real según unidades actuales
+            item.precio = pares * item._precioCombo + sueltas * item._precioUnitario;
+            item.cantidad = 1; // siempre 1 en el array, el precio ya incluye todo
+
+            const precioTotal = item.precio;
+
+            // Etiqueta descriptiva
+            let etiqueta = '';
+            if (pares > 0 && sueltas > 0) {
+                etiqueta = `<span style="font-size:12px;color:#888;display:block;margin-top:2px;">${pares * 2} en combo + 1 suelta</span>`;
+            } else if (pares > 0) {
+                etiqueta = `<span style="font-size:12px;color:#888;display:block;margin-top:2px;">${pares} combo${pares > 1 ? 's' : ''}</span>`;
+            }
+
+            const imgHTML = item.imagen
+                ? `<img src="${item.imagen}" alt="${item.nombre}" class="cart-item-img">`
+                : '';
+
+            el.innerHTML = `
+                <div class="cart-item-top">
+                    ${imgHTML}
+                    <div class="cart-item-body">
+                        <div class="cart-item-nombre">${item.nombre}${etiqueta}</div>
+                        <div class="cart-item-controls">
+                            <button class="qty-btn qty-minus-desglose">−</button>
+                            <span class="qty-cantidad">${totalUnidades}</span>
+                            <button class="qty-btn qty-plus-desglose">+</button>
+                            <span class="cart-item-subtotal">${formatearPrecio(precioTotal)}</span>
+                            <button class="cart-item-remove">×</button>
+                        </div>
                     </div>
-                </div>
-            </div>`;
-        el.querySelector('.qty-minus').addEventListener('click', () => actualizarCantidad(item.id, -1));
-        el.querySelector('.qty-plus').addEventListener('click', () => actualizarCantidad(item.id, 1));
-        el.querySelector('.cart-item-remove').addEventListener('click', () => eliminarDelCarrito(item.id));
+                </div>`;
+
+            el.querySelector('.qty-minus-desglose').addEventListener('click', () => {
+                // Quitar una unidad del primer desglose disponible
+                const keys = Object.keys(item.desglose);
+                for (const k of keys) {
+                    if (item.desglose[k] > 0) {
+                        item.desglose[k]--;
+                        if (item.desglose[k] === 0) delete item.desglose[k];
+                        break;
+                    }
+                }
+                const nuevaTotal = Object.values(item.desglose).reduce((s, v) => s + v, 0);
+                if (nuevaTotal === 0) {
+                    carrito = carrito.filter(i => i.id !== item.id);
+                } else {
+                    const p = Math.floor(nuevaTotal / 2);
+                    const s = nuevaTotal % 2;
+                    item.precio = p * item._precioCombo + s * item._precioUnitario;
+                }
+                actualizarCarritoUI();
+            });
+
+            el.querySelector('.qty-plus-desglose').addEventListener('click', () => {
+                // Sumar al primer desglose disponible
+                const keys = Object.keys(item.desglose);
+                if (keys.length > 0) {
+                    item.desglose[keys[0]]++;
+                }
+                const nuevaTotal = Object.values(item.desglose).reduce((s, v) => s + v, 0);
+                const p = Math.floor(nuevaTotal / 2);
+                const s = nuevaTotal % 2;
+                item.precio = p * item._precioCombo + s * item._precioUnitario;
+                actualizarCarritoUI();
+            });
+
+            el.querySelector('.cart-item-remove').addEventListener('click', () => eliminarDelCarrito(item.id));
+
+            // ── ÍTEM NORMAL ──
+        } else {
+            const subtotal = item.precio * item.cantidad;
+            const imgHTML = item.imagen
+                ? `<img src="${item.imagen}" alt="${item.nombre}" class="cart-item-img">`
+                : '';
+            el.innerHTML = `
+                <div class="cart-item-top">
+                    ${imgHTML}
+                    <div class="cart-item-body">
+                        <div class="cart-item-nombre">${item.nombre}</div>
+                        <div class="cart-item-controls">
+                            <button class="qty-btn qty-minus" data-id="${item.id}">−</button>
+                            <span class="qty-cantidad">${item.cantidad}</span>
+                            <button class="qty-btn qty-plus" data-id="${item.id}">+</button>
+                            <span class="cart-item-subtotal">${formatearPrecio(subtotal)}</span>
+                            <button class="cart-item-remove" data-id="${item.id}">×</button>
+                        </div>
+                    </div>
+                </div>`;
+            el.querySelector('.qty-minus').addEventListener('click', () => actualizarCantidad(item.id, -1));
+            el.querySelector('.qty-plus').addEventListener('click', () => actualizarCantidad(item.id, 1));
+            el.querySelector('.cart-item-remove').addEventListener('click', () => eliminarDelCarrito(item.id));
+        }
+
         cartItemsList.appendChild(el);
     });
 }
