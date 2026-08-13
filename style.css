@@ -95,7 +95,7 @@
 
 html {
     scroll-behavior: smooth;
-    background-color: var(--color-primary);
+    background-color: #EF087C;
 }
 
 body {
@@ -103,7 +103,7 @@ body {
     font-size: var(--font-size-base);
     line-height: 1.6;
     color: var(--color-text);
-    background-color: #FFF8FA;
+    background-color: #EF087C;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -410,6 +410,7 @@ body {
     margin: 0 auto;
     margin-top: 190px;
     width: 100%;
+    background-color: #FFF8FA;
 }
 
 /* ============================================
@@ -2120,7 +2121,7 @@ body.modal-abierto .secondary-nav {
 }
 
 body.modal-abierto {
-    background: #FFF8FA !important;
+    background-color: #EF087C !important;
 }
 
 @media (max-width: 768px) {
@@ -2139,18 +2140,5 @@ body.modal-abierto {
     body.carrito-abierto {
         background-color: #EF087C;
     }
-}
-
-/* Fix global y definitivo para safe-area-inset-bottom en iOS/Chrome Mobile */
-html::after {
-    content: '';
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: env(safe-area-inset-bottom);
-    background-color: #EF087C;
-    z-index: 99999;
-    pointer-events: none;
 }
 
