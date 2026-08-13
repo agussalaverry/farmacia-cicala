@@ -95,6 +95,7 @@
 
 html {
     scroll-behavior: smooth;
+    background-color: var(--color-primary);
 }
 
 body {
@@ -102,7 +103,8 @@ body {
     font-size: var(--font-size-base);
     line-height: 1.6;
     color: var(--color-text);
-    background-color: #FFF8FA;
+    background-color: var(--color-primary); /* For Safari 15 tab bar */
+    background-image: linear-gradient(#FFF8FA, #FFF8FA); /* Visual background */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -2118,7 +2120,8 @@ body.modal-abierto .secondary-nav {
 }
 
 body.modal-abierto {
-    background: #FFF8FA !important;
+    background-color: var(--color-primary) !important;
+    background-image: linear-gradient(#FFF8FA, #FFF8FA) !important;
 }
 
 @media (max-width: 768px) {
@@ -2136,6 +2139,7 @@ body.modal-abierto {
 
     body.carrito-abierto {
         background-color: #EF087C;
+        background-image: none !important;
     }
 }
 
