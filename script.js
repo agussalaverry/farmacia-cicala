@@ -1712,6 +1712,24 @@ document.addEventListener('DOMContentLoaded', () => {
             secondaryNav.style.transform = 'translateY(0)';
         }
         lastScroll = currentScroll;
+        // Actualizar tab activo según sección visible
+        const secciones = ['novedades', 'promociones', 'combos'];
+        const header = document.querySelector('.header');
+        const secondaryNav2 = document.querySelector('.secondary-nav');
+        const offset = (header?.offsetHeight || 100) + (secondaryNav2?.offsetHeight || 44) + 40;
+
+        let seccionActiva = null;
+        for (const id of secciones) {
+            const sec = document.getElementById(id);
+            if (!sec) continue;
+            const top = sec.getBoundingClientRect().top;
+            if (top <= offset) seccionActiva = id;
+        }
+        if (seccionActiva) {
+            navTabs.forEach(t => {
+                t.classList.toggle('active', t.getAttribute('data-section') === seccionActiva);
+            });
+        }
     });
 
     if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
