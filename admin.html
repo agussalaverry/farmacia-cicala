@@ -1630,7 +1630,7 @@
             }
 
             /* ====== SETUP UPLOADERS MÚLTIPLES ====== */
-            function setupImagenUploadMultiple(inputId, areaId, previewListId, urlInputId) {
+            function setupImagenUploadMultiple(inputId, areaId, previewListId, urlInputId, soloUna = false) {
                 const input = document.getElementById(inputId);
                 const area = document.getElementById(areaId);
                 const previewList = document.getElementById(previewListId);
@@ -1690,7 +1690,11 @@
                     });
                 }
 
-                async function procesarFiles(files) {
+                async function procesarFiles(files, soloUna = false) {
+                    if (soloUna && imagenes.length >= 1) {
+                        toast('Solo se permite una imagen de portada para el combo', 'error');
+                        return;
+                    }
                     for (const file of files) {
                         await new Promise(resolve => {
                             abrirRecortador(file, resultado => {
@@ -1708,7 +1712,7 @@
                 }
 
                 input.addEventListener('change', async e => {
-                    if (e.target.files.length) await procesarFiles([...e.target.files]);
+                    if (e.target.files.length) await procesarFiles([...e.target.files], soloUna);
                     input.value = '';
                 });
 
@@ -1716,7 +1720,7 @@
                 area.addEventListener('dragleave', () => area.classList.remove('dragover'));
                 area.addEventListener('drop', async e => {
                     e.preventDefault(); area.classList.remove('dragover');
-                    if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files]);
+                    if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files], soloUna);
                 });
 
                 return {
@@ -1749,7 +1753,7 @@
             document.addEventListener('DOMContentLoaded', () => {
                 uploaderNovedad = setupImagenUploadMultiple('novedad-imagen-file', 'upload-area-novedad', 'preview-list-novedad', 'novedad-imagen-url');
                 uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
-                uploaderCombo = setupImagenUploadMultiple('combo-imagen-file', 'upload-area-combo', 'preview-list-combo', 'combo-imagen-url');
+                uploaderCombo = setupImagenUploadMultiple('combo-imagen-file', 'upload-area-combo', 'preview-list-combo', 'combo-imagen-url', true);
                 uploaderComboP1 = setupImagenUploadMultiple('combo-p1-imagen-file', 'upload-area-combo-p1', 'preview-list-combo-p1', '');
                 uploaderComboP2 = setupImagenUploadMultiple('combo-p2-imagen-file', 'upload-area-combo-p2', 'preview-list-combo-p2', '');
 
