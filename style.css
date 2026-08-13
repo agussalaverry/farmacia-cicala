@@ -2118,3 +2118,17 @@ body.modal-abierto .secondary-nav {
 body.modal-abierto {
     background: #FFF8FA !important;
 }
+
+@media (max-width: 768px) {
+    .cart-panel::after {
+        content: '';
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: white;
+        z-index: -1;
+    }
+}
