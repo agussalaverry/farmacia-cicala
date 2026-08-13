@@ -1111,6 +1111,8 @@
                     <h2>Novedades</h2>
                     <button class="btn-add" id="btn-nueva-novedad">+ Agregar novedad</button>
                     <button class="btn-sort-alpha" id="btn-sort-novedades">A→Z</button>
+                    <input type="text" id="search-novedades" placeholder="🔍 Buscar..."
+                        style="padding:10px 16px;border:2px solid #F2C0D8;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;outline:none;width:220px;">
                 </div>
                 <div class="productos-table">
                     <div class="table-header th-novedad">
@@ -1128,6 +1130,8 @@
                     <h2>Promociones</h2>
                     <button class="btn-add" id="btn-nueva-promocion">+ Agregar promoción</button>
                     <button class="btn-sort-alpha" id="btn-sort-promociones">A→Z</button>
+                    <input type="text" id="search-promociones" placeholder="🔍 Buscar..."
+                        style="padding:10px 16px;border:2px solid #F2C0D8;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;outline:none;width:220px;">
                 </div>
                 <div class="productos-table">
                     <div class="table-header th-promocion">
@@ -1146,6 +1150,8 @@
                     <h2>Combos</h2>
                     <button class="btn-add" id="btn-nuevo-combo">+ Agregar combo</button>
                     <button class="btn-sort-alpha" id="btn-sort-combos">A→Z</button>
+                    <input type="text" id="search-combos" placeholder="🔍 Buscar..."
+                        style="padding:10px 16px;border:2px solid #F2C0D8;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;outline:none;width:220px;">
                 </div>
                 <div class="productos-table">
                     <div class="table-header th-combo">
@@ -1859,6 +1865,7 @@
                     lista.appendChild(row);
                 });
                 initDragAndDrop('lista-novedades', 'novedades', cargarNovedades);
+                initBuscador('search-novedades', 'lista-novedades');
             }
 
             /* ====== PROMOCIONES ====== */
@@ -1906,6 +1913,7 @@
                     lista.appendChild(row);
                 });
                 initDragAndDrop('lista-promociones', 'promociones', cargarPromociones);
+                initBuscador('search-promociones', 'lista-promociones');
             }
 
             /* ====== COMBOS ====== */
@@ -1951,6 +1959,7 @@
                     lista.appendChild(row);
                 });
                 initDragAndDrop('lista-combos', 'combos', cargarCombos);
+                initBuscador('search-combos', 'lista-combos');
             }
 
             /* ====== NOVEDADES - abrir modal ====== */
@@ -1961,10 +1970,12 @@
                 document.getElementById('novedad-descripcion').value = p.descripcion || '';
                 document.getElementById('novedad-precio').value = p.precio || '';
                 document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
+
+                // Primero cargar categorías, LUEGO setear el valor
                 await actualizarSelectsCategorias();
                 document.getElementById('novedad-categoria').value = p.categoria || '';
+
                 uploaderNovedad.reset();
-                // Cargar imágenes existentes (campo 'imagenes' array, o 'imagen' string legacy)
                 const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
                 uploaderNovedad.setUrls(imgs);
                 document.getElementById('modal-novedad').classList.add('active');
@@ -2014,8 +2025,11 @@
                 document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
                 document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
                 document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
+
+                // Primero cargar categorías, LUEGO setear el valor
                 await actualizarSelectsCategorias();
                 document.getElementById('promocion-categoria').value = p.categoria || '';
+
                 uploaderPromocion.reset();
                 const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
                 uploaderPromocion.setUrls(imgs);
@@ -2065,13 +2079,15 @@
                 document.getElementById('combo-descripcion').value = c.descripcion || '';
                 document.getElementById('combo-precio').value = c.precio || '';
                 document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
+
+                // Primero cargar categorías, LUEGO setear el valor
                 await actualizarSelectsCategorias();
                 document.getElementById('combo-categoria').value = c.categoria || '';
 
-                // Portada
                 uploaderCombo.reset();
                 const imgs = c.imagenes || (c.imagen ? [c.imagen] : []);
                 uploaderCombo.setUrls(imgs);
+                document.getElementById('modal-combo').classList.add('active');
 
                 // Producto 1
                 uploaderComboP1.reset();
@@ -2553,20 +2569,23 @@
             };
 
             async function actualizarSelectsCategorias() {
-                if (categoriasCache.length === 0) {
-                    const snap = await getDocs(collection(db, 'categorias'));
-                    categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-                        .sort((a, b) => a.nombre.localeCompare(b.nombre));
-                }
+                // Siempre recargar desde Firestore para tener datos frescos
+                const snap = await getDocs(collection(db, 'categorias'));
+                categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
+
                 ['novedad-categoria', 'promocion-categoria', 'combo-categoria'].forEach(id => {
                     const sel = document.getElementById(id);
                     if (!sel) return;
-                    const val = sel.value;
+                    const val = sel.value; // guardar valor actual
                     sel.innerHTML = '<option value="">Sin categoría</option>';
                     categoriasCache.forEach(c => {
-                        sel.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
+                        const opt = document.createElement('option');
+                        opt.value = c.id;
+                        opt.textContent = c.nombre;
+                        sel.appendChild(opt);
                     });
-                    sel.value = val;
+                    sel.value = val; // restaurar
                 });
             }
 
@@ -2661,6 +2680,37 @@
                     if (tab.dataset.tab === 'horarios') cargarHorarios();
                 });
             });
+
+            /* ====== BUSCADOR ====== */
+            function initBuscador(inputId, listaId) {
+                const input = document.getElementById(inputId);
+                if (!input) return;
+                input.addEventListener('input', () => {
+                    const q = input.value.trim().toLowerCase();
+                    const lista = document.getElementById(listaId);
+                    lista.querySelectorAll('.producto-row').forEach(row => {
+                        const nombre = row.querySelector('.producto-nombre-cell')?.textContent?.toLowerCase() || '';
+                        row.style.display = (!q || nombre.includes(q)) ? '' : 'none';
+                    });
+                });
+            }
+
+            // Inicializar buscadores cuando ya cargaron los datos
+            const _origCargarNovedades = cargarNovedades;
+            cargarNovedades = async function () {
+                await _origCargarNovedades();
+                initBuscador('search-novedades', 'lista-novedades');
+            };
+            const _origCargarPromociones = cargarPromociones;
+            cargarPromociones = async function () {
+                await _origCargarPromociones();
+                initBuscador('search-promociones', 'lista-promociones');
+            };
+            const _origCargarCombos = cargarCombos;
+            cargarCombos = async function () {
+                await _origCargarCombos();
+                initBuscador('search-combos', 'lista-combos');
+            };
 
         </script>
 </body>
