@@ -172,13 +172,15 @@ function initCarrusel(id, onSlide) {
 
 function ordenarPorCategoria(productos, categorias) {
     const result = [];
-    // Primero, productos de cada categoría en orden
     categorias.forEach(cat => {
-        const delaCat = productos.filter(p => p.categoria === cat.id);
+        const delaCat = productos
+            .filter(p => p.categoria === cat.id)
+            .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
         result.push(...delaCat);
     });
-    // Al final, sin categoría
-    const sinCat = productos.filter(p => !p.categoria);
+    const sinCat = productos
+        .filter(p => !p.categoria)
+        .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
     result.push(...sinCat);
     return result;
 }
