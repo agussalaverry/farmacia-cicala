@@ -1282,6 +1282,8 @@ function actualizarCarritoUI() {
     renderizarCartItems();
     // Si hay un modal abierto, re-renderizar sus botones para reflejar cambios del carrito
     if (_modalRenderActivo) _modalRenderActivo();
+    const cartCountModal = document.getElementById('cart-count-modal');
+    if (cartCountModal) cartCountModal.textContent = cantidadTotal;
 }
 
 function renderizarCartItems() {
@@ -1381,7 +1383,8 @@ function generarMensajeWhatsApp() {
     let mensaje = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
     carrito.forEach(item => {
         const subtotal = item.precio * item.cantidad;
-        mensaje += `• ${item.nombre} x${item.cantidad} - ${formatearPrecio(subtotal)}\n`;
+        const cantTexto = item.desglose ? '' : ` x${item.cantidad}`;
+        mensaje += `• ${item.nombre}${cantTexto} - ${formatearPrecio(subtotal)}\n`;
     });
     const total = carrito.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
     mensaje += `\nTotal: ${formatearPrecio(total)}\n\n`;
@@ -1801,6 +1804,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Esperar a que los productos carguen antes de abrir el modal
         setTimeout(abrirModalDesdeHash, 1500);
+    }
+    // Carrito en modal — solo mobile
+    const btnCarritoModal = document.getElementById('btn-carrito-modal');
+    if (btnCarritoModal) {
+        btnCarritoModal.addEventListener('click', () => {
+            cerrarModalProducto();
+            setTimeout(() => abrirCarrito(), 300);
+        });
     }
 });
 

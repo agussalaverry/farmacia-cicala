@@ -2096,3 +2096,15 @@ body.modal-abierto .secondary-nav {
         display: block;
     }
 }
+
+/* Botón carrito en modal — solo desktop lo oculta */
+#btn-carrito-modal {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #btn-carrito-modal {
+        display: block;
+        position: relative;
+    }
+}
