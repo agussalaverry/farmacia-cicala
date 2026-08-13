@@ -103,8 +103,7 @@ body {
     font-size: var(--font-size-base);
     line-height: 1.6;
     color: var(--color-text);
-    background-color: var(--color-primary); /* For Safari 15 tab bar */
-    background-image: linear-gradient(#FFF8FA, #FFF8FA); /* Visual background */
+    background-color: #FFF8FA;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -1713,6 +1712,7 @@ html {
     max-width: 600px;
     margin: 0 auto;
     padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)); /* Previene que la botonera quede oculta por el safe area fijo */
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -2120,8 +2120,7 @@ body.modal-abierto .secondary-nav {
 }
 
 body.modal-abierto {
-    background-color: var(--color-primary) !important;
-    background-image: linear-gradient(#FFF8FA, #FFF8FA) !important;
+    background: #FFF8FA !important;
 }
 
 @media (max-width: 768px) {
@@ -2139,11 +2138,10 @@ body.modal-abierto {
 
     body.carrito-abierto {
         background-color: #EF087C;
-        background-image: none !important;
     }
 }
 
-/* Fix global para safe-area-inset-bottom en iOS/Chrome Mobile */
+/* Fix global y definitivo para safe-area-inset-bottom en iOS/Chrome Mobile */
 html::after {
     content: '';
     position: fixed;
@@ -2155,3 +2153,4 @@ html::after {
     z-index: 99999;
     pointer-events: none;
 }
+
