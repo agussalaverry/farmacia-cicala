@@ -1532,9 +1532,11 @@ footer::before {
 
     /* ---- CARRITO: pantalla completa, sin scroll detrás ---- */
     .cart-panel {
-        max-width: 100%;
-        /* El scroll se bloquea en body desde JS, el panel tiene su propio scroll */
+        overflow-y: auto;
         overscroll-behavior: contain;
+        touch-action: pan-y;
+        min-height: 100dvh;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom));
     }
 
     .producto-modal-contenido .btn-agregar-carrito {
@@ -2132,8 +2134,19 @@ body.modal-abierto {
         z-index: -1;
     }
 
-    /* Fondo rosa en safe area inferior cuando el carrito está abierto */
     body.carrito-abierto {
         background-color: #EF087C;
+    }
+
+    body.carrito-abierto::after {
+        content: '';
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: env(safe-area-inset-bottom);
+        background: #EF087C;
+        z-index: 20001;
+        pointer-events: none;
     }
 }
