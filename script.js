@@ -1755,6 +1755,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
 
+    // Entrada base para que mobile nunca salga de la app
+    history.replaceState({ panel: 'base' }, '');
+
     window.addEventListener('popstate', (e) => {
         const panel = e.state?.panel;
         const modalProducto = document.getElementById('producto-modal');
@@ -1765,17 +1768,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (carritoAbierto) {
             cerrarCarrito();
             if (modalActivo) history.pushState({ panel: 'modal' }, '');
+            else history.replaceState({ panel: 'base' }, '');
             return;
         }
 
         if (filtrosAbiertos) {
             cerrarFiltros();
+            history.replaceState({ panel: 'base' }, '');
             return;
         }
 
         if (modalActivo) {
             cerrarModalProducto();
+            history.replaceState({ panel: 'base' }, '');
             return;
+        }
+
+        // Si no hay nada abierto y el estado es base, no hacer nada
+        if (panel === 'base') {
+            history.pushState({ panel: 'base' }, '');
         }
     });
 
