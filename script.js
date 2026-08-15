@@ -1756,9 +1756,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cerrar modal con botón retroceso del navegador (mobile y PC)
     window.addEventListener('popstate', (e) => {
+        const modalProducto = document.getElementById('producto-modal');
         const carritoAbierto = cartPanel && cartPanel.classList.contains('active');
+
         if (carritoAbierto) {
             cerrarCarrito();
+            return;
+        }
+
+        if (modalProducto.classList.contains('active')) {
+            cerrarModalProducto();
             return;
         }
     });
