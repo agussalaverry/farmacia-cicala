@@ -457,7 +457,7 @@ function abrirModalProducto(p) {
     document.body.classList.add('modal-abierto');
 
     const hashTipo = p.tipo || 'novedad';
-    history.pushState(null, '', `#${hashTipo}-${p.id}`);
+    history.pushState({ panel: 'modal', hash: `#${hashTipo}-${p.id}` }, '', `#${hashTipo}-${p.id}`);
 
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
@@ -654,7 +654,7 @@ function abrirModalProducto(p) {
 
 function abrirModalCombo(combo) {
     document.body.classList.add('modal-abierto');
-    history.pushState(null, '', `#combo-${combo.id}`);
+    history.pushState({ panel: 'modal', hash: `#combo-${combo.id}` }, '', `#combo-${combo.id}`);
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
 
@@ -1419,9 +1419,10 @@ function abrirCarrito() {
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
     bloquearScroll();
+    history.pushState({ panel: 'carrito' }, '');
     const modalProducto = document.getElementById('producto-modal');
     if (modalProducto.classList.contains('active')) {
-        history.pushState({ nivel: 'carrito-sobre-modal' }, '');
+        history.pushState({ panel: 'carrito-sobre-modal' }, '');
     }
 }
 
@@ -1619,12 +1620,12 @@ const closeFiltrosBtn = document.getElementById('close-filtros-btn');
 let filtrosCargados = false;
 
 function abrirFiltros() {
-    // CAMBIO 4: cerrar carrito si está abierto
     if (cartPanel.classList.contains('active')) cerrarCarrito();
     filtrosDrawer.classList.add('active');
     filtrosOverlay.classList.add('active');
     bloquearScroll();
     if (!filtrosCargados) { cargarFiltros(); filtrosCargados = true; }
+    history.pushState({ panel: 'filtros' }, '');
 }
 
 function cerrarFiltros() {
@@ -1754,17 +1755,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
 
-    // Cerrar modal con botón retroceso del navegador (mobile y PC)
     window.addEventListener('popstate', (e) => {
+        const panel = e.state?.panel;
         const modalProducto = document.getElementById('producto-modal');
+        const modalActivo = modalProducto.classList.contains('active');
         const carritoAbierto = cartPanel && cartPanel.classList.contains('active');
+        const filtrosAbiertos = filtrosDrawer && filtrosDrawer.classList.contains('active');
 
         if (carritoAbierto) {
             cerrarCarrito();
+            if (modalActivo) history.pushState({ panel: 'modal' }, '');
             return;
         }
 
-        if (modalProducto.classList.contains('active')) {
+        if (filtrosAbiertos) {
+            cerrarFiltros();
+            return;
+        }
+
+        if (modalActivo) {
             cerrarModalProducto();
             return;
         }
