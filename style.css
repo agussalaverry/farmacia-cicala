@@ -1542,9 +1542,6 @@ footer::before {
         padding: 14px;
     }
 
-    .producto-modal-cart-btn {
-        display: flex;
-    }
 
     .floating-buttons {
         display: none !important;
@@ -1747,6 +1744,12 @@ html {
     border: none;
     cursor: pointer;
     padding: 8px;
+}
+
+@media (max-width: 768px) {
+    .producto-modal-cart-btn {
+        display: flex;
+    }
 }
 
 .producto-modal-cart-icon {
