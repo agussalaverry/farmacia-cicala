@@ -1425,7 +1425,11 @@ function abrirCarrito() {
 function cerrarCarrito() {
     cartPanel.classList.remove('active');
     cartOverlay.classList.remove('active');
-    desbloquearScroll();
+    // Si el modal de producto está abierto, no desbloquear scroll — el modal ya lo controla
+    const modalProducto = document.getElementById('producto-modal');
+    if (!modalProducto || !modalProducto.classList.contains('active')) {
+        desbloquearScroll();
+    }
 }
 
 /* ============================================
