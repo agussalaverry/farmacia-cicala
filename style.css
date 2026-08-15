@@ -1542,6 +1542,10 @@ footer::before {
         padding: 14px;
     }
 
+    .producto-modal-cart-btn {
+        display: flex;
+    }
+
     .floating-buttons {
         display: none !important;
     }
@@ -1725,6 +1729,46 @@ html {
     cursor: pointer;
     padding: 12px 0;
     text-align: left;
+}
+
+/* Top row: volver button + cart button (cart only visible on mobile) */
+.producto-modal-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.producto-modal-cart-btn {
+    display: none; /* hidden on desktop, shown in mobile media query */
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.producto-modal-cart-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.producto-modal-cart-badge {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    background: #FF6B35;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .producto-modal-nombre {

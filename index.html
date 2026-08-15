@@ -343,7 +343,13 @@
     <!-- MODAL DETALLE PRODUCTO -->
     <div id="producto-modal" class="producto-modal-overlay">
         <div class="producto-modal-contenido">
-            <button class="producto-modal-volver" id="btn-volver-modal">← Volver</button>
+            <div class="producto-modal-top-row">
+                <button class="producto-modal-volver" id="btn-volver-modal">← Volver</button>
+                <button class="producto-modal-cart-btn" id="btn-carrito-modal" title="Ver carrito">
+                    <img src="images/carrito/carrito sin fondo.png" alt="Carrito" class="producto-modal-cart-icon">
+                    <span id="cart-count-modal" class="producto-modal-cart-badge">0</span>
+                </button>
+            </div>
             <div id="modal-img-wrap" class="producto-modal-img-wrap"></div>
             <div class="producto-modal-info">
                 <h2 id="modal-nombre" class="producto-modal-nombre"></h2>

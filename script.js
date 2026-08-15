@@ -1149,6 +1149,15 @@ btnVolver.addEventListener('touchend', (e) => {
     cerrarModalProducto();
 }, { passive: false });
 
+// Botón de carrito dentro del modal (solo visible en mobile)
+const btnCarritoModal = document.getElementById('btn-carrito-modal');
+if (btnCarritoModal) {
+    btnCarritoModal.addEventListener('click', (e) => {
+        e.stopPropagation();
+        abrirCarrito();
+    });
+}
+
 /* ============================================
    CARGAR PRODUCTOS DESDE FIRESTORE
    ============================================ */
@@ -1280,6 +1289,8 @@ function actualizarCarritoUI() {
     cartCount.textContent = cantidadTotal;
     const cartCountMobile = document.getElementById('cart-count-mobile');
     if (cartCountMobile) cartCountMobile.textContent = cantidadTotal;
+    const cartCountModal = document.getElementById('cart-count-modal');
+    if (cartCountModal) cartCountModal.textContent = cantidadTotal;
     cartTotalEl.textContent = formatearPrecio(total);
     renderizarCartItems();
     // Si hay un modal abierto, re-renderizar sus botones para reflejar cambios del carrito
