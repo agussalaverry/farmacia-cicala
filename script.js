@@ -1753,7 +1753,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cerrar modal con botón retroceso del navegador (mobile y PC)
     window.addEventListener('popstate', () => {
-        if (document.getElementById('producto-modal').classList.contains('active')) {
+        const modalProducto = document.getElementById('producto-modal');
+        const carritoAbierto = cartPanel && cartPanel.classList.contains('active');
+
+        if (modalProducto.classList.contains('active') && carritoAbierto) {
+            // El carrito está abierto sobre el modal: cerrar solo el carrito
+            // y restaurar el hash del modal para no perder el estado
+            cerrarCarrito();
+            const hash = window.location.hash || '';
+            history.pushState(null, '', hash || window.location.pathname);
+            return;
+        }
+
+        if (modalProducto.classList.contains('active')) {
             cerrarModalProducto();
         }
     });
