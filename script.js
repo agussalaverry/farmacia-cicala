@@ -1415,11 +1415,14 @@ function generarMensajeWhatsApp() {
 
 function abrirCarrito() {
     if (portalAbierto) cerrarPortal();
-    // CAMBIO 4: cerrar filtros si están abiertos
     cerrarFiltros();
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
     bloquearScroll();
+    const modalProducto = document.getElementById('producto-modal');
+    if (modalProducto.classList.contains('active')) {
+        history.pushState({ nivel: 'carrito-sobre-modal' }, '');
+    }
 }
 
 function cerrarCarrito() {
@@ -1752,21 +1755,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof twemoji !== 'undefined') twemoji.parse(document.body);
 
     // Cerrar modal con botón retroceso del navegador (mobile y PC)
-    window.addEventListener('popstate', () => {
-        const modalProducto = document.getElementById('producto-modal');
+    window.addEventListener('popstate', (e) => {
         const carritoAbierto = cartPanel && cartPanel.classList.contains('active');
-
-        if (modalProducto.classList.contains('active') && carritoAbierto) {
-            // El carrito está abierto sobre el modal: cerrar solo el carrito
-            // y restaurar el hash del modal para no perder el estado
+        if (carritoAbierto) {
             cerrarCarrito();
-            const hash = window.location.hash || '';
-            history.pushState(null, '', hash || window.location.pathname);
             return;
-        }
-
-        if (modalProducto.classList.contains('active')) {
-            cerrarModalProducto();
         }
     });
 
