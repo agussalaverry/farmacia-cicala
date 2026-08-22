@@ -1,21 +1,15 @@
-/* ============================================
-   FARMACIA CICALA - SCRIPT.JS
-   ============================================ */
-
 import { getFirestore, collection, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
-    authDomain: "farmacia-cicala.firebaseapp.com",
-    projectId: "farmacia-cicala",
-    storageBucket: "farmacia-cicala.firebasestorage.app",
-    messagingSenderId: "299138749267",
-    appId: "1:299138749267:web:c716a4f57e6e8957a987a6"
-};
-
-const app = initializeApp(firebaseConfig);
+// Leer configuración desde config.js
+const _C = window.CONFIG;
+const app = initializeApp(_C.FIREBASE_CONFIG);
 const db = getFirestore(app);
+
+// Nombres de colecciones
+const COL_DESTACADOS = _C.COL_DESTACADOS;
+const COL_OFERTAS = _C.COL_OFERTAS;
+const COL_PACKS = _C.COL_PACKS;
 
 /* ============================================
    ESTADO
@@ -1185,27 +1179,26 @@ if (btnCarritoModal) {
 async function cargarProductos() {
     mostrarCargando();
     try {
-        // Cargar categorías ordenadas
         const categoriasSnap = await getDocs(collection(db, 'categorias'));
         const categorias = categoriasSnap.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
 
-        const novedadesSnap = await getDocs(collection(db, 'novedades'));
+        const novedadesSnap = await getDocs(collection(db, COL_DESTACADOS));
         const novedades = novedadesSnap.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .filter(p => p.visible !== false)
             .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
         renderNovedades(novedades, categorias);
 
-        const promocionesSnap = await getDocs(collection(db, 'promociones'));
+        const promocionesSnap = await getDocs(collection(db, COL_OFERTAS));
         const promociones = promocionesSnap.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .filter(p => p.visible !== false)
             .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
         renderPromociones(promociones, categorias);
 
-        const combosSnap = await getDocs(collection(db, 'combos'));
+        const combosSnap = await getDocs(collection(db, COL_PACKS));
         const combos = combosSnap.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .filter(p => p.visible !== false)
@@ -1220,9 +1213,13 @@ async function cargarProductos() {
     const horSnap = await getDoc(doc(db, 'config', 'horarios'));
     if (horSnap.exists()) {
         const h = horSnap.data();
-        document.getElementById('hor-display-lv').textContent = h.lunesViernes || '—';
-        document.getElementById('hor-display-sab').textContent = h.sabados || '—';
-        document.getElementById('hor-display-dom').textContent = h.domingos || '—';
+        document.getElementById('hor-display-lv').textContent = h.lunesViernes || _C.HORARIO_LV || '—';
+        document.getElementById('hor-display-sab').textContent = h.sabados || _C.HORARIO_SAB || '—';
+        document.getElementById('hor-display-dom').textContent = h.domingos || _C.HORARIO_DOM || '—';
+    } else {
+        document.getElementById('hor-display-lv').textContent = _C.HORARIO_LV || '—';
+        document.getElementById('hor-display-sab').textContent = _C.HORARIO_SAB || '—';
+        document.getElementById('hor-display-dom').textContent = _C.HORARIO_DOM || '—';
     }
 }
 
@@ -1411,7 +1408,7 @@ function renderizarCartItems() {
 
 function generarMensajeWhatsApp() {
     if (carrito.length === 0) { mostrarConfirmacion('El carrito está vacío'); return; }
-    let mensaje = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
+    let mensaje = _C.WHATSAPP_MENSAJE + '\n\n';
     carrito.forEach(item => {
         const subtotal = item.precio * item.cantidad;
         mensaje += `• ${item.nombre} x${item.cantidad} - ${formatearPrecio(subtotal)}\n`;
@@ -1419,14 +1416,14 @@ function generarMensajeWhatsApp() {
     const total = carrito.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
     mensaje += `\nTotal: ${formatearPrecio(total)}\n\n`;
     if (modalidadSeleccionada === 'retiro') {
-        mensaje += `Modalidad: Retiro en farmacia 🏪\n\n`;
+        mensaje += `Modalidad: Retiro en tienda 🏪\n\n`;
     } else {
         const direccion = direccionInput.value.trim();
         if (!direccion) { mostrarConfirmacion('Por favor escribí tu dirección'); direccionInput.focus(); return; }
         mensaje += `Modalidad: Envío a domicilio 🚚\nDirección: ${direccion}\n\n`;
     }
-    mensaje += `⚠️ Tu pedido está pendiente de confirmación.\nUn integrante de Farmacia Cicala te confirmará\nla disponibilidad antes de realizar el pago.`;
-    window.open(`https://wa.me/542494360437?text=${encodeURIComponent(mensaje)}`, '_blank');
+    mensaje += `⚠️ Tu pedido está pendiente de confirmación.\nTe contactaremos para confirmar disponibilidad antes del pago.`;
+    window.open(`https://wa.me/${_C.WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
 /* ============================================

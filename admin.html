@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin — Farmacia Cicala</title>
+    <title>Panel de administración</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <link rel="icon" type="image/jpeg" href="images/logos/logo para la pestaña.png">
+    <script src="config.js"></script>
     <style>
         *,
         *::before,
@@ -1070,8 +1071,8 @@
     <div id="login-screen">
         <div class="login-card">
             <div class="login-logo">
-                <h1>Farmacia Cicala</h1>
-                <p>Panel de administración</p>
+                <h1>Panel de administración</h1>
+                <p>Iniciar sesión</p>
             </div>
             <div class="form-group">
                 <label>Email</label>
@@ -1098,9 +1099,9 @@
 
         <div class="admin-body">
             <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="novedades">Novedades</button>
-                <button class="admin-tab" data-tab="promociones">Promociones</button>
-                <button class="admin-tab" data-tab="combos">Combos</button>
+                <button class="admin-tab active" data-tab="novedades">Destacados</button>
+                <button class="admin-tab" data-tab="promociones">Ofertas</button>
+                <button class="admin-tab" data-tab="combos">Combos & Packs</button>
                 <button class="admin-tab" data-tab="categorias">Filtros</button>
                 <button class="admin-tab" data-tab="horarios">Horarios</button>
             </div>
@@ -1108,8 +1109,8 @@
             <!-- NOVEDADES -->
             <div class="admin-section active" id="tab-novedades">
                 <div class="section-toolbar">
-                    <h2>Novedades</h2>
-                    <button class="btn-add" id="btn-nueva-novedad">+ Agregar novedad</button>
+                    <h2>Destacados</h2>
+                    <button class="btn-add" id="btn-nueva-novedad">+ Agregar destacado</button>
                     <button class="btn-sort-alpha" id="btn-sort-novedades">A→Z</button>
                     <input type="text" id="search-novedades" placeholder="🔍 Buscar..."
                         style="padding:10px 16px;border:2px solid #F2C0D8;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;outline:none;width:220px;">
@@ -1127,8 +1128,8 @@
             <!-- PROMOCIONES -->
             <div class="admin-section" id="tab-promociones">
                 <div class="section-toolbar">
-                    <h2>Promociones</h2>
-                    <button class="btn-add" id="btn-nueva-promocion">+ Agregar promoción</button>
+                    <h2>Ofertas</h2>
+                    <button class="btn-add" id="btn-nueva-promocion">+ Agregar oferta</button>
                     <button class="btn-sort-alpha" id="btn-sort-promociones">A→Z</button>
                     <input type="text" id="search-promociones" placeholder="🔍 Buscar..."
                         style="padding:10px 16px;border:2px solid #F2C0D8;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;outline:none;width:220px;">
@@ -1147,8 +1148,8 @@
             <!-- COMBOS -->
             <div class="admin-section" id="tab-combos">
                 <div class="section-toolbar">
-                    <h2>Combos</h2>
-                    <button class="btn-add" id="btn-nuevo-combo">+ Agregar combo</button>
+                    <h2>Combos & Packs</h2>
+                    <button class="btn-add" id="btn-nuevo-combo">+ Agregar combo/pack</button>
                     <button class="btn-sort-alpha" id="btn-sort-combos">A→Z</button>
                     <input type="text" id="search-combos" placeholder="🔍 Buscar..."
                         style="padding:10px 16px;border:2px solid #F2C0D8;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;outline:none;width:220px;">
@@ -1434,409 +1435,402 @@
         </div>
     </div>
     <!-- MODAL RECORTADOR -->
-        <div class="cropper-modal-overlay" id="cropper-modal">
-            <div class="cropper-modal-box">
-                <div>
-                    <p class="cropper-modal-title">✂️ Recortá la imagen</p>
-                    <p class="cropper-modal-subtitle">Arrastrá y redimensioná el recuadro para elegir el área del
-                        producto.
-                        O usá la imagen completa tal como está.</p>
-                </div>
-                <div class="cropper-wrapper">
-                    <img id="cropper-img" src="" alt="Recortar">
-                </div>
-                <div class="cropper-modal-actions">
-                    <button class="btn-crop-confirm" id="btn-crop-confirm">✓ Usar recorte</button>
-                    <button class="btn-crop-original" id="btn-crop-original">📷 Usar imagen completa</button>
-                    <button class="btn-crop-cancel" id="btn-crop-cancel">✕ Cancelar</button>
-                </div>
+    <div class="cropper-modal-overlay" id="cropper-modal">
+        <div class="cropper-modal-box">
+            <div>
+                <p class="cropper-modal-title">✂️ Recortá la imagen</p>
+                <p class="cropper-modal-subtitle">Arrastrá y redimensioná el recuadro para elegir el área del
+                    producto.
+                    O usá la imagen completa tal como está.</p>
+            </div>
+            <div class="cropper-wrapper">
+                <img id="cropper-img" src="" alt="Recortar">
+            </div>
+            <div class="cropper-modal-actions">
+                <button class="btn-crop-confirm" id="btn-crop-confirm">✓ Usar recorte</button>
+                <button class="btn-crop-original" id="btn-crop-original">📷 Usar imagen completa</button>
+                <button class="btn-crop-cancel" id="btn-crop-cancel">✕ Cancelar</button>
             </div>
         </div>
+    </div>
 
-        <!-- MODAL CATEGORIA -->
-        <div class="modal-overlay" id="modal-categoria">
-            <div class="modal">
-                <h3 id="modal-categoria-title">Nueva categoría</h3>
-                <input type="hidden" id="categoria-id-edit">
-                <div class="form-group">
-                    <label>Nombre de la categoría</label>
-                    <input type="text" id="categoria-nombre" placeholder="Ej: Perfumes, Cremas, Medicamentos...">
-                </div>
-                <div class="modal-actions">
-                    <button class="btn-cancel" id="btn-cancelar-categoria">Cancelar</button>
-                    <button class="btn-save" id="btn-guardar-categoria">Guardar</button>
-                </div>
+    <!-- MODAL CATEGORIA -->
+    <div class="modal-overlay" id="modal-categoria">
+        <div class="modal">
+            <h3 id="modal-categoria-title">Nueva categoría</h3>
+            <input type="hidden" id="categoria-id-edit">
+            <div class="form-group">
+                <label>Nombre de la categoría</label>
+                <input type="text" id="categoria-nombre" placeholder="Ej: Perfumes, Cremas, Medicamentos...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btn-cancelar-categoria">Cancelar</button>
+                <button class="btn-save" id="btn-guardar-categoria">Guardar</button>
             </div>
         </div>
+    </div>
 
-        <!-- MODAL CONFIRMAR ELIMINACIÓN -->
-        <div class="confirm-overlay" id="confirm-overlay">
-            <div class="confirm-box">
-                <div class="confirm-icon" id="confirm-icon">🗑️</div>
-                <div class="confirm-title" id="confirm-title">¿Eliminás este producto?</div>
-                <div class="confirm-subtitle" id="confirm-subtitle">Esta acción no se puede deshacer.</div>
-                <div class="confirm-actions">
-                    <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
-                    <button class="btn-confirm-delete" id="btn-confirm-delete">Eliminar</button>
-                </div>
+    <!-- MODAL CONFIRMAR ELIMINACIÓN -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-icon" id="confirm-icon">🗑️</div>
+            <div class="confirm-title" id="confirm-title">¿Eliminás este producto?</div>
+            <div class="confirm-subtitle" id="confirm-subtitle">Esta acción no se puede deshacer.</div>
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
+                <button class="btn-confirm-delete" id="btn-confirm-delete">Eliminar</button>
             </div>
         </div>
+    </div>
 
-        <div class="toast" id="toast"></div>
+    <div class="toast" id="toast"></div>
 
-        <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-            import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
-            import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
-            // Cropper.js importado como módulo ESM para que sea visible en este scope
-            import Cropper from "https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.esm.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+        // Cropper.js importado como módulo ESM para que sea visible en este scope
+        import Cropper from "https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.esm.js";
 
-            /* ====== CONFIG ====== */
-            const firebaseConfig = {
-                apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
-                authDomain: "farmacia-cicala.firebaseapp.com",
-                projectId: "farmacia-cicala",
-                storageBucket: "farmacia-cicala.firebasestorage.app",
-                messagingSenderId: "299138749267",
-                appId: "1:299138749267:web:c716a4f57e6e8957a987a6"
-            };
-            const CLOUDINARY_CLOUD = 'dhzkuqo5s';
-            const CLOUDINARY_PRESET = 'farmacia_cicala';
+        /* ====== CONFIG ====== */
+        const _C = window.CONFIG;
+        const firebaseConfig = _C.FIREBASE_CONFIG;
+        const CLOUDINARY_CLOUD = _C.CLOUDINARY_CLOUD;
+        const CLOUDINARY_PRESET = _C.CLOUDINARY_PRESET;
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app);
-
-            /* ====== AUTH ====== */
-            onAuthStateChanged(auth, user => {
-                if (user) {
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('admin-panel').style.display = 'block';
-                    document.getElementById('admin-user-email').textContent = user.email;
-                    cargarTodo();
-                } else {
-                    document.getElementById('login-screen').style.display = 'flex';
-                    document.getElementById('admin-panel').style.display = 'none';
-                }
-            });
-
-            document.getElementById('login-btn').addEventListener('click', async () => {
-                const email = document.getElementById('login-email').value.trim();
-                const pass = document.getElementById('login-password').value;
-                document.getElementById('login-error').textContent = '';
-                try {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                } catch (e) {
-                    document.getElementById('login-error').textContent = 'Email o contraseña incorrectos.';
-                }
-            });
-            document.getElementById('login-password').addEventListener('keydown', e => {
-                if (e.key === 'Enter') document.getElementById('login-btn').click();
-            });
-            document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-
-            /* ====== TABS ====== */
-            document.querySelectorAll('.admin-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-                });
-            });
-
-            /* ====== RECORTADOR DE IMÁGENES ====== */
-            let cropperInstance = null;
-            let cropperCallback = null;
-            let cropperOriginalFile = null;   // ← guardamos el File original ANTES de que Cropper lo toque
-
-            const cropperModal = document.getElementById('cropper-modal');
-            const cropperImg = document.getElementById('cropper-img');
-            const btnCropConfirm = document.getElementById('btn-crop-confirm');
-            const btnCropOriginal = document.getElementById('btn-crop-original');
-            const btnCropCancel = document.getElementById('btn-crop-cancel');
-
-            function abrirRecortador(file, onResult) {
-                cropperOriginalFile = file;   // ← guardamos referencia al File original
-                const reader = new FileReader();
-                reader.onload = e => {
-                    // Destruir instancia previa ANTES de cambiar el src
-                    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-                    cropperImg.src = e.target.result;
-                    cropperModal.classList.add('active');
-                    // Esperar a que la imagen cargue para inicializar Cropper
-                    cropperImg.onload = () => {
-                        cropperInstance = new Cropper(cropperImg, {
-                            aspectRatio: NaN,
-                            viewMode: 1,
-                            dragMode: 'move',
-                            autoCropArea: 0.85,
-                            responsive: true,
-                            restore: false,
-                            guides: true,
-                            center: true,
-                            highlight: false,
-                            cropBoxMovable: true,
-                            cropBoxResizable: true,
-                            toggleDragModeOnDblclick: false,
-                        });
-                    };
-                    cropperCallback = onResult;
-                };
-                reader.readAsDataURL(file);
+        /* ====== AUTH ====== */
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('admin-user-email').textContent = user.email;
+                cargarTodo();
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('admin-panel').style.display = 'none';
             }
+        });
 
-            btnCropConfirm.addEventListener('click', () => {
-                if (!cropperInstance) return;
-                // Deshabilitar botón para evitar doble click
-                btnCropConfirm.disabled = true;
-                cropperInstance.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200, fillColor: '#fff' })
-                    .toBlob(blob => {
-                        const croppedFile = new File([blob], 'recortada.jpg', { type: 'image/jpeg' });
-                        const cb = cropperCallback;
-                        cerrarRecortador();
-                        btnCropConfirm.disabled = false;
-                        if (cb) cb(croppedFile);
-                    }, 'image/jpeg', 0.92);
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
+            document.getElementById('login-error').textContent = '';
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                document.getElementById('login-error').textContent = 'Email o contraseña incorrectos.';
+            }
+        });
+        document.getElementById('login-password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('login-btn').click();
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+        /* ====== TABS ====== */
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
             });
+        });
 
-            btnCropOriginal.addEventListener('click', () => {
-                // Usamos el File original guardado — no tocamos cropperImg.src (que Cropper modifica)
-                const originalFile = cropperOriginalFile;
-                const cb = cropperCallback;
-                cerrarRecortador();
-                if (cb && originalFile) cb(originalFile);
-            });
+        /* ====== RECORTADOR DE IMÁGENES ====== */
+        let cropperInstance = null;
+        let cropperCallback = null;
+        let cropperOriginalFile = null;   // ← guardamos el File original ANTES de que Cropper lo toque
 
-            btnCropCancel.addEventListener('click', cerrarRecortador);
+        const cropperModal = document.getElementById('cropper-modal');
+        const cropperImg = document.getElementById('cropper-img');
+        const btnCropConfirm = document.getElementById('btn-crop-confirm');
+        const btnCropOriginal = document.getElementById('btn-crop-original');
+        const btnCropCancel = document.getElementById('btn-crop-cancel');
 
-            function cerrarRecortador() {
-                cropperModal.classList.remove('active');
+        function abrirRecortador(file, onResult) {
+            cropperOriginalFile = file;   // ← guardamos referencia al File original
+            const reader = new FileReader();
+            reader.onload = e => {
+                // Destruir instancia previa ANTES de cambiar el src
                 if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-                cropperCallback = null;
-                cropperOriginalFile = null;
-            }
-
-            /* ====== CLOUDINARY UPLOAD ====== */
-            async function subirImagenCloudinary(file, prefijo, setEstado) {
-                setEstado('Subiendo imagen...', 'subiendo');
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', CLOUDINARY_PRESET);
-                formData.append('folder', `farmacia-cicala/${prefijo}`);
-
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!res.ok) throw new Error('Error al subir imagen');
-                const data = await res.json();
-                setEstado('✓ Imagen subida correctamente', 'listo');
-                return data.secure_url;
-            }
-
-            /* ====== SETUP UPLOADERS MÚLTIPLES ====== */
-            function setupImagenUploadMultiple(inputId, areaId, previewListId, urlInputId, soloUna = false) {
-                const input = document.getElementById(inputId);
-                const area = document.getElementById(areaId);
-                const previewList = document.getElementById(previewListId);
-
-                let imagenes = [];
-
-                function renderPreviews() {
-                    previewList.innerHTML = '';
-                    imagenes.forEach((img, idx) => {
-                        const wrap = document.createElement('div');
-                        wrap.style.cssText = 'position:relative;display:inline-flex;flex-direction:column;gap:4px;align-items:center;width:110px;';
-
-                        const im = document.createElement('img');
-                        im.src = img.previewSrc;
-                        im.style.cssText = `width:90px;height:90px;object-fit:cover;border-radius:8px;border:3px solid ${img.esPortada ? '#D5006D' : '#F2C0D8'};cursor:pointer;`;
-                        im.title = 'Hacer portada';
-                        im.addEventListener('click', () => {
-                            imagenes.forEach((i, j) => i.esPortada = (j === idx));
-                            renderPreviews();
-                        });
-
-                        if (img.esPortada) {
-                            const badge = document.createElement('span');
-                            badge.textContent = '⭐ Portada';
-                            badge.style.cssText = 'position:absolute;top:4px;left:4px;background:#D5006D;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;pointer-events:none;';
-                            wrap.appendChild(badge);
-                        }
-
-                        // Solo mostrar input de nombre si hay más de una imagen
-                        const nameInput = document.createElement('input');
-                        nameInput.type = 'text';
-                        nameInput.placeholder = 'Ej: Menta';
-                        nameInput.value = img.nombre || '';
-                        nameInput.style.cssText = 'width:90px;font-size:11px;padding:4px;border:1px solid #F2C0D8;border-radius:6px;font-family:Nunito,sans-serif;text-align:center;';
-                        nameInput.addEventListener('input', e => { imagenes[idx].nombre = e.target.value; });
-
-                        if (imagenes.length > 1) {
-                            wrap.appendChild(nameInput);
-                        }
-
-                        const btn = document.createElement('button');
-                        btn.textContent = '✕';
-                        btn.type = 'button';
-                        btn.style.cssText = 'position:absolute;top:-6px;right:4px;background:#E53935;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;padding:0;';
-                        btn.addEventListener('click', () => {
-                            imagenes.splice(idx, 1);
-                            if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
-                            renderPreviews();
-                        });
-
-                        wrap.appendChild(im);
-                        if (imagenes.length > 1) {
-                            wrap.appendChild(nameInput);
-                        }
-                        wrap.appendChild(btn);
-                        previewList.appendChild(wrap);
+                cropperImg.src = e.target.result;
+                cropperModal.classList.add('active');
+                // Esperar a que la imagen cargue para inicializar Cropper
+                cropperImg.onload = () => {
+                    cropperInstance = new Cropper(cropperImg, {
+                        aspectRatio: NaN,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 0.85,
+                        responsive: true,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
                     });
-                }
+                };
+                cropperCallback = onResult;
+            };
+            reader.readAsDataURL(file);
+        }
 
-                async function procesarFiles(files, soloUna = false) {
-                    if (soloUna && imagenes.length >= 1) {
-                        toast('Solo se permite una imagen de portada para el combo', 'error');
-                        return;
+        btnCropConfirm.addEventListener('click', () => {
+            if (!cropperInstance) return;
+            // Deshabilitar botón para evitar doble click
+            btnCropConfirm.disabled = true;
+            cropperInstance.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200, fillColor: '#fff' })
+                .toBlob(blob => {
+                    const croppedFile = new File([blob], 'recortada.jpg', { type: 'image/jpeg' });
+                    const cb = cropperCallback;
+                    cerrarRecortador();
+                    btnCropConfirm.disabled = false;
+                    if (cb) cb(croppedFile);
+                }, 'image/jpeg', 0.92);
+        });
+
+        btnCropOriginal.addEventListener('click', () => {
+            // Usamos el File original guardado — no tocamos cropperImg.src (que Cropper modifica)
+            const originalFile = cropperOriginalFile;
+            const cb = cropperCallback;
+            cerrarRecortador();
+            if (cb && originalFile) cb(originalFile);
+        });
+
+        btnCropCancel.addEventListener('click', cerrarRecortador);
+
+        function cerrarRecortador() {
+            cropperModal.classList.remove('active');
+            if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+            cropperCallback = null;
+            cropperOriginalFile = null;
+        }
+
+        /* ====== CLOUDINARY UPLOAD ====== */
+        async function subirImagenCloudinary(file, prefijo, setEstado) {
+            setEstado('Subiendo imagen...', 'subiendo');
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_PRESET);
+            formData.append('folder', `farmacia-cicala/${prefijo}`);
+
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) throw new Error('Error al subir imagen');
+            const data = await res.json();
+            setEstado('✓ Imagen subida correctamente', 'listo');
+            return data.secure_url;
+        }
+
+        /* ====== SETUP UPLOADERS MÚLTIPLES ====== */
+        function setupImagenUploadMultiple(inputId, areaId, previewListId, urlInputId, soloUna = false) {
+            const input = document.getElementById(inputId);
+            const area = document.getElementById(areaId);
+            const previewList = document.getElementById(previewListId);
+
+            let imagenes = [];
+
+            function renderPreviews() {
+                previewList.innerHTML = '';
+                imagenes.forEach((img, idx) => {
+                    const wrap = document.createElement('div');
+                    wrap.style.cssText = 'position:relative;display:inline-flex;flex-direction:column;gap:4px;align-items:center;width:110px;';
+
+                    const im = document.createElement('img');
+                    im.src = img.previewSrc;
+                    im.style.cssText = `width:90px;height:90px;object-fit:cover;border-radius:8px;border:3px solid ${img.esPortada ? '#D5006D' : '#F2C0D8'};cursor:pointer;`;
+                    im.title = 'Hacer portada';
+                    im.addEventListener('click', () => {
+                        imagenes.forEach((i, j) => i.esPortada = (j === idx));
+                        renderPreviews();
+                    });
+
+                    if (img.esPortada) {
+                        const badge = document.createElement('span');
+                        badge.textContent = '⭐ Portada';
+                        badge.style.cssText = 'position:absolute;top:4px;left:4px;background:#D5006D;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;pointer-events:none;';
+                        wrap.appendChild(badge);
                     }
-                    for (const file of files) {
-                        await new Promise(resolve => {
-                            abrirRecortador(file, resultado => {
-                                const reader = new FileReader();
-                                reader.onload = e => {
-                                    const esPortada = imagenes.length === 0;
-                                    imagenes.push({ file: resultado, url: '', nombre: '', esPortada, previewSrc: e.target.result });
-                                    renderPreviews();
-                                    resolve();
-                                };
-                                reader.readAsDataURL(resultado);
-                            });
-                        });
+
+                    // Solo mostrar input de nombre si hay más de una imagen
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.placeholder = 'Ej: Menta';
+                    nameInput.value = img.nombre || '';
+                    nameInput.style.cssText = 'width:90px;font-size:11px;padding:4px;border:1px solid #F2C0D8;border-radius:6px;font-family:Nunito,sans-serif;text-align:center;';
+                    nameInput.addEventListener('input', e => { imagenes[idx].nombre = e.target.value; });
+
+                    if (imagenes.length > 1) {
+                        wrap.appendChild(nameInput);
                     }
-                }
 
-                input.addEventListener('change', async e => {
-                    if (e.target.files.length) await procesarFiles([...e.target.files], soloUna);
-                    input.value = '';
-                });
-
-                area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
-                area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-                area.addEventListener('drop', async e => {
-                    e.preventDefault(); area.classList.remove('dragover');
-                    if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files], soloUna);
-                });
-
-                return {
-                    async subirTodas(prefijo, setEstado) {
-                        const result = [];
-                        for (const img of imagenes) {
-                            let url = img.url;
-                            if (!url && img.file) {
-                                url = await subirImagenCloudinary(img.file, prefijo, setEstado);
-                                img.url = url;
-                            }
-                            result.push({ url, nombre: img.nombre || '', esPortada: img.esPortada || false });
-                        }
-                        return result;
-                    },
-                    setUrls(imgs) {
-                        imagenes = (imgs || []).map((img, idx) => {
-                            if (typeof img === 'string') return { file: null, url: img, nombre: '', esPortada: idx === 0, previewSrc: img };
-                            return { file: null, url: img.url, nombre: img.nombre || '', esPortada: img.esPortada || false, previewSrc: img.url };
-                        });
+                    const btn = document.createElement('button');
+                    btn.textContent = '✕';
+                    btn.type = 'button';
+                    btn.style.cssText = 'position:absolute;top:-6px;right:4px;background:#E53935;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;padding:0;';
+                    btn.addEventListener('click', () => {
+                        imagenes.splice(idx, 1);
                         if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
                         renderPreviews();
-                    },
-                    reset() { imagenes = []; renderPreviews(); },
-                    setEstado: () => { },
-                };
-            }
+                    });
 
-            let uploaderNovedad, uploaderPromocion, uploaderCombo, uploaderComboP1, uploaderComboP2;
-            document.addEventListener('DOMContentLoaded', () => {
-                uploaderNovedad = setupImagenUploadMultiple('novedad-imagen-file', 'upload-area-novedad', 'preview-list-novedad', 'novedad-imagen-url');
-                uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
-                uploaderCombo = setupImagenUploadMultiple('combo-imagen-file', 'upload-area-combo', 'preview-list-combo', 'combo-imagen-url', true);
-                uploaderComboP1 = setupImagenUploadMultiple('combo-p1-imagen-file', 'upload-area-combo-p1', 'preview-list-combo-p1', '');
-                uploaderComboP2 = setupImagenUploadMultiple('combo-p2-imagen-file', 'upload-area-combo-p2', 'preview-list-combo-p2', '');
-
-                document.getElementById('btn-agregar-p2').addEventListener('click', () => {
-                    document.getElementById('combo-p2-section').style.display = 'block';
-                    document.getElementById('combo-p2-toggle').style.display = 'none';
+                    wrap.appendChild(im);
+                    if (imagenes.length > 1) {
+                        wrap.appendChild(nameInput);
+                    }
+                    wrap.appendChild(btn);
+                    previewList.appendChild(wrap);
                 });
-                document.getElementById('btn-quitar-p2').addEventListener('click', () => {
-                    document.getElementById('combo-p2-section').style.display = 'none';
-                    document.getElementById('combo-p2-toggle').style.display = 'block';
-                    uploaderComboP2.reset();
-                    document.getElementById('combo-p2-nombre').value = '';
-                    document.getElementById('combo-p2-precio').value = '';
-                });
-            });
+            }
 
-            /* ====== UTILIDADES ====== */
-            function fmt(n) {
-                return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n);
-            }
-            function toast(msg, tipo = '') {
-                const t = document.getElementById('toast');
-                t.textContent = msg;
-                t.className = 'toast ' + tipo;
-                setTimeout(() => t.classList.add('visible'), 10);
-                setTimeout(() => t.classList.remove('visible'), 2500);
-            }
-            function cerrarModal(id) {
-                if (!id) return;
-                const el = document.getElementById(id);
-                if (el) el.classList.remove('active');
-            }
-            function cerrarModalSeguro(id) {
-                if (!id || id === 'cropper-modal' || id.startsWith('confirm')) {
-                    cerrarModal(id);
+            async function procesarFiles(files, soloUna = false) {
+                if (soloUna && imagenes.length >= 1) {
+                    toast('Solo se permite una imagen de portada para el combo', 'error');
                     return;
                 }
-                mostrarConfirmacionCustom(
-                    '⚠️',
-                    '¿Estás seguro que quieres salir?',
-                    'Se perderán los cambios no guardados.',
-                    'Quedarme',
-                    'Salir sin guardar',
-                    () => { cerrarModal(id); },
-                    false
-                );
-            }
-            function thumbHTML(url) {
-                return url
-                    ? `<img class="thumb" src="${url}" alt="" onerror="this.style.display='none'">`
-                    : `<div class="thumb-placeholder">📦</div>`;
-            }
-
-            /* ====== CARGAR TODO ====== */
-            function cargarTodo() {
-                setTimeout(() => { cargarNovedades(); cargarPromociones(); cargarCombos(); }, 0);
+                for (const file of files) {
+                    await new Promise(resolve => {
+                        abrirRecortador(file, resultado => {
+                            const reader = new FileReader();
+                            reader.onload = e => {
+                                const esPortada = imagenes.length === 0;
+                                imagenes.push({ file: resultado, url: '', nombre: '', esPortada, previewSrc: e.target.result });
+                                renderPreviews();
+                                resolve();
+                            };
+                            reader.readAsDataURL(resultado);
+                        });
+                    });
+                }
             }
 
-            /* ====== NOVEDADES ====== */
-            async function cargarNovedades() {
-                const lista = document.getElementById('lista-novedades');
-                lista.innerHTML = '<div class="loading">Cargando...</div>';
-                const snap = await getDocs(collection(db, 'novedades'));
-                if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin novedades aún. Agregá la primera.</div>'; return; }
-                lista.innerHTML = '';
-                // Ordenar por campo 'orden'
-                const docsOrdenados = snap.docs.sort((a, b) =>
-                    (a.data().orden ?? 999) - (b.data().orden ?? 999)
-                );
-                docsOrdenados.forEach(d => {
-                    const p = d.data();
-                    const row = document.createElement('div');
-                    row.className = 'producto-row th-novedad';
-                    row.draggable = true;
-                    row.dataset.id = d.id;  // ← necesario para el drag & drop      
-                    row.innerHTML = `
+            input.addEventListener('change', async e => {
+                if (e.target.files.length) await procesarFiles([...e.target.files], soloUna);
+                input.value = '';
+            });
+
+            area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+            area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+            area.addEventListener('drop', async e => {
+                e.preventDefault(); area.classList.remove('dragover');
+                if (e.dataTransfer.files.length) await procesarFiles([...e.dataTransfer.files], soloUna);
+            });
+
+            return {
+                async subirTodas(prefijo, setEstado) {
+                    const result = [];
+                    for (const img of imagenes) {
+                        let url = img.url;
+                        if (!url && img.file) {
+                            url = await subirImagenCloudinary(img.file, prefijo, setEstado);
+                            img.url = url;
+                        }
+                        result.push({ url, nombre: img.nombre || '', esPortada: img.esPortada || false });
+                    }
+                    return result;
+                },
+                setUrls(imgs) {
+                    imagenes = (imgs || []).map((img, idx) => {
+                        if (typeof img === 'string') return { file: null, url: img, nombre: '', esPortada: idx === 0, previewSrc: img };
+                        return { file: null, url: img.url, nombre: img.nombre || '', esPortada: img.esPortada || false, previewSrc: img.url };
+                    });
+                    if (imagenes.length > 0 && !imagenes.some(i => i.esPortada)) imagenes[0].esPortada = true;
+                    renderPreviews();
+                },
+                reset() { imagenes = []; renderPreviews(); },
+                setEstado: () => { },
+            };
+        }
+
+        let uploaderNovedad, uploaderPromocion, uploaderCombo, uploaderComboP1, uploaderComboP2;
+        document.addEventListener('DOMContentLoaded', () => {
+            uploaderNovedad = setupImagenUploadMultiple('novedad-imagen-file', 'upload-area-novedad', 'preview-list-novedad', 'novedad-imagen-url');
+            uploaderPromocion = setupImagenUploadMultiple('promocion-imagen-file', 'upload-area-promocion', 'preview-list-promocion', 'promocion-imagen-url');
+            uploaderCombo = setupImagenUploadMultiple('combo-imagen-file', 'upload-area-combo', 'preview-list-combo', 'combo-imagen-url', true);
+            uploaderComboP1 = setupImagenUploadMultiple('combo-p1-imagen-file', 'upload-area-combo-p1', 'preview-list-combo-p1', '');
+            uploaderComboP2 = setupImagenUploadMultiple('combo-p2-imagen-file', 'upload-area-combo-p2', 'preview-list-combo-p2', '');
+
+            document.getElementById('btn-agregar-p2').addEventListener('click', () => {
+                document.getElementById('combo-p2-section').style.display = 'block';
+                document.getElementById('combo-p2-toggle').style.display = 'none';
+            });
+            document.getElementById('btn-quitar-p2').addEventListener('click', () => {
+                document.getElementById('combo-p2-section').style.display = 'none';
+                document.getElementById('combo-p2-toggle').style.display = 'block';
+                uploaderComboP2.reset();
+                document.getElementById('combo-p2-nombre').value = '';
+                document.getElementById('combo-p2-precio').value = '';
+            });
+        });
+
+        /* ====== UTILIDADES ====== */
+        function fmt(n) {
+            return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n);
+        }
+        function toast(msg, tipo = '') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast ' + tipo;
+            setTimeout(() => t.classList.add('visible'), 10);
+            setTimeout(() => t.classList.remove('visible'), 2500);
+        }
+        function cerrarModal(id) {
+            if (!id) return;
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+        }
+        function cerrarModalSeguro(id) {
+            if (!id || id === 'cropper-modal' || id.startsWith('confirm')) {
+                cerrarModal(id);
+                return;
+            }
+            mostrarConfirmacionCustom(
+                '⚠️',
+                '¿Estás seguro que quieres salir?',
+                'Se perderán los cambios no guardados.',
+                'Quedarme',
+                'Salir sin guardar',
+                () => { cerrarModal(id); },
+                false
+            );
+        }
+        function thumbHTML(url) {
+            return url
+                ? `<img class="thumb" src="${url}" alt="" onerror="this.style.display='none'">`
+                : `<div class="thumb-placeholder">📦</div>`;
+        }
+
+        /* ====== CARGAR TODO ====== */
+        function cargarTodo() {
+            setTimeout(() => { cargarNovedades(); cargarPromociones(); cargarCombos(); }, 0);
+        }
+
+        /* ====== NOVEDADES ====== */
+        async function cargarNovedades() {
+            const lista = document.getElementById('lista-novedades');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'novedades'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin novedades aún. Agregá la primera.</div>'; return; }
+            lista.innerHTML = '';
+            // Ordenar por campo 'orden'
+            const docsOrdenados = snap.docs.sort((a, b) =>
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
+                const p = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-novedad';
+                row.draggable = true;
+                row.dataset.id = d.id;  // ← necesario para el drag & drop      
+                row.innerHTML = `
             ${thumbHTML(p.imagen)}
             <span class="producto-nombre-cell">${p.nombre}</span>
             <span class="producto-desc-cell">${p.descripcion || ''}</span>
@@ -1850,45 +1844,45 @@
                 <button class="btn-delete">🗑️</button>
             </div>`;
 
-                    row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
-                        const btn = e.currentTarget;
-                        const esVisible = btn.dataset.visible === 'true';
-                        await toggleVisible('novedades', btn.dataset.id, esVisible);
-                        cargarNovedades();
-                    });
-
-                    row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-                        const btn = e.currentTarget;
-                        await toggleStock('novedades', btn.dataset.id, btn.dataset.stock === 'true');
-                        cargarNovedades();
-                    });
-                    row.querySelector('.btn-edit').addEventListener('click', () => {
-                        abrirModalNovedad(d.id, p);
-                    });
-                    row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, p.nombre, cargarNovedades));
-                    lista.appendChild(row);
+                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    const esVisible = btn.dataset.visible === 'true';
+                    await toggleVisible('novedades', btn.dataset.id, esVisible);
+                    cargarNovedades();
                 });
-                initDragAndDrop('lista-novedades', 'novedades', cargarNovedades);
-                initBuscador('search-novedades', 'lista-novedades');
-            }
 
-            /* ====== PROMOCIONES ====== */
-            async function cargarPromociones() {
-                const lista = document.getElementById('lista-promociones');
-                lista.innerHTML = '<div class="loading">Cargando...</div>';
-                const snap = await getDocs(collection(db, 'promociones'));
-                if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin promociones aún.</div>'; return; }
-                lista.innerHTML = '';
-                const docsOrdenados = snap.docs.sort((a, b) =>
-                    (a.data().orden ?? 999) - (b.data().orden ?? 999)
-                );
-                docsOrdenados.forEach(d => {
-                    const p = d.data();
-                    const row = document.createElement('div');
-                    row.className = 'producto-row th-promocion';
-                    row.draggable = true;
-                    row.dataset.id = d.id;
-                    row.innerHTML = `
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('novedades', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarNovedades();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => {
+                    abrirModalNovedad(d.id, p);
+                });
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('novedades', d.id, p.nombre, cargarNovedades));
+                lista.appendChild(row);
+            });
+            initDragAndDrop('lista-novedades', 'novedades', cargarNovedades);
+            initBuscador('search-novedades', 'lista-novedades');
+        }
+
+        /* ====== PROMOCIONES ====== */
+        async function cargarPromociones() {
+            const lista = document.getElementById('lista-promociones');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'promociones'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin promociones aún.</div>'; return; }
+            lista.innerHTML = '';
+            const docsOrdenados = snap.docs.sort((a, b) =>
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
+                const p = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-promocion';
+                row.draggable = true;
+                row.dataset.id = d.id;
+                row.innerHTML = `
                     ${thumbHTML(p.imagen)}
                     <span class="producto-nombre-cell">${p.nombre}</span>
                     <span class="producto-desc-cell">${p.descripcion || ''}</span>
@@ -1902,41 +1896,41 @@
                         <button class="btn-edit">✏️</button>
                         <button class="btn-delete">🗑️</button>
                     </div>`;
-                    row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
-                        const btn = e.currentTarget;
-                        await toggleVisible('promociones', btn.dataset.id, btn.dataset.visible === 'true');
-                        cargarPromociones();
-                    });
-                    row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-                        const btn = e.currentTarget;
-                        await toggleStock('promociones', btn.dataset.id, btn.dataset.stock === 'true');
-                        cargarPromociones();
-                    });
-                    row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
-                    row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
-                    lista.appendChild(row);
+                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleVisible('promociones', btn.dataset.id, btn.dataset.visible === 'true');
+                    cargarPromociones();
                 });
-                initDragAndDrop('lista-promociones', 'promociones', cargarPromociones);
-                initBuscador('search-promociones', 'lista-promociones');
-            }
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('promociones', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarPromociones();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalPromocion(d.id, p));
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('promociones', d.id, p.nombre, cargarPromociones));
+                lista.appendChild(row);
+            });
+            initDragAndDrop('lista-promociones', 'promociones', cargarPromociones);
+            initBuscador('search-promociones', 'lista-promociones');
+        }
 
-            /* ====== COMBOS ====== */
-            async function cargarCombos() {
-                const lista = document.getElementById('lista-combos');
-                lista.innerHTML = '<div class="loading">Cargando...</div>';
-                const snap = await getDocs(collection(db, 'combos'));
-                if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún.</div>'; return; }
-                lista.innerHTML = '';
-                const docsOrdenados = snap.docs.sort((a, b) =>
-                    (a.data().orden ?? 999) - (b.data().orden ?? 999)
-                );
-                docsOrdenados.forEach(d => {
-                    const c = d.data();
-                    const row = document.createElement('div');
-                    row.className = 'producto-row th-combo';
-                    row.draggable = true;
-                    row.dataset.id = d.id;
-                    row.innerHTML = `
+        /* ====== COMBOS ====== */
+        async function cargarCombos() {
+            const lista = document.getElementById('lista-combos');
+            lista.innerHTML = '<div class="loading">Cargando...</div>';
+            const snap = await getDocs(collection(db, 'combos'));
+            if (snap.empty) { lista.innerHTML = '<div class="empty-state">Sin combos aún.</div>'; return; }
+            lista.innerHTML = '';
+            const docsOrdenados = snap.docs.sort((a, b) =>
+                (a.data().orden ?? 999) - (b.data().orden ?? 999)
+            );
+            docsOrdenados.forEach(d => {
+                const c = d.data();
+                const row = document.createElement('div');
+                row.className = 'producto-row th-combo';
+                row.draggable = true;
+                row.dataset.id = d.id;
+                row.innerHTML = `
                     ${thumbHTML(c.imagen)}
                     <span class="producto-nombre-cell">${c.nombre}</span>
                     <span class="producto-desc-cell">${c.descripcion || ''}</span>
@@ -1948,492 +1942,492 @@
                         <button class="btn-edit">✏️</button>
                         <button class="btn-delete">🗑️</button>
                     </div>`;
-                    row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
-                        const btn = e.currentTarget;
-                        await toggleVisible('combos', btn.dataset.id, btn.dataset.visible === 'true');
-                        cargarCombos();
-                    });
-                    row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
-                        const btn = e.currentTarget;
-                        await toggleStock('combos', btn.dataset.id, btn.dataset.stock === 'true');
-                        cargarCombos();
-                    });
-                    row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
-                    row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
-                    lista.appendChild(row);
+                row.querySelector('.btn-toggle-visible').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleVisible('combos', btn.dataset.id, btn.dataset.visible === 'true');
+                    cargarCombos();
                 });
-                initDragAndDrop('lista-combos', 'combos', cargarCombos);
-                initBuscador('search-combos', 'lista-combos');
-            }
-
-            /* ====== NOVEDADES - abrir modal ====== */
-            async function abrirModalNovedad(id = '', p = {}) {
-                document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
-                document.getElementById('novedad-id').value = id;
-                document.getElementById('novedad-nombre').value = p.nombre || '';
-                document.getElementById('novedad-descripcion').value = p.descripcion || '';
-                document.getElementById('novedad-precio').value = p.precio || '';
-                document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
-
-                // Primero cargar categorías, LUEGO setear el valor
-                await actualizarSelectsCategorias();
-                document.getElementById('novedad-categoria').value = p.categoria || '';
-
-                uploaderNovedad.reset();
-                const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
-                uploaderNovedad.setUrls(imgs);
-                document.getElementById('modal-novedad').classList.add('active');
-            }
-
-            /* ====== NOVEDADES - guardar ====== */
-            document.getElementById('btn-guardar-novedad').addEventListener('click', async () => {
-                const id = document.getElementById('novedad-id').value;
-                const nombre = document.getElementById('novedad-nombre').value.trim();
-                const descripcion = document.getElementById('novedad-descripcion').value.trim();
-                const precio = parseInt(document.getElementById('novedad-precio').value);
-                const enStock = document.getElementById('novedad-stock').value === 'true';
-                const categoria = document.getElementById('novedad-categoria').value;
-                if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
-
-                let imagenes = [];
-                try { imagenes = await uploaderNovedad.subirTodas('novedades', uploaderNovedad.setEstado); }
-                catch (e) { toast('Error al subir imagen', 'error'); return; }
-
-                const portada = imagenes.find(i => i.esPortada) || imagenes[0];
-                const data = {
-                    nombre, descripcion, precio, enStock, categoria,
-                    imagenes,
-                    imagen: portada?.url || '',
-                    tipo: 'novedad'
-                };
-                try {
-                    if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
-                    // DESPUÉS:
-                    else {
-                        const orden = await getOrdenSiguiente('novedades', categoria);
-                        await addDoc(collection(db, 'novedades'), { ...data, orden });
-                        toast('Novedad agregada', 'success');
-                    }
-                    cerrarModal('modal-novedad'); cargarNovedades();
-                } catch (e) { toast('Error al guardar', 'error'); }
+                row.querySelector('.btn-toggle-stock').addEventListener('click', async e => {
+                    const btn = e.currentTarget;
+                    await toggleStock('combos', btn.dataset.id, btn.dataset.stock === 'true');
+                    cargarCombos();
+                });
+                row.querySelector('.btn-edit').addEventListener('click', () => abrirModalCombo(d.id, c));
+                row.querySelector('.btn-delete').addEventListener('click', () => eliminar('combos', d.id, c.nombre, cargarCombos));
+                lista.appendChild(row);
             });
+            initDragAndDrop('lista-combos', 'combos', cargarCombos);
+            initBuscador('search-combos', 'lista-combos');
+        }
 
-            /* ====== PROMOCIONES - abrir modal ====== */
+        /* ====== NOVEDADES - abrir modal ====== */
+        async function abrirModalNovedad(id = '', p = {}) {
+            document.getElementById('modal-novedad-titulo').textContent = id ? 'Editar novedad' : 'Agregar novedad';
+            document.getElementById('novedad-id').value = id;
+            document.getElementById('novedad-nombre').value = p.nombre || '';
+            document.getElementById('novedad-descripcion').value = p.descripcion || '';
+            document.getElementById('novedad-precio').value = p.precio || '';
+            document.getElementById('novedad-stock').value = p.enStock === false ? 'false' : 'true';
 
-            async function abrirModalPromocion(id = '', p = {}) {
-                document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
-                document.getElementById('promocion-id').value = id;
-                document.getElementById('promocion-nombre').value = p.nombre || '';
-                document.getElementById('promocion-descripcion').value = p.descripcion || '';
-                document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
-                document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
-                document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
-                document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
+            // Primero cargar categorías, LUEGO setear el valor
+            await actualizarSelectsCategorias();
+            document.getElementById('novedad-categoria').value = p.categoria || '';
 
-                // Primero cargar categorías, LUEGO setear el valor
-                await actualizarSelectsCategorias();
-                document.getElementById('promocion-categoria').value = p.categoria || '';
+            uploaderNovedad.reset();
+            const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
+            uploaderNovedad.setUrls(imgs);
+            document.getElementById('modal-novedad').classList.add('active');
+        }
 
-                uploaderPromocion.reset();
-                const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
-                uploaderPromocion.setUrls(imgs);
-                document.getElementById('modal-promocion').classList.add('active');
-            }
+        /* ====== NOVEDADES - guardar ====== */
+        document.getElementById('btn-guardar-novedad').addEventListener('click', async () => {
+            const id = document.getElementById('novedad-id').value;
+            const nombre = document.getElementById('novedad-nombre').value.trim();
+            const descripcion = document.getElementById('novedad-descripcion').value.trim();
+            const precio = parseInt(document.getElementById('novedad-precio').value);
+            const enStock = document.getElementById('novedad-stock').value === 'true';
+            const categoria = document.getElementById('novedad-categoria').value;
+            if (!nombre || !precio) { toast('Completá nombre y precio', 'error'); return; }
 
-            /* ====== PROMOCIONES - guardar ====== */
-            document.getElementById('btn-guardar-promocion').addEventListener('click', async () => {
-                const id = document.getElementById('promocion-id').value;
-                const nombre = document.getElementById('promocion-nombre').value.trim();
-                const descripcion = document.getElementById('promocion-descripcion').value.trim();
-                const precioOriginal = parseInt(document.getElementById('promocion-precio-original').value);
-                const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
-                const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
-                const enStock = document.getElementById('promocion-stock').value === 'true';
-                const categoria = document.getElementById('promocion-categoria').value;
-                if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
+            let imagenes = [];
+            try { imagenes = await uploaderNovedad.subirTodas('novedades', uploaderNovedad.setEstado); }
+            catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-                let imagenes = [];
-                try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
-                catch (e) { toast('Error al subir imagen', 'error'); return; }
-
-                const portada = imagenes.find(i => i.esPortada) || imagenes[0];
-                const data = {
-                    nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
-                    imagenes,
-                    imagen: portada?.url || '',
-                    tipo: 'promocion'
-                };
-                try {
-                    if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
-                    // DESPUÉS:
-                    else {
-                        const orden = await getOrdenSiguiente('promociones', categoria);
-                        await addDoc(collection(db, 'promociones'), { ...data, orden });
-                        toast('Promoción agregada', 'success');
-                    }
-                    cerrarModal('modal-promocion'); cargarPromociones();
-                } catch (e) { toast('Error al guardar', 'error'); }
-            });
-
-            /* ====== COMBOS - abrir modal ====== */
-            async function abrirModalCombo(id = '', c = {}) {
-                document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
-                document.getElementById('combo-id').value = id;
-                document.getElementById('combo-nombre').value = c.nombre || '';
-                document.getElementById('combo-descripcion').value = c.descripcion || '';
-                document.getElementById('combo-precio').value = c.precio || '';
-                document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
-
-                // Primero cargar categorías, LUEGO setear el valor
-                await actualizarSelectsCategorias();
-                document.getElementById('combo-categoria').value = c.categoria || '';
-
-                uploaderCombo.reset();
-                const imgs = c.imagenes || (c.imagen ? [c.imagen] : []);
-                uploaderCombo.setUrls(imgs);
-                document.getElementById('modal-combo').classList.add('active');
-
-                // Producto 1
-                uploaderComboP1.reset();
-                document.getElementById('combo-p1-nombre').value = c.producto1?.nombre || '';
-                document.getElementById('combo-p1-precio').value = c.producto1?.precio || '';
-                if (c.producto1?.variantes?.length) uploaderComboP1.setUrls(c.producto1.variantes);
-
-                // Producto 2
-                const tieneP2 = c.producto2 !== null && c.producto2 !== undefined;
-                uploaderComboP2.reset();
-                document.getElementById('combo-p2-nombre').value = c.producto2?.nombre || '';
-                document.getElementById('combo-p2-precio').value = c.producto2?.precio || '';
-                if (c.producto2?.variantes?.length) uploaderComboP2.setUrls(c.producto2.variantes);
-                document.getElementById('combo-p2-section').style.display = tieneP2 ? 'block' : 'none';
-                document.getElementById('combo-p2-toggle').style.display = tieneP2 ? 'none' : 'block';
-
-                document.getElementById('modal-combo').classList.add('active');
-            }
-
-            /* ====== COMBOS - guardar ====== */
-            document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
-                const id = document.getElementById('combo-id').value;
-                const nombre = document.getElementById('combo-nombre').value.trim();
-                const descripcion = document.getElementById('combo-descripcion').value.trim();
-                const precio = parseInt(document.getElementById('combo-precio').value);
-                const enStock = document.getElementById('combo-stock').value === 'true';
-                const categoria = document.getElementById('combo-categoria').value;
-                const p1Nombre = document.getElementById('combo-p1-nombre').value.trim();
-                const p1Precio = parseInt(document.getElementById('combo-p1-precio').value) || 0;
-                const tieneP2 = document.getElementById('combo-p2-section').style.display !== 'none';
-                const p2Nombre = document.getElementById('combo-p2-nombre').value.trim();
-                const p2Precio = parseInt(document.getElementById('combo-p2-precio').value) || 0;
-
-                if (!nombre || !precio) { toast('Completá nombre y precio del combo', 'error'); return; }
-                if (!p1Nombre || !p1Precio) { toast('Completá nombre y precio del Producto 1', 'error'); return; }
-                if (tieneP2 && (!p2Nombre || !p2Precio)) { toast('Completá nombre y precio del Producto 2', 'error'); return; }
-
-                let imagenes = [];
-                let p1Variantes = [], p2Variantes = [];
-                try {
-                    imagenes = await uploaderCombo.subirTodas('combos', uploaderCombo.setEstado);
-                    p1Variantes = await uploaderComboP1.subirTodas('combos/p1', uploaderComboP1.setEstado);
-                    if (tieneP2) p2Variantes = await uploaderComboP2.subirTodas('combos/p2', uploaderComboP2.setEstado);
-                } catch (e) { toast('Error al subir imagen', 'error'); return; }
-
-                const portada = imagenes.find(i => i.esPortada) || imagenes[0];
-
-                const data = {
-                    nombre, descripcion, precio, enStock, categoria,
-                    imagenes,
-                    imagen: portada?.url || '',
-                    tipo: 'combo',
-                    producto1: {
-                        nombre: p1Nombre,
-                        precio: p1Precio,
-                        variantes: p1Variantes
-                    },
-                    producto2: tieneP2 ? {
-                        nombre: p2Nombre,
-                        precio: p2Precio,
-                        variantes: p2Variantes
-                    } : null
-                };
-
-                try {
-                    if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
-                    else {
-                        const orden = await getOrdenSiguiente('combos', categoria);
-                        await addDoc(collection(db, 'combos'), { ...data, orden });
-                        toast('Combo agregado', 'success');
-                    }
-                    cerrarModal('modal-combo'); cargarCombos();
-                } catch (e) { toast('Error al guardar', 'error'); }
-            });
-
-            /* ====== ORDEN AUTOMÁTICO AL AGREGAR ====== */
-            async function getOrdenSiguiente(coleccion, categoriaId) {
-                const snap = await getDocs(collection(db, coleccion));
-                const productos = snap.docs
-                    .map(d => d.data())
-                    .filter(p => (p.categoria || '') === (categoriaId || ''));
-                if (productos.length === 0) return 0;
-                return Math.max(...productos.map(p => p.orden ?? 0)) + 1;
-            }
-
-            /* ====== DRAG & DROP ORDEN ====== */
-            function initDragAndDrop(listaId, coleccion, recargar) {
-                const lista = document.getElementById(listaId);
-                let dragSrc = null;
-
-                function getRows() {
-                    return [...lista.querySelectorAll('.producto-row')];
+            const portada = imagenes.find(i => i.esPortada) || imagenes[0];
+            const data = {
+                nombre, descripcion, precio, enStock, categoria,
+                imagenes,
+                imagen: portada?.url || '',
+                tipo: 'novedad'
+            };
+            try {
+                if (id) { await updateDoc(doc(db, 'novedades', id), data); toast('Novedad actualizada', 'success'); }
+                // DESPUÉS:
+                else {
+                    const orden = await getOrdenSiguiente('novedades', categoria);
+                    await addDoc(collection(db, 'novedades'), { ...data, orden });
+                    toast('Novedad agregada', 'success');
                 }
+                cerrarModal('modal-novedad'); cargarNovedades();
+            } catch (e) { toast('Error al guardar', 'error'); }
+        });
 
-                lista.addEventListener('dragstart', e => {
-                    dragSrc = e.target.closest('.producto-row');
-                    if (!dragSrc) return;
-                    dragSrc.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'move';
-                });
+        /* ====== PROMOCIONES - abrir modal ====== */
 
-                lista.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    const target = e.target.closest('.producto-row');
-                    if (!target || target === dragSrc) return;
-                    getRows().forEach(r => r.classList.remove('drag-over'));
-                    target.classList.add('drag-over');
-                });
+        async function abrirModalPromocion(id = '', p = {}) {
+            document.getElementById('modal-promocion-titulo').textContent = id ? 'Editar promoción' : 'Agregar promoción';
+            document.getElementById('promocion-id').value = id;
+            document.getElementById('promocion-nombre').value = p.nombre || '';
+            document.getElementById('promocion-descripcion').value = p.descripcion || '';
+            document.getElementById('promocion-precio-original').value = p.precioOriginal || '';
+            document.getElementById('promocion-precio-descuento').value = p.precioDescuento || '';
+            document.getElementById('promocion-descuento-pct').value = p.descuentoPorcentaje || '';
+            document.getElementById('promocion-stock').value = p.enStock === false ? 'false' : 'true';
 
-                lista.addEventListener('dragleave', e => {
-                    const target = e.target.closest('.producto-row');
-                    if (target) target.classList.remove('drag-over');
-                });
+            // Primero cargar categorías, LUEGO setear el valor
+            await actualizarSelectsCategorias();
+            document.getElementById('promocion-categoria').value = p.categoria || '';
 
-                lista.addEventListener('drop', async e => {
-                    e.preventDefault();
-                    const target = e.target.closest('.producto-row');
-                    if (!target || target === dragSrc) return;
-                    target.classList.remove('drag-over');
-                    dragSrc.classList.remove('dragging');
+            uploaderPromocion.reset();
+            const imgs = p.imagenes || (p.imagen ? [p.imagen] : []);
+            uploaderPromocion.setUrls(imgs);
+            document.getElementById('modal-promocion').classList.add('active');
+        }
 
-                    // Reordenar en el DOM
-                    lista.insertBefore(dragSrc, target);
+        /* ====== PROMOCIONES - guardar ====== */
+        document.getElementById('btn-guardar-promocion').addEventListener('click', async () => {
+            const id = document.getElementById('promocion-id').value;
+            const nombre = document.getElementById('promocion-nombre').value.trim();
+            const descripcion = document.getElementById('promocion-descripcion').value.trim();
+            const precioOriginal = parseInt(document.getElementById('promocion-precio-original').value);
+            const precioDescuento = parseInt(document.getElementById('promocion-precio-descuento').value);
+            const descuentoPorcentaje = parseInt(document.getElementById('promocion-descuento-pct').value) || 0;
+            const enStock = document.getElementById('promocion-stock').value === 'true';
+            const categoria = document.getElementById('promocion-categoria').value;
+            if (!nombre || !precioOriginal || !precioDescuento) { toast('Completá nombre y precios', 'error'); return; }
 
-                    // Guardar nuevo orden en Firestore
-                    const rows = getRows();
-                    const updates = rows.map((row, i) =>
-                        updateDoc(doc(db, coleccion, row.dataset.id), { orden: i })
-                    );
-                    await Promise.all(updates);
-                    toast('Orden guardado', 'success');
-                });
+            let imagenes = [];
+            try { imagenes = await uploaderPromocion.subirTodas('promociones', uploaderPromocion.setEstado); }
+            catch (e) { toast('Error al subir imagen', 'error'); return; }
 
-                lista.addEventListener('dragend', e => {
-                    getRows().forEach(r => {
-                        r.classList.remove('dragging');
-                        r.classList.remove('drag-over');
-                    });
-                });
+            const portada = imagenes.find(i => i.esPortada) || imagenes[0];
+            const data = {
+                nombre, descripcion, precioOriginal, precioDescuento, descuentoPorcentaje, enStock, categoria,
+                imagenes,
+                imagen: portada?.url || '',
+                tipo: 'promocion'
+            };
+            try {
+                if (id) { await updateDoc(doc(db, 'promociones', id), data); toast('Promoción actualizada', 'success'); }
+                // DESPUÉS:
+                else {
+                    const orden = await getOrdenSiguiente('promociones', categoria);
+                    await addDoc(collection(db, 'promociones'), { ...data, orden });
+                    toast('Promoción agregada', 'success');
+                }
+                cerrarModal('modal-promocion'); cargarPromociones();
+            } catch (e) { toast('Error al guardar', 'error'); }
+        });
+
+        /* ====== COMBOS - abrir modal ====== */
+        async function abrirModalCombo(id = '', c = {}) {
+            document.getElementById('modal-combo-titulo').textContent = id ? 'Editar combo' : 'Agregar combo';
+            document.getElementById('combo-id').value = id;
+            document.getElementById('combo-nombre').value = c.nombre || '';
+            document.getElementById('combo-descripcion').value = c.descripcion || '';
+            document.getElementById('combo-precio').value = c.precio || '';
+            document.getElementById('combo-stock').value = c.enStock === false ? 'false' : 'true';
+
+            // Primero cargar categorías, LUEGO setear el valor
+            await actualizarSelectsCategorias();
+            document.getElementById('combo-categoria').value = c.categoria || '';
+
+            uploaderCombo.reset();
+            const imgs = c.imagenes || (c.imagen ? [c.imagen] : []);
+            uploaderCombo.setUrls(imgs);
+            document.getElementById('modal-combo').classList.add('active');
+
+            // Producto 1
+            uploaderComboP1.reset();
+            document.getElementById('combo-p1-nombre').value = c.producto1?.nombre || '';
+            document.getElementById('combo-p1-precio').value = c.producto1?.precio || '';
+            if (c.producto1?.variantes?.length) uploaderComboP1.setUrls(c.producto1.variantes);
+
+            // Producto 2
+            const tieneP2 = c.producto2 !== null && c.producto2 !== undefined;
+            uploaderComboP2.reset();
+            document.getElementById('combo-p2-nombre').value = c.producto2?.nombre || '';
+            document.getElementById('combo-p2-precio').value = c.producto2?.precio || '';
+            if (c.producto2?.variantes?.length) uploaderComboP2.setUrls(c.producto2.variantes);
+            document.getElementById('combo-p2-section').style.display = tieneP2 ? 'block' : 'none';
+            document.getElementById('combo-p2-toggle').style.display = tieneP2 ? 'none' : 'block';
+
+            document.getElementById('modal-combo').classList.add('active');
+        }
+
+        /* ====== COMBOS - guardar ====== */
+        document.getElementById('btn-guardar-combo').addEventListener('click', async () => {
+            const id = document.getElementById('combo-id').value;
+            const nombre = document.getElementById('combo-nombre').value.trim();
+            const descripcion = document.getElementById('combo-descripcion').value.trim();
+            const precio = parseInt(document.getElementById('combo-precio').value);
+            const enStock = document.getElementById('combo-stock').value === 'true';
+            const categoria = document.getElementById('combo-categoria').value;
+            const p1Nombre = document.getElementById('combo-p1-nombre').value.trim();
+            const p1Precio = parseInt(document.getElementById('combo-p1-precio').value) || 0;
+            const tieneP2 = document.getElementById('combo-p2-section').style.display !== 'none';
+            const p2Nombre = document.getElementById('combo-p2-nombre').value.trim();
+            const p2Precio = parseInt(document.getElementById('combo-p2-precio').value) || 0;
+
+            if (!nombre || !precio) { toast('Completá nombre y precio del combo', 'error'); return; }
+            if (!p1Nombre || !p1Precio) { toast('Completá nombre y precio del Producto 1', 'error'); return; }
+            if (tieneP2 && (!p2Nombre || !p2Precio)) { toast('Completá nombre y precio del Producto 2', 'error'); return; }
+
+            let imagenes = [];
+            let p1Variantes = [], p2Variantes = [];
+            try {
+                imagenes = await uploaderCombo.subirTodas('combos', uploaderCombo.setEstado);
+                p1Variantes = await uploaderComboP1.subirTodas('combos/p1', uploaderComboP1.setEstado);
+                if (tieneP2) p2Variantes = await uploaderComboP2.subirTodas('combos/p2', uploaderComboP2.setEstado);
+            } catch (e) { toast('Error al subir imagen', 'error'); return; }
+
+            const portada = imagenes.find(i => i.esPortada) || imagenes[0];
+
+            const data = {
+                nombre, descripcion, precio, enStock, categoria,
+                imagenes,
+                imagen: portada?.url || '',
+                tipo: 'combo',
+                producto1: {
+                    nombre: p1Nombre,
+                    precio: p1Precio,
+                    variantes: p1Variantes
+                },
+                producto2: tieneP2 ? {
+                    nombre: p2Nombre,
+                    precio: p2Precio,
+                    variantes: p2Variantes
+                } : null
+            };
+
+            try {
+                if (id) { await updateDoc(doc(db, 'combos', id), data); toast('Combo actualizado', 'success'); }
+                else {
+                    const orden = await getOrdenSiguiente('combos', categoria);
+                    await addDoc(collection(db, 'combos'), { ...data, orden });
+                    toast('Combo agregado', 'success');
+                }
+                cerrarModal('modal-combo'); cargarCombos();
+            } catch (e) { toast('Error al guardar', 'error'); }
+        });
+
+        /* ====== ORDEN AUTOMÁTICO AL AGREGAR ====== */
+        async function getOrdenSiguiente(coleccion, categoriaId) {
+            const snap = await getDocs(collection(db, coleccion));
+            const productos = snap.docs
+                .map(d => d.data())
+                .filter(p => (p.categoria || '') === (categoriaId || ''));
+            if (productos.length === 0) return 0;
+            return Math.max(...productos.map(p => p.orden ?? 0)) + 1;
+        }
+
+        /* ====== DRAG & DROP ORDEN ====== */
+        function initDragAndDrop(listaId, coleccion, recargar) {
+            const lista = document.getElementById(listaId);
+            let dragSrc = null;
+
+            function getRows() {
+                return [...lista.querySelectorAll('.producto-row')];
             }
 
-            async function ordenarAlfabetico(coleccion, recargar) {
-                const snap = await getDocs(collection(db, coleccion));
-                const docs = snap.docs.map(d => ({ id: d.id, nombre: d.data().nombre }));
-                docs.sort((a, b) => a.nombre.localeCompare(b.nombre));
-                const updates = docs.map((d, i) =>
-                    updateDoc(doc(db, coleccion, d.id), { orden: i })
+            lista.addEventListener('dragstart', e => {
+                dragSrc = e.target.closest('.producto-row');
+                if (!dragSrc) return;
+                dragSrc.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            lista.addEventListener('dragover', e => {
+                e.preventDefault();
+                const target = e.target.closest('.producto-row');
+                if (!target || target === dragSrc) return;
+                getRows().forEach(r => r.classList.remove('drag-over'));
+                target.classList.add('drag-over');
+            });
+
+            lista.addEventListener('dragleave', e => {
+                const target = e.target.closest('.producto-row');
+                if (target) target.classList.remove('drag-over');
+            });
+
+            lista.addEventListener('drop', async e => {
+                e.preventDefault();
+                const target = e.target.closest('.producto-row');
+                if (!target || target === dragSrc) return;
+                target.classList.remove('drag-over');
+                dragSrc.classList.remove('dragging');
+
+                // Reordenar en el DOM
+                lista.insertBefore(dragSrc, target);
+
+                // Guardar nuevo orden en Firestore
+                const rows = getRows();
+                const updates = rows.map((row, i) =>
+                    updateDoc(doc(db, coleccion, row.dataset.id), { orden: i })
                 );
                 await Promise.all(updates);
-                toast('Ordenado A→Z', 'success');
+                toast('Orden guardado', 'success');
+            });
+
+            lista.addEventListener('dragend', e => {
+                getRows().forEach(r => {
+                    r.classList.remove('dragging');
+                    r.classList.remove('drag-over');
+                });
+            });
+        }
+
+        async function ordenarAlfabetico(coleccion, recargar) {
+            const snap = await getDocs(collection(db, coleccion));
+            const docs = snap.docs.map(d => ({ id: d.id, nombre: d.data().nombre }));
+            docs.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            const updates = docs.map((d, i) =>
+                updateDoc(doc(db, coleccion, d.id), { orden: i })
+            );
+            await Promise.all(updates);
+            toast('Ordenado A→Z', 'success');
+            recargar();
+        }
+
+        /* ====== TOGGLE STOCK ====== */
+        async function toggleStock(col, id, stockActual) {
+            await updateDoc(doc(db, col, id), { enStock: !stockActual });
+            // Notificación gris para cambio de stock
+            toast(stockActual ? 'Sin stock' : 'Con stock', stockActual ? 'gray' : 'success');
+        }
+
+
+        async function toggleVisible(col, id, visibleActual) {
+            await updateDoc(doc(db, col, id), { visible: !visibleActual });
+            toast(visibleActual ? 'Producto oculto' : 'Producto visible', visibleActual ? 'gray' : 'success');
+        }
+
+        /* ====== CONFIRMAR ELIMINACIÓN Y SALIDA ====== */
+        function mostrarConfirmacionCustom(icono, titulo, subtitulo, textoCancelar, textoAceptar, onAceptar, esEliminar = false) {
+            const overlay = document.getElementById('confirm-overlay');
+            const iconEl = document.getElementById('confirm-icon');
+            const titleEl = document.getElementById('confirm-title');
+            const subtitleEl = document.getElementById('confirm-subtitle');
+            const btnCan = document.getElementById('btn-confirm-cancel');
+            const btnDel = document.getElementById('btn-confirm-delete');
+
+            if (!overlay || !btnCan || !btnDel) return;
+
+            iconEl.textContent = icono;
+            titleEl.textContent = titulo;
+            subtitleEl.textContent = subtitulo;
+
+            const newCan = btnCan.cloneNode(true);
+            const newDel = btnDel.cloneNode(true);
+
+            newCan.textContent = textoCancelar;
+            newDel.textContent = textoAceptar;
+
+            if (esEliminar) {
+                newDel.style.background = 'var(--red)';
+                newDel.style.color = '#fff';
+            } else {
+                newDel.style.background = 'var(--pink)';
+                newDel.style.color = '#fff';
+            }
+
+            btnCan.parentNode.replaceChild(newCan, btnCan);
+            btnDel.parentNode.replaceChild(newDel, btnDel);
+
+            overlay.classList.add('active');
+
+            newDel.onclick = async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                overlay.classList.remove('active');
+                if (onAceptar) await onAceptar();
+            };
+
+            newCan.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                overlay.classList.remove('active');
+            };
+
+            overlay.onclick = (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        }
+
+        function confirmarEliminacion(nombre, onAceptar) {
+            mostrarConfirmacionCustom(
+                '🗑️',
+                '¿Eliminás este producto?',
+                `"${nombre}" será eliminado permanentemente.`,
+                'Cancelar',
+                'Eliminar',
+                onAceptar,
+                true
+            );
+        }
+
+        /* ====== ELIMINAR ====== */
+        async function eliminar(col, id, nombre, recargar) {
+            confirmarEliminacion(nombre, async () => {
+                await deleteDoc(doc(db, col, id));
+                toast('Producto eliminado', 'error');
                 recargar();
-            }
+            });
+        }
 
-            /* ====== TOGGLE STOCK ====== */
-            async function toggleStock(col, id, stockActual) {
-                await updateDoc(doc(db, col, id), { enStock: !stockActual });
-                // Notificación gris para cambio de stock
-                toast(stockActual ? 'Sin stock' : 'Con stock', stockActual ? 'gray' : 'success');
-            }
+        /* ====== CATEGORÍAS ====== */
+        let categoriasCache = [];
+        let isCargandoCategorias = false;
 
-
-            async function toggleVisible(col, id, visibleActual) {
-                await updateDoc(doc(db, col, id), { visible: !visibleActual });
-                toast(visibleActual ? 'Producto oculto' : 'Producto visible', visibleActual ? 'gray' : 'success');
-            }
-
-            /* ====== CONFIRMAR ELIMINACIÓN Y SALIDA ====== */
-            function mostrarConfirmacionCustom(icono, titulo, subtitulo, textoCancelar, textoAceptar, onAceptar, esEliminar = false) {
-                const overlay = document.getElementById('confirm-overlay');
-                const iconEl = document.getElementById('confirm-icon');
-                const titleEl = document.getElementById('confirm-title');
-                const subtitleEl = document.getElementById('confirm-subtitle');
-                const btnCan = document.getElementById('btn-confirm-cancel');
-                const btnDel = document.getElementById('btn-confirm-delete');
-
-                if (!overlay || !btnCan || !btnDel) return;
-
-                iconEl.textContent = icono;
-                titleEl.textContent = titulo;
-                subtitleEl.textContent = subtitulo;
-
-                const newCan = btnCan.cloneNode(true);
-                const newDel = btnDel.cloneNode(true);
-
-                newCan.textContent = textoCancelar;
-                newDel.textContent = textoAceptar;
-
-                if (esEliminar) {
-                    newDel.style.background = 'var(--red)';
-                    newDel.style.color = '#fff';
-                } else {
-                    newDel.style.background = 'var(--pink)';
-                    newDel.style.color = '#fff';
-                }
-
-                btnCan.parentNode.replaceChild(newCan, btnCan);
-                btnDel.parentNode.replaceChild(newDel, btnDel);
-
-                overlay.classList.add('active');
-
-                newDel.onclick = async (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    overlay.classList.remove('active');
-                    if (onAceptar) await onAceptar();
-                };
-
-                newCan.onclick = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    overlay.classList.remove('active');
-                };
-
-                overlay.onclick = (e) => {
-                    if (e.target === overlay) overlay.classList.remove('active');
-                };
-            }
-
-            function confirmarEliminacion(nombre, onAceptar) {
-                mostrarConfirmacionCustom(
-                    '🗑️',
-                    '¿Eliminás este producto?',
-                    `"${nombre}" será eliminado permanentemente.`,
-                    'Cancelar',
-                    'Eliminar',
-                    onAceptar,
-                    true
-                );
-            }
-
-            /* ====== ELIMINAR ====== */
-            async function eliminar(col, id, nombre, recargar) {
-                confirmarEliminacion(nombre, async () => {
-                    await deleteDoc(doc(db, col, id));
-                    toast('Producto eliminado', 'error');
-                    recargar();
-                });
-            }
-
-            /* ====== CATEGORÍAS ====== */
-            let categoriasCache = [];
-            let isCargandoCategorias = false;
-
-            async function cargarCategorias() {
-                if (isCargandoCategorias) return;
-                isCargandoCategorias = true;
-                try {
-                    const lista = document.getElementById('lista-categorias');
-                    lista.innerHTML = '<div class="loading">Cargando...</div>';
-                    const snap = await getDocs(collection(db, 'categorias'));
-                    categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-                        .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
-
-                    actualizarSelectsCategorias();
-
-                    if (snap.empty) {
-                        lista.innerHTML = '<div class="empty-state">Sin categorías. Creá la primera.</div>';
-                        return;
-                    }
-
-                    lista.innerHTML = '';
-                    for (const cat of categoriasCache) {
-                        await renderCategoria(cat, lista);
-                    }
-
-                    initDragAndDropCategorias();
-                } finally {
-                    isCargandoCategorias = false;
-                }
-            }
-
-            function initDragAndDropCategorias() {
+        async function cargarCategorias() {
+            if (isCargandoCategorias) return;
+            isCargandoCategorias = true;
+            try {
                 const lista = document.getElementById('lista-categorias');
-                let dragSrcCat = null;
+                lista.innerHTML = '<div class="loading">Cargando...</div>';
+                const snap = await getDocs(collection(db, 'categorias'));
+                categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
 
-                lista.querySelectorAll('.cat-card').forEach(card => {
-                    card.addEventListener('dragstart', e => {
-                        dragSrcCat = card;
-                        card.style.opacity = '0.4';
-                        e.dataTransfer.effectAllowed = 'move';
-                        e.dataTransfer.setData('type', 'categoria');
-                    });
-                    card.addEventListener('dragend', () => {
-                        card.style.opacity = '';
+                actualizarSelectsCategorias();
+
+                if (snap.empty) {
+                    lista.innerHTML = '<div class="empty-state">Sin categorías. Creá la primera.</div>';
+                    return;
+                }
+
+                lista.innerHTML = '';
+                for (const cat of categoriasCache) {
+                    await renderCategoria(cat, lista);
+                }
+
+                initDragAndDropCategorias();
+            } finally {
+                isCargandoCategorias = false;
+            }
+        }
+
+        function initDragAndDropCategorias() {
+            const lista = document.getElementById('lista-categorias');
+            let dragSrcCat = null;
+
+            lista.querySelectorAll('.cat-card').forEach(card => {
+                card.addEventListener('dragstart', e => {
+                    dragSrcCat = card;
+                    card.style.opacity = '0.4';
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('type', 'categoria');
+                });
+                card.addEventListener('dragend', () => {
+                    card.style.opacity = '';
+                    lista.querySelectorAll('.cat-card').forEach(c => c.classList.remove('drag-over-cat'));
+                });
+                card.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    if (dragSrcCat && dragSrcCat !== card) {
                         lista.querySelectorAll('.cat-card').forEach(c => c.classList.remove('drag-over-cat'));
-                    });
-                    card.addEventListener('dragover', e => {
-                        e.preventDefault();
-                        if (dragSrcCat && dragSrcCat !== card) {
-                            lista.querySelectorAll('.cat-card').forEach(c => c.classList.remove('drag-over-cat'));
-                            card.classList.add('drag-over-cat');
-                        }
-                    });
-                    card.addEventListener('dragleave', () => card.classList.remove('drag-over-cat'));
-                    card.addEventListener('drop', async e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        card.classList.remove('drag-over-cat');
-                        if (!dragSrcCat || dragSrcCat === card) return;
-                        const type = e.dataTransfer.getData('type');
-                        if (type !== 'categoria') return;
+                        card.classList.add('drag-over-cat');
+                    }
+                });
+                card.addEventListener('dragleave', () => card.classList.remove('drag-over-cat'));
+                card.addEventListener('drop', async e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    card.classList.remove('drag-over-cat');
+                    if (!dragSrcCat || dragSrcCat === card) return;
+                    const type = e.dataTransfer.getData('type');
+                    if (type !== 'categoria') return;
 
-                        // Reordenar en DOM
-                        const cards = [...lista.querySelectorAll('.cat-card')];
-                        const srcIdx = cards.indexOf(dragSrcCat);
-                        const tgtIdx = cards.indexOf(card);
-                        if (srcIdx < tgtIdx) lista.insertBefore(dragSrcCat, card.nextSibling);
-                        else lista.insertBefore(dragSrcCat, card);
+                    // Reordenar en DOM
+                    const cards = [...lista.querySelectorAll('.cat-card')];
+                    const srcIdx = cards.indexOf(dragSrcCat);
+                    const tgtIdx = cards.indexOf(card);
+                    if (srcIdx < tgtIdx) lista.insertBefore(dragSrcCat, card.nextSibling);
+                    else lista.insertBefore(dragSrcCat, card);
 
-                        // Guardar nuevo orden en Firestore
-                        const newCards = [...lista.querySelectorAll('.cat-card')];
-                        await Promise.all(newCards.map((c, i) =>
-                            updateDoc(doc(db, 'categorias', c.dataset.catId), { orden: i })
-                        ));
-                        toast('Orden de categorías guardado', 'success');
-                    });
+                    // Guardar nuevo orden en Firestore
+                    const newCards = [...lista.querySelectorAll('.cat-card')];
+                    await Promise.all(newCards.map((c, i) =>
+                        updateDoc(doc(db, 'categorias', c.dataset.catId), { orden: i })
+                    ));
+                    toast('Orden de categorías guardado', 'success');
+                });
+            });
+        }
+
+        async function renderCategoria(cat, lista) {
+            const colecciones = ['novedades', 'promociones', 'combos'];
+            let productos = [];
+            for (const col of colecciones) {
+                const snap = await getDocs(collection(db, col));
+                snap.docs.forEach(d => {
+                    const data = d.data();
+                    if (data.categoria === cat.id) {
+                        productos.push({ ...data, _col: col, _id: d.id });
+                    }
                 });
             }
+            productos.sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
 
-            async function renderCategoria(cat, lista) {
-                const colecciones = ['novedades', 'promociones', 'combos'];
-                let productos = [];
-                for (const col of colecciones) {
-                    const snap = await getDocs(collection(db, col));
-                    snap.docs.forEach(d => {
-                        const data = d.data();
-                        if (data.categoria === cat.id) {
-                            productos.push({ ...data, _col: col, _id: d.id });
-                        }
-                    });
-                }
-                productos.sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
+            const el = document.createElement('div');
+            el.className = 'cat-card';
+            el.dataset.catId = cat.id;
+            el.draggable = true;
+            el.style.cssText = 'background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:12px;overflow:hidden;cursor:grab;';
 
-                const el = document.createElement('div');
-                el.className = 'cat-card';
-                el.dataset.catId = cat.id;
-                el.draggable = true;
-                el.style.cssText = 'background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:12px;overflow:hidden;cursor:grab;';
-
-                const header = document.createElement('div');
-                header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#FFF0F5;border-left:4px solid var(--pink);';
-                header.innerHTML = `
+            const header = document.createElement('div');
+            header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#FFF0F5;border-left:4px solid var(--pink);';
+            header.innerHTML = `
                 <div style="display:flex;align-items:center;gap:10px;">
                     <span style="color:#ccc;font-size:20px;cursor:grab;">⠿</span>
                     <span style="font-weight:800;font-size:18px;color:var(--pink);">${cat.nombre}</span>
@@ -2445,29 +2439,29 @@
                     <span class="cat-arrow" style="font-size:20px;transition:transform 0.3s;cursor:pointer;">▼</span>
                 </div>`;
 
-                const body = document.createElement('div');
-                body.style.cssText = 'display:none;padding:12px 20px;min-height:60px;';
-                body.dataset.catId = cat.id;
+            const body = document.createElement('div');
+            body.style.cssText = 'display:none;padding:12px 20px;min-height:60px;';
+            body.dataset.catId = cat.id;
 
-                function renderProductos() {
-                    body.innerHTML = '';
-                    const dropZoneMsg = document.createElement('div');
-                    dropZoneMsg.className = 'drop-zone-msg';
-                    dropZoneMsg.style.cssText = 'display:none;text-align:center;padding:16px;color:#ccc;font-size:14px;border:2px dashed #F2C0D8;border-radius:8px;margin-top:8px;';
-                    dropZoneMsg.textContent = 'Soltá aquí para mover a esta categoría';
+            function renderProductos() {
+                body.innerHTML = '';
+                const dropZoneMsg = document.createElement('div');
+                dropZoneMsg.className = 'drop-zone-msg';
+                dropZoneMsg.style.cssText = 'display:none;text-align:center;padding:16px;color:#ccc;font-size:14px;border:2px dashed #F2C0D8;border-radius:8px;margin-top:8px;';
+                dropZoneMsg.textContent = 'Soltá aquí para mover a esta categoría';
 
-                    if (productos.length === 0) {
-                        body.innerHTML = '<p style="color:#999;padding:8px 0;">No hay productos en esta categoría.</p>';
-                    } else {
-                        productos.forEach((p, pIdx) => {
-                            const row = document.createElement('div');
-                            row.draggable = true;
-                            row.dataset.productId = p._id;
-                            row.dataset.productCol = p._col;
-                            row.dataset.catId = cat.id;
-                            row.className = 'prod-row-draggable';
-                            row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #F5F5F5;cursor:grab;';
-                            row.innerHTML = `
+                if (productos.length === 0) {
+                    body.innerHTML = '<p style="color:#999;padding:8px 0;">No hay productos en esta categoría.</p>';
+                } else {
+                    productos.forEach((p, pIdx) => {
+                        const row = document.createElement('div');
+                        row.draggable = true;
+                        row.dataset.productId = p._id;
+                        row.dataset.productCol = p._col;
+                        row.dataset.catId = cat.id;
+                        row.className = 'prod-row-draggable';
+                        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #F5F5F5;cursor:grab;';
+                        row.innerHTML = `
                             <span style="color:#ccc;font-size:18px;">⠿</span>
                             ${p.imagen ? `<img src="${p.imagen}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;">` : '<div style="width:44px;height:44px;background:#F0F0F0;border-radius:8px;display:flex;align-items:center;justify-content:center;">📦</div>'}
                             <div style="flex:1;">
@@ -2476,292 +2470,292 @@
                             </div>
                             <button onclick="quitarDeCategoria('${p._id}','${p._col}')" style="background:#FFEBEE;color:#E53935;border:none;border-radius:8px;padding:6px 12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Quitar</button>`;
 
-                            // Drag producto dentro/entre categorías
-                            row.addEventListener('dragstart', e => {
-                                e.stopPropagation(); // no activar drag de categoría
-                                e.dataTransfer.setData('type', 'producto');
-                                e.dataTransfer.setData('productId', p._id);
-                                e.dataTransfer.setData('productCol', p._col);
-                                e.dataTransfer.setData('fromCatId', cat.id);
-                                row.style.opacity = '0.4';
-                            });
-                            row.addEventListener('dragend', () => {
-                                row.style.opacity = '';
-                                document.querySelectorAll('.prod-row-draggable').forEach(r => r.classList.remove('drag-over-prod'));
-                            });
-                            row.addEventListener('dragover', e => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                document.querySelectorAll('.prod-row-draggable').forEach(r => r.classList.remove('drag-over-prod'));
-                                row.classList.add('drag-over-prod');
-                            });
-                            row.addEventListener('dragleave', () => row.classList.remove('drag-over-prod'));
-                            row.addEventListener('drop', async e => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                row.classList.remove('drag-over-prod');
-                                const type = e.dataTransfer.getData('type');
-                                if (type !== 'producto') return;
-                                const productId = e.dataTransfer.getData('productId');
-                                const productCol = e.dataTransfer.getData('productCol');
-                                const fromCatId = e.dataTransfer.getData('fromCatId');
-                                if (productId === p._id) return;
-
-                                if (fromCatId === cat.id) {
-                                    // Reordenar dentro de la misma categoría
-                                    const srcIdx = productos.findIndex(x => x._id === productId);
-                                    const tgtIdx = pIdx;
-                                    if (srcIdx === -1) return;
-                                    const [moved] = productos.splice(srcIdx, 1);
-                                    productos.splice(tgtIdx, 0, moved);
-                                    await guardarOrdenProductos(productos);
-                                    renderProductos();
-                                } else {
-                                    // Mover a esta categoría
-                                    await updateDoc(doc(db, productCol, productId), { categoria: cat.id });
-                                    toast('Producto movido', 'success');
-                                    cargarCategorias();
-                                }
-                            });
-
-                            body.appendChild(row);
+                        // Drag producto dentro/entre categorías
+                        row.addEventListener('dragstart', e => {
+                            e.stopPropagation(); // no activar drag de categoría
+                            e.dataTransfer.setData('type', 'producto');
+                            e.dataTransfer.setData('productId', p._id);
+                            e.dataTransfer.setData('productCol', p._col);
+                            e.dataTransfer.setData('fromCatId', cat.id);
+                            row.style.opacity = '0.4';
                         });
-                    }
-                    body.appendChild(dropZoneMsg);
+                        row.addEventListener('dragend', () => {
+                            row.style.opacity = '';
+                            document.querySelectorAll('.prod-row-draggable').forEach(r => r.classList.remove('drag-over-prod'));
+                        });
+                        row.addEventListener('dragover', e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            document.querySelectorAll('.prod-row-draggable').forEach(r => r.classList.remove('drag-over-prod'));
+                            row.classList.add('drag-over-prod');
+                        });
+                        row.addEventListener('dragleave', () => row.classList.remove('drag-over-prod'));
+                        row.addEventListener('drop', async e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            row.classList.remove('drag-over-prod');
+                            const type = e.dataTransfer.getData('type');
+                            if (type !== 'producto') return;
+                            const productId = e.dataTransfer.getData('productId');
+                            const productCol = e.dataTransfer.getData('productCol');
+                            const fromCatId = e.dataTransfer.getData('fromCatId');
+                            if (productId === p._id) return;
 
-                    // Drop zone del body (para cuando la categoría está vacía o se suelta en área libre)
-                    body.addEventListener('dragover', e => {
-                        e.preventDefault();
-                        const type = e.dataTransfer.getData('type');
-                        dropZoneMsg.style.display = 'block';
-                        body.style.background = '#FFF8FC';
+                            if (fromCatId === cat.id) {
+                                // Reordenar dentro de la misma categoría
+                                const srcIdx = productos.findIndex(x => x._id === productId);
+                                const tgtIdx = pIdx;
+                                if (srcIdx === -1) return;
+                                const [moved] = productos.splice(srcIdx, 1);
+                                productos.splice(tgtIdx, 0, moved);
+                                await guardarOrdenProductos(productos);
+                                renderProductos();
+                            } else {
+                                // Mover a esta categoría
+                                await updateDoc(doc(db, productCol, productId), { categoria: cat.id });
+                                toast('Producto movido', 'success');
+                                cargarCategorias();
+                            }
+                        });
+
+                        body.appendChild(row);
                     });
-                    body.addEventListener('dragleave', e => {
-                        if (!body.contains(e.relatedTarget)) {
-                            dropZoneMsg.style.display = 'none';
-                            body.style.background = '';
-                        }
-                    });
-                    body.addEventListener('drop', async e => {
-                        e.preventDefault();
+                }
+                body.appendChild(dropZoneMsg);
+
+                // Drop zone del body (para cuando la categoría está vacía o se suelta en área libre)
+                body.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const type = e.dataTransfer.getData('type');
+                    dropZoneMsg.style.display = 'block';
+                    body.style.background = '#FFF8FC';
+                });
+                body.addEventListener('dragleave', e => {
+                    if (!body.contains(e.relatedTarget)) {
                         dropZoneMsg.style.display = 'none';
                         body.style.background = '';
-                        const type = e.dataTransfer.getData('type');
-                        if (type !== 'producto') return;
-                        const productId = e.dataTransfer.getData('productId');
-                        const productCol = e.dataTransfer.getData('productCol');
-                        const fromCatId = e.dataTransfer.getData('fromCatId');
-                        if (fromCatId === cat.id) return;
-                        await updateDoc(doc(db, productCol, productId), { categoria: cat.id });
-                        toast('Producto movido', 'success');
-                        cargarCategorias();
-                    });
-                }
-
-                async function guardarOrdenProductos(prods) {
-                    await Promise.all(prods.map((p, i) =>
-                        updateDoc(doc(db, p._col, p._id), { orden: i })
-                    ));
-                    toast('Orden guardado', 'success');
-                }
-
-                renderProductos();
-
-                header.addEventListener('click', e => {
-                    if (e.target.closest('.btn-edit') || e.target.closest('.btn-delete')) return;
-                    const open = body.style.display === 'block';
-                    body.style.display = open ? 'none' : 'block';
-                    header.querySelector('.cat-arrow').style.transform = open ? '' : 'rotate(180deg)';
+                    }
                 });
-
-                el.appendChild(header);
-                el.appendChild(body);
-                lista.appendChild(el);
-            }
-
-            window.quitarDeCategoria = async (productId, productCol) => {
-                await updateDoc(doc(db, productCol, productId), { categoria: '' });
-                toast('Producto quitado de la categoría', 'success');
-                cargarCategorias();
-            };
-
-            async function actualizarSelectsCategorias() {
-                // Siempre recargar desde Firestore para tener datos frescos
-                const snap = await getDocs(collection(db, 'categorias'));
-                categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-                    .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
-
-                ['novedad-categoria', 'promocion-categoria', 'combo-categoria'].forEach(id => {
-                    const sel = document.getElementById(id);
-                    if (!sel) return;
-                    const val = sel.value; // guardar valor actual
-                    sel.innerHTML = '<option value="">Sin categoría</option>';
-                    categoriasCache.forEach(c => {
-                        const opt = document.createElement('option');
-                        opt.value = c.id;
-                        opt.textContent = c.nombre;
-                        sel.appendChild(opt);
-                    });
-                    sel.value = val; // restaurar
-                });
-            }
-
-            window.eliminarCategoria = async (id, nombre) => {
-                confirmarEliminacion(nombre, async () => {
-                    await deleteDoc(doc(db, 'categorias', id));
-                    toast('Categoría eliminada', 'error');
+                body.addEventListener('drop', async e => {
+                    e.preventDefault();
+                    dropZoneMsg.style.display = 'none';
+                    body.style.background = '';
+                    const type = e.dataTransfer.getData('type');
+                    if (type !== 'producto') return;
+                    const productId = e.dataTransfer.getData('productId');
+                    const productCol = e.dataTransfer.getData('productCol');
+                    const fromCatId = e.dataTransfer.getData('fromCatId');
+                    if (fromCatId === cat.id) return;
+                    await updateDoc(doc(db, productCol, productId), { categoria: cat.id });
+                    toast('Producto movido', 'success');
                     cargarCategorias();
                 });
-            };
+            }
 
-            // Cargar categorías cuando se abre esa tab
-            document.querySelectorAll('.admin-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    if (tab.dataset.tab === 'categorias') cargarCategorias();
+            async function guardarOrdenProductos(prods) {
+                await Promise.all(prods.map((p, i) =>
+                    updateDoc(doc(db, p._col, p._id), { orden: i })
+                ));
+                toast('Orden guardado', 'success');
+            }
+
+            renderProductos();
+
+            header.addEventListener('click', e => {
+                if (e.target.closest('.btn-edit') || e.target.closest('.btn-delete')) return;
+                const open = body.style.display === 'block';
+                body.style.display = open ? 'none' : 'block';
+                header.querySelector('.cat-arrow').style.transform = open ? '' : 'rotate(180deg)';
+            });
+
+            el.appendChild(header);
+            el.appendChild(body);
+            lista.appendChild(el);
+        }
+
+        window.quitarDeCategoria = async (productId, productCol) => {
+            await updateDoc(doc(db, productCol, productId), { categoria: '' });
+            toast('Producto quitado de la categoría', 'success');
+            cargarCategorias();
+        };
+
+        async function actualizarSelectsCategorias() {
+            // Siempre recargar desde Firestore para tener datos frescos
+            const snap = await getDocs(collection(db, 'categorias'));
+            categoriasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                .sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
+
+            ['novedad-categoria', 'promocion-categoria', 'combo-categoria'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const val = sel.value; // guardar valor actual
+                sel.innerHTML = '<option value="">Sin categoría</option>';
+                categoriasCache.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.nombre;
+                    sel.appendChild(opt);
                 });
+                sel.value = val; // restaurar
             });
+        }
 
-            document.getElementById('btn-cancelar-novedad').addEventListener('click', (e) => {
-                e.preventDefault();
-                cerrarModalSeguro('modal-novedad');
-            });
-            document.getElementById('btn-cancelar-promocion').addEventListener('click', (e) => {
-                e.preventDefault();
-                cerrarModalSeguro('modal-promocion');
-            });
-            document.getElementById('btn-cancelar-combo').addEventListener('click', (e) => {
-                e.preventDefault();
-                cerrarModalSeguro('modal-combo');
-            });
-            document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
-            document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
-            document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
-
-            document.getElementById('btn-nueva-categoria').addEventListener('click', () => {
-                document.getElementById('modal-categoria-title').textContent = 'Nueva categoría';
-                document.getElementById('categoria-id-edit').value = '';
-                document.getElementById('categoria-nombre').value = '';
-                document.getElementById('modal-categoria').classList.add('active');
-            });
-            window.editarCategoria = (id, nombre) => {
-                document.getElementById('modal-categoria-title').textContent = 'Editar categoría';
-                document.getElementById('categoria-id-edit').value = id;
-                document.getElementById('categoria-nombre').value = nombre;
-                document.getElementById('modal-categoria').classList.add('active');
-            };
-            document.getElementById('btn-cancelar-categoria').addEventListener('click', (e) => {
-                e.preventDefault();
-                cerrarModalSeguro('modal-categoria');
-            });
-            document.getElementById('btn-guardar-categoria').addEventListener('click', async () => {
-                const nombre = document.getElementById('categoria-nombre').value.trim();
-                const editId = document.getElementById('categoria-id-edit').value;
-                if (!nombre) { toast('Escribí un nombre', 'error'); return; }
-                if (editId) {
-                    await updateDoc(doc(db, 'categorias', editId), { nombre });
-                    toast('Categoría actualizada', 'success');
-                } else {
-                    await addDoc(collection(db, 'categorias'), { nombre });
-                    toast('Categoría creada', 'success');
-                }
-                cerrarModal('modal-categoria');
-                categoriasCache = [];
+        window.eliminarCategoria = async (id, nombre) => {
+            confirmarEliminacion(nombre, async () => {
+                await deleteDoc(doc(db, 'categorias', id));
+                toast('Categoría eliminada', 'error');
                 cargarCategorias();
             });
+        };
 
-            document.getElementById('btn-sort-novedades').addEventListener('click', () =>
-                ordenarAlfabetico('novedades', cargarNovedades));
-            document.getElementById('btn-sort-promociones').addEventListener('click', () =>
-                ordenarAlfabetico('promociones', cargarPromociones));
-            document.getElementById('btn-sort-combos').addEventListener('click', () =>
-                ordenarAlfabetico('combos', cargarCombos));
-
-            /* ====== CERRAR MODALES CON OVERLAY ====== */
-            document.querySelectorAll('.modal-overlay').forEach(overlay => {
-                overlay.addEventListener('click', (e) => {
-                    if (e.target === overlay) {
-                        cerrarModalSeguro(overlay.id);
-                    }
-                });
+        // Cargar categorías cuando se abre esa tab
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (tab.dataset.tab === 'categorias') cargarCategorias();
             });
+        });
 
-            /* ESCAPE TECLA PARA CERRAR MODAL SEGURAMENTE */
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    const confirmOverlay = document.getElementById('confirm-overlay');
-                    if (confirmOverlay && confirmOverlay.classList.contains('active')) {
-                        confirmOverlay.classList.remove('active');
-                        return;
-                    }
-                    const activeModal = document.querySelector('.modal-overlay.active');
-                    if (activeModal) {
-                        cerrarModalSeguro(activeModal.id);
-                    }
+        document.getElementById('btn-cancelar-novedad').addEventListener('click', (e) => {
+            e.preventDefault();
+            cerrarModalSeguro('modal-novedad');
+        });
+        document.getElementById('btn-cancelar-promocion').addEventListener('click', (e) => {
+            e.preventDefault();
+            cerrarModalSeguro('modal-promocion');
+        });
+        document.getElementById('btn-cancelar-combo').addEventListener('click', (e) => {
+            e.preventDefault();
+            cerrarModalSeguro('modal-combo');
+        });
+        document.getElementById('btn-nueva-novedad').addEventListener('click', () => abrirModalNovedad());
+        document.getElementById('btn-nueva-promocion').addEventListener('click', () => abrirModalPromocion());
+        document.getElementById('btn-nuevo-combo').addEventListener('click', () => abrirModalCombo());
+
+        document.getElementById('btn-nueva-categoria').addEventListener('click', () => {
+            document.getElementById('modal-categoria-title').textContent = 'Nueva categoría';
+            document.getElementById('categoria-id-edit').value = '';
+            document.getElementById('categoria-nombre').value = '';
+            document.getElementById('modal-categoria').classList.add('active');
+        });
+        window.editarCategoria = (id, nombre) => {
+            document.getElementById('modal-categoria-title').textContent = 'Editar categoría';
+            document.getElementById('categoria-id-edit').value = id;
+            document.getElementById('categoria-nombre').value = nombre;
+            document.getElementById('modal-categoria').classList.add('active');
+        };
+        document.getElementById('btn-cancelar-categoria').addEventListener('click', (e) => {
+            e.preventDefault();
+            cerrarModalSeguro('modal-categoria');
+        });
+        document.getElementById('btn-guardar-categoria').addEventListener('click', async () => {
+            const nombre = document.getElementById('categoria-nombre').value.trim();
+            const editId = document.getElementById('categoria-id-edit').value;
+            if (!nombre) { toast('Escribí un nombre', 'error'); return; }
+            if (editId) {
+                await updateDoc(doc(db, 'categorias', editId), { nombre });
+                toast('Categoría actualizada', 'success');
+            } else {
+                await addDoc(collection(db, 'categorias'), { nombre });
+                toast('Categoría creada', 'success');
+            }
+            cerrarModal('modal-categoria');
+            categoriasCache = [];
+            cargarCategorias();
+        });
+
+        document.getElementById('btn-sort-novedades').addEventListener('click', () =>
+            ordenarAlfabetico('novedades', cargarNovedades));
+        document.getElementById('btn-sort-promociones').addEventListener('click', () =>
+            ordenarAlfabetico('promociones', cargarPromociones));
+        document.getElementById('btn-sort-combos').addEventListener('click', () =>
+            ordenarAlfabetico('combos', cargarCombos));
+
+        /* ====== CERRAR MODALES CON OVERLAY ====== */
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    cerrarModalSeguro(overlay.id);
                 }
             });
+        });
 
-            async function cargarHorarios() {
-                try {
-                    const snap = await getDoc(doc(db, 'config', 'horarios'));
-                    const data = snap.exists() ? snap.data() : {};
-                    document.getElementById('hor-lunes-viernes').value = data.lunesViernes || '';
-                    document.getElementById('hor-sabados').value = data.sabados || '';
-                    document.getElementById('hor-domingos').value = data.domingos || '';
-                } catch (e) {
-                    console.error('Error cargando horarios:', e);
+        /* ESCAPE TECLA PARA CERRAR MODAL SEGURAMENTE */
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const confirmOverlay = document.getElementById('confirm-overlay');
+                if (confirmOverlay && confirmOverlay.classList.contains('active')) {
+                    confirmOverlay.classList.remove('active');
+                    return;
                 }
-                document.getElementById('horarios-loading').style.display = 'none';
-                document.getElementById('horarios-form').style.display = 'block';
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) {
+                    cerrarModalSeguro(activeModal.id);
+                }
             }
+        });
 
-            document.getElementById('btn-guardar-horarios').addEventListener('click', async () => {
-                const data = {
-                    lunesViernes: document.getElementById('hor-lunes-viernes').value.trim(),
-                    sabados: document.getElementById('hor-sabados').value.trim(),
-                    domingos: document.getElementById('hor-domingos').value.trim(),
-                };
-                await setDoc(doc(db, 'config', 'horarios'), data);
-                toast('Horarios guardados', 'success');
+        async function cargarHorarios() {
+            try {
+                const snap = await getDoc(doc(db, 'config', 'horarios'));
+                const data = snap.exists() ? snap.data() : {};
+                document.getElementById('hor-lunes-viernes').value = data.lunesViernes || '';
+                document.getElementById('hor-sabados').value = data.sabados || '';
+                document.getElementById('hor-domingos').value = data.domingos || '';
+            } catch (e) {
+                console.error('Error cargando horarios:', e);
+            }
+            document.getElementById('horarios-loading').style.display = 'none';
+            document.getElementById('horarios-form').style.display = 'block';
+        }
+
+        document.getElementById('btn-guardar-horarios').addEventListener('click', async () => {
+            const data = {
+                lunesViernes: document.getElementById('hor-lunes-viernes').value.trim(),
+                sabados: document.getElementById('hor-sabados').value.trim(),
+                domingos: document.getElementById('hor-domingos').value.trim(),
+            };
+            await setDoc(doc(db, 'config', 'horarios'), data);
+            toast('Horarios guardados', 'success');
+        });
+
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (tab.dataset.tab === 'horarios') cargarHorarios();
             });
+        });
 
-            document.querySelectorAll('.admin-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    if (tab.dataset.tab === 'horarios') cargarHorarios();
+        /* ====== BUSCADOR ====== */
+        function initBuscador(inputId, listaId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.addEventListener('input', () => {
+                const q = input.value.trim().toLowerCase();
+                const lista = document.getElementById(listaId);
+                lista.querySelectorAll('.producto-row').forEach(row => {
+                    const nombre = row.querySelector('.producto-nombre-cell')?.textContent?.toLowerCase() || '';
+                    row.style.display = (!q || nombre.includes(q)) ? '' : 'none';
                 });
             });
+        }
 
-            /* ====== BUSCADOR ====== */
-            function initBuscador(inputId, listaId) {
-                const input = document.getElementById(inputId);
-                if (!input) return;
-                input.addEventListener('input', () => {
-                    const q = input.value.trim().toLowerCase();
-                    const lista = document.getElementById(listaId);
-                    lista.querySelectorAll('.producto-row').forEach(row => {
-                        const nombre = row.querySelector('.producto-nombre-cell')?.textContent?.toLowerCase() || '';
-                        row.style.display = (!q || nombre.includes(q)) ? '' : 'none';
-                    });
-                });
-            }
+        // Inicializar buscadores cuando ya cargaron los datos
+        const _origCargarNovedades = cargarNovedades;
+        cargarNovedades = async function () {
+            await _origCargarNovedades();
+            initBuscador('search-novedades', 'lista-novedades');
+        };
+        const _origCargarPromociones = cargarPromociones;
+        cargarPromociones = async function () {
+            await _origCargarPromociones();
+            initBuscador('search-promociones', 'lista-promociones');
+        };
+        const _origCargarCombos = cargarCombos;
+        cargarCombos = async function () {
+            await _origCargarCombos();
+            initBuscador('search-combos', 'lista-combos');
+        };
 
-            // Inicializar buscadores cuando ya cargaron los datos
-            const _origCargarNovedades = cargarNovedades;
-            cargarNovedades = async function () {
-                await _origCargarNovedades();
-                initBuscador('search-novedades', 'lista-novedades');
-            };
-            const _origCargarPromociones = cargarPromociones;
-            cargarPromociones = async function () {
-                await _origCargarPromociones();
-                initBuscador('search-promociones', 'lista-promociones');
-            };
-            const _origCargarCombos = cargarCombos;
-            cargarCombos = async function () {
-                await _origCargarCombos();
-                initBuscador('search-combos', 'lista-combos');
-            };
-
-        </script>
+    </script>
 </body>
 
 </html>

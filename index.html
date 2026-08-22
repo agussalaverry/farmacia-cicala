@@ -2,365 +2,333 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="google-site-verification" content="GKt6fBYmVQIHN6HnGarruus4qyoJu-2HmJrA5mTT1Po" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Farmacia Cicala en Tandil — Descuentos, promociones y novedades en medicamentos, perfumería y herboristería. Quintana 620, Tandil. Tel: +542494014223">
-    <meta name="keywords"
-        content="farmacia cicala, farmacia tandil, farmacia quintana 620, descuentos farmacia tandil, cicala tandil">
-    <meta name="author" content="Farmacia Cicala">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#EF087C">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- EDITAR: descripción del negocio -->
+  <meta name="description" content="Mi Tienda — Descuentos, promociones y novedades.">
+  <!-- EDITAR: keywords del negocio -->
+  <meta name="keywords" content="mi tienda, productos, ofertas, descuentos">
+  <meta name="author" content="Mi Tienda">
+  <meta name="robots" content="index, follow">
+  <!-- EDITAR: color primario del negocio -->
+  <meta name="theme-color" content="#2563EB">
 
-    <!-- Open Graph (para redes sociales y mejor preview en Google) -->
-    <meta property="og:title" content="Farmacia Cicala — Descuentos y Ofertas en Tandil">
-    <meta property="og:description"
-        content="Promociones, novedades y combos en Farmacia Cicala. Quintana 620, Tandil. Pedí por WhatsApp.">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="es_AR">
+  <!-- Open Graph -->
+  <!-- EDITAR: título y descripción para redes sociales -->
+  <meta property="og:title" content="Mi Tienda — Descuentos y Ofertas">
+  <meta property="og:description" content="Promociones y novedades en Mi Tienda.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
 
-    <title>Farmacia Cicala — Descuentos y Ofertas | Tandil</title>
+  <!-- EDITAR: título de la pestaña -->
+  <title>Mi Tienda — Descuentos y Ofertas</title>
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="images/logos/favicon.png">
+  <!-- EDITAR: favicon -->
+  <link rel="icon" type="image/png" href="images/logos/favicon.png">
+  <link rel="stylesheet" href="style.css">
 
-    <!-- Schema.org: datos estructurados para Google -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Pharmacy",
-      "name": "Farmacia Cicala",
-      "url": "https://farmaciacicala.vercel.app",
-      "telephone": "+542494014223",
-      "email": "farmaciacicalatandil@gmail.com",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Quintana 620",
-        "addressLocality": "Tandil",
-        "addressRegion": "Buenos Aires",
-        "addressCountry": "AR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -37.3214,
-        "longitude": -59.1332
-      },
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"]
-        },
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Saturday"]
-        }
-      ],
-      "hasMap": "https://maps.google.com/?q=Quintana+620+Tandil"
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "Mi Tienda",
+    "telephone": "+5491112345678",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Dirección 123",
+      "addressLocality": "Ciudad",
+      "addressCountry": "AR"
     }
-    </script>
+  }
+  </script>
 
-    <script>
-        if (history.scrollRestoration) {
-            history.scrollRestoration = 'manual';
-        }
-    </script>
+  <script>
+    if (history.scrollRestoration) history.scrollRestoration = 'manual';
+  </script>
+
+  <!-- config.js ANTES que cualquier otro script -->
+  <script src="config.js"></script>
 </head>
 
 <body>
 
-    <!-- ============================================
-         HEADER FIJO
-         ============================================ -->
-    <header class="header">
-        <div class="header-container">
-            <!-- Logo y nombre -->
-            <div class="header-logo-section">
-                <img id="logo" src="images/logos/logo rosa para principal.jpeg" alt="Farmacia Cicala"
-                    class="header-logo">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-logo-section">
+        <!-- EDITAR: logo del negocio -->
+        <img id="logo" src="images/logos/logo.png" alt="Mi Tienda" class="header-logo">
+      </div>
+
+      <nav class="header-nav">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <button class="nav-button">Horarios</button>
+            <div class="nav-dropdown">
+              <div class="dropdown-item">
+                <span class="dropdown-label">Lunes a Viernes</span>
+                <span class="dropdown-value" id="hor-display-lv">—</span>
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item">
+                <span class="dropdown-label">Sábados</span>
+                <span class="dropdown-value" id="hor-display-sab">—</span>
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item">
+                <span class="dropdown-label">Domingos</span>
+                <span class="dropdown-value" id="hor-display-dom">—</span>
+              </div>
             </div>
-
-            <!-- Menú de navegación -->
-            <nav class="header-nav">
-                <ul class="nav-list">
-                    <li class="nav-item">
-                        <button class="nav-button">Horarios</button>
-                        <div class="nav-dropdown">
-                            <div class="dropdown-item">
-                                <span class="dropdown-label">Lunes a Viernes</span>
-                                <span class="dropdown-value" id="hor-display-lv">—</span>
-                            </div>
-                            <hr class="dropdown-divider">
-                            <div class="dropdown-item">
-                                <span class="dropdown-label">Sábados</span>
-                                <span class="dropdown-value" id="hor-display-sab">—</span>
-                            </div>
-                            <hr class="dropdown-divider">
-                            <div class="dropdown-item">
-                                <span class="dropdown-label">Domingos</span>
-                                <span class="dropdown-value" id="hor-display-dom">—</span>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="nav-separator">|</li>
-                    <li class="nav-item">
-                        <button class="nav-button">Ubicación</button>
-                        <div class="nav-dropdown nav-dropdown-wide">
-                            <div class="dropdown-location-text">
-                                <span class="dropdown-label">Quintana 620</span>
-                                <span class="dropdown-value">Tandil, Buenos Aires</span>
-                            </div>
-                            <hr class="dropdown-divider">
-                            <iframe class="dropdown-map"
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3173.4865262729163!2d-59.1458254233937!3d-37.30730160526426!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9591202e700395c5%3A0x5130296ad01f6992!2sFarmacia%20Cicala!5e0!3m2!1ses!2sar!4v1786503809192!5m2!1ses!2sar"
-                                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                                referrerpolicy="strict-origin-when-cross-origin">
-                            </iframe>
-                        </div>
-                    </li>
-                    <li class="nav-separator">|</li>
-                    <li class="nav-item">
-                        <button class="nav-button">Contacto</button>
-                        <div class="nav-dropdown">
-                            <div class="dropdown-item">
-                                <span class="dropdown-label"><img src="images/Contacto/telefono sin fondo.png"
-                                        class="contact-icon" alt="Tel">Teléfono</span>
-                                <a href="tel:+542494014223" class="dropdown-link">+542494014223</a>
-                            </div>
-                            <hr class="dropdown-divider">
-                            <div class="dropdown-item">
-                                <span class="dropdown-label"><img src="images/Contacto/whatsapp sin fondo.png"
-                                        class="contact-icon" alt="WhatsApp">WhatsApp</span>
-                                <a href="https://wa.me/542494360437" target="_blank"
-                                    class="dropdown-link">2494360437</a>
-                            </div>
-                            <hr class="dropdown-divider">
-                            <div class="dropdown-item">
-                                <span class="dropdown-label"><img src="images/Contacto/mail sin fondo.png"
-                                        class="contact-icon" alt="Email">Email</span>
-                                <a href="mailto:farmaciacicalatandil@gmail.com"
-                                    class="dropdown-link">farmaciacicalatandil@gmail.com</a>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-
-
-    <!-- ============================================
-         BARRA DE NAVEGACIÓN SECUNDARIA (tabs)
-         ============================================ -->
-    <nav class="secondary-nav">
-        <div class="secondary-nav-container">
-            <button class="nav-tab active" data-section="novedades">Novedades</button>
-            <button class="nav-tab" data-section="promociones">Promociones</button>
-            <button class="nav-tab" data-section="combos">Combos</button>
-        </div>
-    </nav>
-
-    <!-- ============================================
-         SECCIÓN PRINCIPAL (CONTENIDO)
-         ============================================ -->
-    <main class="main-content">
-
-        <!-- NOVEDADES -->
-        <section id="novedades" class="productos-section">
-            <div class="section-header">
-                <h2 class="section-title">Novedades</h2>
-                <p class="section-subtitle">Productos nuevos que acaban de llegar a la farmacia</p>
+          </li>
+          <li class="nav-separator">|</li>
+          <li class="nav-item">
+            <button class="nav-button">Ubicación</button>
+            <div class="nav-dropdown nav-dropdown-wide">
+              <div class="dropdown-location-text">
+                <span class="dropdown-label" id="header-direccion">Dirección 123</span>
+                <span class="dropdown-value" id="header-ciudad">Ciudad, Provincia</span>
+              </div>
+              <hr class="dropdown-divider">
+              <!-- EDITAR: embed de Google Maps -->
+              <iframe class="dropdown-map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d0!2d0!3d0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sMi+Tienda!5e0!3m2!1ses!2sar!4v0"
+                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin">
+              </iframe>
             </div>
-            <div id="novedades-container" class="productos-grid">
-                <!-- Las tarjetas se insertarán aquí mediante JavaScript -->
+          </li>
+          <li class="nav-separator">|</li>
+          <li class="nav-item">
+            <button class="nav-button">Contacto</button>
+            <div class="nav-dropdown">
+              <div class="dropdown-item">
+                <span class="dropdown-label">
+                  <img src="images/Contacto/telefono sin fondo.png" class="contact-icon" alt="Tel">Teléfono
+                </span>
+                <a id="header-tel-link" href="tel:+5491112345678" class="dropdown-link">+54 9 11 1234-5678</a>
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item">
+                <span class="dropdown-label">
+                  <img src="images/Contacto/whatsapp sin fondo.png" class="contact-icon" alt="WhatsApp">WhatsApp
+                </span>
+                <a id="header-wsp-link" href="https://wa.me/5491112345678" target="_blank" class="dropdown-link">11 1234-5678</a>
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item">
+                <span class="dropdown-label">
+                  <img src="images/Contacto/mail sin fondo.png" class="contact-icon" alt="Email">Email
+                </span>
+                <a id="header-mail-link" href="mailto:info@mitienda.com" class="dropdown-link">info@mitienda.com</a>
+              </div>
             </div>
-        </section>
-
-        <!-- PROMOCIONES -->
-        <section id="promociones" class="productos-section">
-            <div class="section-header">
-                <h2 class="section-title">Promociones</h2>
-                <p class="section-subtitle">Productos con descuento especial esta semana</p>
-            </div>
-            <div id="promociones-container" class="productos-grid">
-                <!-- Las tarjetas se insertarán aquí mediante JavaScript -->
-            </div>
-        </section>
-
-        <!-- COMBOS -->
-        <section id="combos" class="productos-section">
-            <div class="section-header">
-                <h2 class="section-title">Combos</h2>
-                <p class="section-subtitle">Ofertas especiales con múltiples productos</p>
-            </div>
-            <div id="combos-container" class="productos-grid">
-                <!-- Las tarjetas de combos se insertarán aquí mediante JavaScript -->
-            </div>
-        </section>
-
-    </main>
-
-    <!-- ============================================
-         FOOTER CON OLA DECORATIVA
-         ============================================ -->
-    <footer class="footer">
-        <div class="footer-copyright">
-            <p>&copy; 2026 Farmacia Cicala. Todos los derechos reservados.</p>
-        </div>
-    </footer>
-
-    <!-- ============================================
-         BOTONES FLOTANTES
-         ============================================ -->
-    <!-- FLOTANTES DESKTOP -->
-    <div class="floating-buttons">
-        <button id="filtros-btn" class="floating-btn" title="Filtrar por categoría">
-            <img src="images/filtros/filtros sin fondo blanco.png" alt="Filtros" class="filtros-btn-img">
-        </button>
-        <a href="https://farmaciasdeturnotandil.com.ar/" target="_blank" class="floating-btn btn-24hs"
-            title="Farmacias de turno">
-            <span style="font-size:13px; font-weight:800;">Turnos</span>
-        </a>
-        <button id="cart-button" class="floating-btn cart-btn" title="Ver carrito">
-            <img src="images/carrito/carrito sin fondo.png" alt="Carrito"
-                style="width:32px;height:32px;object-fit:contain;">
-            <span id="cart-count" class="cart-badge">0</span>
-        </button>
+          </li>
+        </ul>
+      </nav>
     </div>
+  </header>
 
-    <!-- BARRA INFERIOR MOBILE -->
-    <nav class="bottom-nav-bar">
-        <button id="filtros-btn-mobile" class="bottom-nav-item" title="Filtros">
-            <img src="images/filtros/filtros sin fondo blanco.png" alt="Filtros">
-            Filtros
-        </button>
-        <div class="bottom-nav-separator"></div>
-        <a href="https://farmaciasdeturnotandil.com.ar/" target="_blank" class="bottom-nav-item" title="Turnos">
-            <span style="font-size:16px;font-weight:800;">Turnos</span>
-        </a>
-        <div class="bottom-nav-separator"></div>
-        <button id="cart-button-mobile" class="bottom-nav-item" title="Carrito">
-            <img src="images/carrito/carrito sin fondo.png" alt="Carrito"
-                style="width:26px;height:26px;object-fit:contain;">
-            Carrito
-            <span id="cart-count-mobile" class="bottom-nav-cart-badge">0</span>
-        </button>
-    </nav>
-
-    <div class="bottom-nav-extender"></div>
-
-    <!-- ============================================
-         PANEL DEL CARRITO (DRAWER LATERAL)
-         ============================================ -->
-    <aside id="cart-panel" class="cart-panel">
-
-        <!-- Encabezado del panel -->
-        <div class="cart-panel-header">
-            <h3 class="cart-panel-title">Mi Carrito</h3>
-            <button id="close-cart-btn" class="close-cart-btn" title="Cerrar carrito">✕</button>
-        </div>
-
-        <!-- Divider -->
-        <hr class="cart-divider">
-
-        <!-- Lista de productos en el carrito -->
-        <div id="cart-items" class="cart-items-list">
-            <!-- Los productos del carrito se insertarán aquí mediante JavaScript -->
-            <!-- Mensaje por defecto si el carrito está vacío -->
-            <p class="cart-empty-message">Tu carrito está vacío</p>
-        </div>
-
-        <!-- Divider -->
-        <hr class="cart-divider">
-
-        <!-- Total del carrito -->
-        <div class="cart-total-section">
-            <p class="cart-total-label">Total:</p>
-            <p id="cart-total" class="cart-total-amount">$0</p>
-        </div>
-
-        <!-- Divider -->
-        <hr class="cart-divider">
-
-        <!-- Selector de modalidad de compra -->
-        <div class="cart-modalidad-section">
-            <p class="modalidad-label">¿Cómo recibís tu pedido?</p>
-            <div class="modalidad-buttons">
-                <button id="btn-retiro" class="btn-modalidad active" data-modalidad="retiro">
-                    🏪 Retiro en farmacia
-                </button>
-                <button id="btn-envio" class="btn-modalidad" data-modalidad="envio">
-                    🚚 Envío a domicilio
-                </button>
-            </div>
-        </div>
-
-        <!-- Campo de dirección (mostrar solo si elige envío) -->
-        <div id="direccion-section" class="direccion-section" style="display: none;">
-            <input id="direccion-input" type="text" class="direccion-input" placeholder="Escribí tu dirección acá"
-                maxlength="200">
-        </div>
-
-        <!-- Divider -->
-        <hr class="cart-divider">
-
-        <!-- Botones de acción -->
-        <div class="cart-actions">
-            <button id="enviar-whatsapp-btn" class="btn-enviar-whatsapp">
-                <img src="images/carrito/logo de wsp ahora si.png" alt="" class="btn-icon-img"> Enviar pedido por
-                WhatsApp
-            </button>
-            <button id="clear-cart-btn" class="btn-clear-cart">
-                <img src="images/carrito/cruz carrito posta.png" alt="" class="btn-icon-img"> Vaciar carrito
-            </button>
-        </div>
-
-    </aside>
-
-    <!-- Overlay oscuro para el panel del carrito (opcional, para mejorar UX) -->
-    <div id="cart-overlay" class="cart-overlay"></div>
-
-    <!-- ============================================
-         DRAWER LATERAL DE FILTROS
-         ============================================ -->
-    <aside id="filtros-drawer" class="filtros-drawer">
-        <div class="filtros-drawer-header">
-            <h3 class="filtros-drawer-title">Filtros</h3>
-            <button id="close-filtros-btn" class="close-filtros-btn" title="Cerrar filtros">✕</button>
-        </div>
-        <hr class="cart-divider">
-        <div id="filtros-container" class="filtros-drawer-list"></div>
-    </aside>
-    <div id="filtros-overlay" class="filtros-overlay"></div>
-
-    <!-- ============================================
-         JAVASCRIPT
-         ============================================ -->
-    <!-- Enlazar JS (será creado en la etapa 3) -->
-    <script type="module" src="script.js"></script>
-
-    <!-- MODAL DETALLE PRODUCTO -->
-    <!-- MODAL DETALLE PRODUCTO -->
-    <div id="producto-modal" class="producto-modal-overlay">
-        <div class="producto-modal-contenido">
-            <div class="producto-modal-top-row">
-                <button class="producto-modal-volver" id="btn-volver-modal">← Volver</button>
-                <button class="producto-modal-cart-btn" id="btn-carrito-modal" title="Ver carrito">
-                    <img src="images/carrito/carrito sin fondo.png" alt="Carrito" class="producto-modal-cart-icon">
-                    <span id="cart-count-modal" class="producto-modal-cart-badge">0</span>
-                </button>
-            </div>
-            <div id="modal-img-wrap" class="producto-modal-img-wrap"></div>
-            <div class="producto-modal-info">
-                <h2 id="modal-nombre" class="producto-modal-nombre"></h2>
-                <p id="modal-descripcion" class="producto-modal-descripcion"></p>
-                <p id="modal-precio" class="producto-modal-precio"></p>
-                <button id="modal-btn-carrito" class="btn-agregar-carrito">Agregar al carrito</button>
-            </div>
-        </div>
+  <!-- BARRA SECUNDARIA (tabs) -->
+  <nav class="secondary-nav">
+    <div class="secondary-nav-container">
+      <button class="nav-tab active" data-section="destacados" id="tab-destacados">Destacados</button>
+      <button class="nav-tab" data-section="ofertas" id="tab-ofertas">Ofertas</button>
+      <button class="nav-tab" data-section="packs" id="tab-packs">Combos & Packs</button>
     </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+
+    <section id="destacados" class="productos-section">
+      <div class="section-header">
+        <h2 class="section-title" id="titulo-destacados">Destacados</h2>
+        <p class="section-subtitle" id="subtitulo-destacados">Productos nuevos que acaban de llegar</p>
+      </div>
+      <div id="novedades-container" class="productos-grid"></div>
+    </section>
+
+    <section id="ofertas" class="productos-section">
+      <div class="section-header">
+        <h2 class="section-title" id="titulo-ofertas">Ofertas</h2>
+        <p class="section-subtitle" id="subtitulo-ofertas">Productos con descuento especial esta semana</p>
+      </div>
+      <div id="promociones-container" class="productos-grid"></div>
+    </section>
+
+    <section id="packs" class="productos-section">
+      <div class="section-header">
+        <h2 class="section-title" id="titulo-packs">Combos & Packs</h2>
+        <p class="section-subtitle" id="subtitulo-packs">Ofertas especiales con múltiples productos</p>
+      </div>
+      <div id="combos-container" class="productos-grid"></div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <!-- EDITAR: texto del footer -->
+  <footer class="footer">
+    <div class="footer-copyright">
+      <p id="footer-copy">&copy; 2026 Mi Tienda. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- BOTONES FLOTANTES DESKTOP -->
+  <div class="floating-buttons">
+    <button id="filtros-btn" class="floating-btn" title="Filtrar por categoría">
+      <img src="images/filtros/filtros sin fondo blanco.png" alt="Filtros" class="filtros-btn-img">
+    </button>
+    <a id="turnos-btn-desktop" href="#" target="_blank" class="floating-btn btn-24hs" title="Turnos" style="display:none;">
+      <span style="font-size:13px;font-weight:800;" id="turnos-label-desktop">Turnos</span>
+    </a>
+    <button id="cart-button" class="floating-btn cart-btn" title="Ver carrito">
+      <img src="images/carrito/carrito sin fondo.png" alt="Carrito" style="width:32px;height:32px;object-fit:contain;">
+      <span id="cart-count" class="cart-badge">0</span>
+    </button>
+  </div>
+
+  <!-- BARRA INFERIOR MOBILE -->
+  <nav class="bottom-nav-bar">
+    <button id="filtros-btn-mobile" class="bottom-nav-item" title="Filtros">
+      <img src="images/filtros/filtros sin fondo blanco.png" alt="Filtros">
+      Filtros
+    </button>
+    <div class="bottom-nav-separator"></div>
+    <a id="turnos-btn-mobile" href="#" target="_blank" class="bottom-nav-item" title="Turnos" style="display:none;">
+      <span id="turnos-label-mobile" style="font-size:16px;font-weight:800;">Turnos</span>
+    </a>
+    <div id="turnos-separator-mobile" class="bottom-nav-separator" style="display:none;"></div>
+    <button id="cart-button-mobile" class="bottom-nav-item" title="Carrito">
+      <img src="images/carrito/carrito sin fondo.png" alt="Carrito" style="width:26px;height:26px;object-fit:contain;">
+      Carrito
+      <span id="cart-count-mobile" class="bottom-nav-cart-badge">0</span>
+    </button>
+  </nav>
+
+  <div class="bottom-nav-extender"></div>
+
+  <!-- PANEL DEL CARRITO -->
+  <aside id="cart-panel" class="cart-panel">
+    <div class="cart-panel-header">
+      <h3 class="cart-panel-title">Mi Carrito</h3>
+      <button id="close-cart-btn" class="close-cart-btn" title="Cerrar carrito">✕</button>
+    </div>
+    <hr class="cart-divider">
+    <div id="cart-items" class="cart-items-list">
+      <p class="cart-empty-message">Tu carrito está vacío</p>
+    </div>
+    <hr class="cart-divider">
+    <div class="cart-total-section">
+      <p class="cart-total-label">Total:</p>
+      <p id="cart-total" class="cart-total-amount">$0</p>
+    </div>
+    <hr class="cart-divider">
+    <div class="cart-modalidad-section">
+      <p class="modalidad-label">¿Cómo recibís tu pedido?</p>
+      <div class="modalidad-buttons">
+        <button id="btn-retiro" class="btn-modalidad active" data-modalidad="retiro">🏪 Retiro en tienda</button>
+        <button id="btn-envio" class="btn-modalidad" data-modalidad="envio">🚚 Envío a domicilio</button>
+      </div>
+    </div>
+    <div id="direccion-section" class="direccion-section" style="display:none;">
+      <input id="direccion-input" type="text" class="direccion-input" placeholder="Escribí tu dirección acá" maxlength="200">
+    </div>
+    <hr class="cart-divider">
+    <div class="cart-actions">
+      <button id="enviar-whatsapp-btn" class="btn-enviar-whatsapp">
+        <img src="images/carrito/logo de wsp ahora si.png" alt="" class="btn-icon-img"> Enviar pedido por WhatsApp
+      </button>
+      <button id="clear-cart-btn" class="btn-clear-cart">
+        <img src="images/carrito/cruz carrito posta.png" alt="" class="btn-icon-img"> Vaciar carrito
+      </button>
+    </div>
+  </aside>
+
+  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <!-- DRAWER DE FILTROS -->
+  <aside id="filtros-drawer" class="filtros-drawer">
+    <div class="filtros-drawer-header">
+      <h3 class="filtros-drawer-title">Filtros</h3>
+      <button id="close-filtros-btn" class="close-filtros-btn" title="Cerrar filtros">✕</button>
+    </div>
+    <hr class="cart-divider">
+    <div id="filtros-container" class="filtros-drawer-list"></div>
+  </aside>
+  <div id="filtros-overlay" class="filtros-overlay"></div>
+
+  <!-- MODAL DETALLE PRODUCTO -->
+  <div id="producto-modal" class="producto-modal-overlay">
+    <div class="producto-modal-contenido">
+      <div class="producto-modal-top-row">
+        <button class="producto-modal-volver" id="btn-volver-modal">← Volver</button>
+        <button class="producto-modal-cart-btn" id="btn-carrito-modal" title="Ver carrito">
+          <img src="images/carrito/carrito sin fondo.png" alt="Carrito" class="producto-modal-cart-icon">
+          <span id="cart-count-modal" class="producto-modal-cart-badge">0</span>
+        </button>
+      </div>
+      <div id="modal-img-wrap" class="producto-modal-img-wrap"></div>
+      <div class="producto-modal-info">
+        <h2 id="modal-nombre" class="producto-modal-nombre"></h2>
+        <p id="modal-descripcion" class="producto-modal-descripcion"></p>
+        <p id="modal-precio" class="producto-modal-precio"></p>
+        <button id="modal-btn-carrito" class="btn-agregar-carrito">Agregar al carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+
+  <!-- Aplicar config al DOM una vez cargado -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const C = window.CONFIG;
+
+      // Textos de secciones
+      document.getElementById('titulo-destacados').textContent = C.SECCION_1_NOMBRE;
+      document.getElementById('subtitulo-destacados').textContent = C.SECCION_1_SUBTITULO;
+      document.getElementById('tab-destacados').textContent = C.SECCION_1_NOMBRE;
+
+      document.getElementById('titulo-ofertas').textContent = C.SECCION_2_NOMBRE;
+      document.getElementById('subtitulo-ofertas').textContent = C.SECCION_2_SUBTITULO;
+      document.getElementById('tab-ofertas').textContent = C.SECCION_2_NOMBRE;
+
+      document.getElementById('titulo-packs').textContent = C.SECCION_3_NOMBRE;
+      document.getElementById('subtitulo-packs').textContent = C.SECCION_3_SUBTITULO;
+      document.getElementById('tab-packs').textContent = C.SECCION_3_NOMBRE;
+
+      // Contacto en header
+      document.getElementById('header-direccion').textContent = C.DIRECCION;
+      document.getElementById('header-ciudad').textContent = C.CIUDAD;
+      document.getElementById('header-tel-link').textContent = C.TELEFONO;
+      document.getElementById('header-tel-link').href = 'tel:' + C.WHATSAPP_NUMERO;
+      document.getElementById('header-wsp-link').textContent = C.TELEFONO;
+      document.getElementById('header-wsp-link').href = 'https://wa.me/' + C.WHATSAPP_NUMERO;
+      document.getElementById('header-mail-link').textContent = C.EMAIL;
+      document.getElementById('header-mail-link').href = 'mailto:' + C.EMAIL;
+
+      // Footer
+      document.getElementById('footer-copy').textContent =
+        '© ' + new Date().getFullYear() + ' ' + C.NEGOCIO_NOMBRE + '. Todos los derechos reservados.';
+
+      // Botón Turnos (mostrar solo si hay URL configurada)
+      if (C.TURNOS_URL) {
+        const deskBtn = document.getElementById('turnos-btn-desktop');
+        const mobBtn = document.getElementById('turnos-btn-mobile');
+        const mobSep = document.getElementById('turnos-separator-mobile');
+        deskBtn.href = C.TURNOS_URL;
+        deskBtn.style.display = '';
+        document.getElementById('turnos-label-desktop').textContent = C.TURNOS_LABEL;
+        mobBtn.href = C.TURNOS_URL;
+        mobBtn.style.display = '';
+        mobSep.style.display = '';
+        document.getElementById('turnos-label-mobile').textContent = C.TURNOS_LABEL;
+      }
+    });
+  </script>
 
 </body>
-
 </html>

@@ -10,77 +10,67 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
 :root {
-    /* Colores principales */
-    --color-primary: #EF087C;
-    /* Fucsia logo */
-    --color-primary-dark: #B8005E;
-    /* Fucsia oscuro */
-    --color-secondary: #FFB6C1;
-    /* Rosa claro */
-    --color-accent: #FF69B4;
-    /* Rosa medio */
-    --color-white: #FFFFFF;
-    /* Blanco */
-    --color-bg: #FFF5F8;
-    /* Fondo rosa muy suave */
-    --color-bg-gradient: #FFFFFF;
-    /* Blanco para gradiente */
-    --color-text: #2D2D2D;
-    /* Casi negro */
-    --color-text-light: #666666;
-    /* Gris para texto secundario */
-    --color-border: #E8C1D1;
-    /* Rosa suave para bordes */
-    --color-success: #25D366;
-    /* Verde WhatsApp */
-    --color-success-dark: #1f8e52;
-    /* Verde oscuro WhatsApp */
-    --color-gray: #999999;
-    /* Gris para precios original */
-    --color-badge-new: #2196F3;
-    /* Azul para badge NUEVO */
-    --color-badge-off: #FF6B35;
-    /* Naranja para badge OFF */
-    --color-badge-combo: #25D366;
-    /* Verde para badge COMBO */
+  /* ============================================
+     EDITAR: colores del negocio
+     ============================================ */
+  --color-primary: #2563EB;        /* EDITAR: color principal */
+  --color-primary-dark: #1D4ED8;   /* EDITAR: color principal oscuro (hover, gradientes) */
+  --color-secondary: #BFDBFE;      /* EDITAR: color secundario claro */
+  --color-accent: #60A5FA;         /* EDITAR: color de acento */
+  --color-white: #FFFFFF;
+  --color-bg: #F0F7FF;             /* EDITAR: fondo general (tono muy suave del primario) */
+  --color-bg-gradient: #FFFFFF;
+  --color-text: #1E293B;
+  --color-text-light: #64748B;
+  --color-border: #BFDBFE;         /* EDITAR: bordes (tono suave del primario) */
+  --color-success: #25D366;        /* Verde WhatsApp — no cambiar */
+  --color-success-dark: #1f8e52;
+  --color-gray: #94A3B8;
+  --color-badge-new: #2563EB;      /* EDITAR: badge "NUEVO/DESTACADO" */
+  --color-badge-off: #F97316;      /* Badge descuento — naranja funciona bien genérico */
+  --color-badge-combo: #25D366;    /* Badge combo — verde */
 
-    /* Tipografía */
-    --font-family: 'Nunito', sans-serif;
-    --font-family-display: 'Nunito', sans-serif;
-    --font-size-base: 18px;
-    --font-size-small: 16px;
-    --font-size-medium: 20px;
-    --font-size-large: 24px;
-    --font-size-xl: 28px;
-    --font-size-xxl: 32px;
-    --font-size-heading: 36px;
+  /* ============================================
+     EDITAR: tipografía
+     ============================================ */
+  --font-family: 'Nunito', sans-serif; /* EDITAR: cambiar también el @import arriba */
+  --font-family-display: 'Nunito', sans-serif;
 
-    /* Espaciado */
-    --spacing-xs: 8px;
-    --spacing-sm: 12px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
-    --spacing-xxl: 48px;
+  /* Tamaños — no suele ser necesario editar */
+  --font-size-base: 18px;
+  --font-size-small: 16px;
+  --font-size-medium: 20px;
+  --font-size-large: 24px;
+  --font-size-xl: 28px;
+  --font-size-xxl: 32px;
+  --font-size-heading: 36px;
 
-    /* Border radius */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
-    --radius-pill: 32px;
-    --radius-full: 50%;
+  /* Espaciado */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
 
-    /* Sombras */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.25);
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 32px;
+  --radius-full: 50%;
 
-    /* Gradientes */
-    --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-    --gradient-bg: linear-gradient(180deg, #FFF5F8 0%, #FFFFFF 100%);
-    --gradient-success: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
+  /* Sombras */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.2);
+  --shadow-xl: 0 12px 40px rgba(0,0,0,0.25);
+
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  --gradient-bg: linear-gradient(180deg, var(--color-bg) 0%, #FFFFFF 100%);
+  --gradient-success: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
 }
 
 /* ============================================
