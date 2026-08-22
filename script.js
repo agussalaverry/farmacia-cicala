@@ -453,11 +453,26 @@ function crearTarjetaCombo(combo) {
 let _modalOnAgregado = null;
 let _modalRenderActivo = null;
 
+/** Devuelve true solo en viewports mobile (≤768px) */
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+/** Posición de scroll guardada antes de abrir un panel (para restaurar en popstate) */
+let _scrollAntesDePanelModal = 0;
+let _scrollAntesDePanelCarrito = 0;
+let _scrollAntesDePanelFiltros = 0;
+
 function abrirModalProducto(p) {
     document.body.classList.add('modal-abierto');
 
     const hashTipo = p.tipo || 'novedad';
-    history.pushState({ panel: 'modal', hash: `#${hashTipo}-${p.id}` }, '', `#${hashTipo}-${p.id}`);
+    if (isMobile()) {
+        _scrollAntesDePanelModal = window.scrollY || parseInt(document.body.style.top || '0', 10) * -1 || 0;
+        history.pushState({ panel: 'modal', hash: `#${hashTipo}-${p.id}` }, '', `#${hashTipo}-${p.id}`);
+    } else {
+        history.pushState({ panel: 'modal', hash: `#${hashTipo}-${p.id}` }, '', `#${hashTipo}-${p.id}`);
+    }
 
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
@@ -654,7 +669,12 @@ function abrirModalProducto(p) {
 
 function abrirModalCombo(combo) {
     document.body.classList.add('modal-abierto');
-    history.pushState({ panel: 'modal', hash: `#combo-${combo.id}` }, '', `#combo-${combo.id}`);
+    if (isMobile()) {
+        _scrollAntesDePanelModal = window.scrollY || parseInt(document.body.style.top || '0', 10) * -1 || 0;
+        history.pushState({ panel: 'modal', hash: `#combo-${combo.id}` }, '', `#combo-${combo.id}`);
+    } else {
+        history.pushState({ panel: 'modal', hash: `#combo-${combo.id}` }, '', `#combo-${combo.id}`);
+    }
     document.getElementById('producto-modal').classList.add('active');
     bloquearScroll();
 
@@ -1419,10 +1439,16 @@ function abrirCarrito() {
     cartPanel.classList.add('active');
     cartOverlay.classList.add('active');
     bloquearScroll();
-    history.pushState({ panel: 'carrito' }, '');
     const modalProducto = document.getElementById('producto-modal');
     if (modalProducto.classList.contains('active')) {
+        // Carrito abierto desde el modal — esta lógica ya funciona, no tocar
         history.pushState({ panel: 'carrito-sobre-modal' }, '');
+    } else if (isMobile()) {
+        // Carrito abierto desde la página principal en mobile
+        _scrollAntesDePanelCarrito = window.scrollY || parseInt(document.body.style.top || '0', 10) * -1 || 0;
+        history.pushState({ panel: 'carrito' }, '');
+    } else {
+        history.pushState({ panel: 'carrito' }, '');
     }
 }
 
@@ -1625,7 +1651,12 @@ function abrirFiltros() {
     filtrosOverlay.classList.add('active');
     bloquearScroll();
     if (!filtrosCargados) { cargarFiltros(); filtrosCargados = true; }
-    history.pushState({ panel: 'filtros' }, '');
+    if (isMobile()) {
+        _scrollAntesDePanelFiltros = window.scrollY || parseInt(document.body.style.top || '0', 10) * -1 || 0;
+        history.pushState({ panel: 'filtros' }, '');
+    } else {
+        history.pushState({ panel: 'filtros' }, '');
+    }
 }
 
 function cerrarFiltros() {
@@ -1758,33 +1789,73 @@ document.addEventListener('DOMContentLoaded', () => {
     // Entrada base para que mobile nunca salga de la app
     history.replaceState({ panel: 'base' }, '');
 
+    /**
+     * Restaura la posición de scroll de forma instantánea (sin smooth).
+     * Se usa al cerrar paneles desde popstate en mobile.
+     */
+    function restaurarScrollInstantaneo(scrollY) {
+        // Forzar scroll instantáneo sin animación
+        const prevBehavior = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, scrollY);
+        // Restaurar después de un frame para no afectar otros scrolls
+        requestAnimationFrame(() => {
+            document.documentElement.style.scrollBehavior = prevBehavior;
+        });
+    }
+
     window.addEventListener('popstate', (e) => {
+        // En desktop, solo manejar el flujo existente de carrito-sobre-modal
+        if (!isMobile()) {
+            const modalProducto = document.getElementById('producto-modal');
+            const modalActivo = modalProducto.classList.contains('active');
+            const carritoAbierto = cartPanel && cartPanel.classList.contains('active');
+            // Solo intervenir si el carrito está sobre el modal (flujo existente)
+            if (carritoAbierto && modalActivo) {
+                cerrarCarrito();
+            }
+            return;
+        }
+
+        // ── MOBILE (≤768px) ──
         const panel = e.state?.panel;
         const modalProducto = document.getElementById('producto-modal');
         const modalActivo = modalProducto.classList.contains('active');
         const carritoAbierto = cartPanel && cartPanel.classList.contains('active');
         const filtrosAbiertos = filtrosDrawer && filtrosDrawer.classList.contains('active');
 
-        if (carritoAbierto) {
+        // 1. Carrito abierto sobre el modal (flujo ya existente, no tocar)
+        if (carritoAbierto && modalActivo) {
             cerrarCarrito();
-            if (modalActivo) history.pushState({ panel: 'modal' }, '');
-            else history.replaceState({ panel: 'base' }, '');
+            // No hacer replaceState, el modal sigue con su propia entrada de historial
             return;
         }
 
+        // 2. Carrito abierto desde la página principal
+        if (carritoAbierto) {
+            cerrarCarrito();
+            history.replaceState({ panel: 'base' }, '');
+            restaurarScrollInstantaneo(_scrollAntesDePanelCarrito);
+            return;
+        }
+
+        // 3. Filtros abiertos
         if (filtrosAbiertos) {
             cerrarFiltros();
             history.replaceState({ panel: 'base' }, '');
+            restaurarScrollInstantaneo(_scrollAntesDePanelFiltros);
             return;
         }
 
+        // 4. Modal de producto abierto
         if (modalActivo) {
             cerrarModalProducto();
             history.replaceState({ panel: 'base' }, '');
+            restaurarScrollInstantaneo(_scrollAntesDePanelModal);
             return;
         }
 
-        // Si no hay nada abierto y el estado es base, no hacer nada
+        // 5. Nada abierto: re-pushear base para que el próximo retroceso no salga de la app
         if (panel === 'base') {
             history.pushState({ panel: 'base' }, '');
         }
