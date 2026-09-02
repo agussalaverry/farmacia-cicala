@@ -14,12 +14,12 @@ window.CONFIG = {
 
   // Firebase — reemplazar con las credenciales del cliente
   FIREBASE_CONFIG: {
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_PROYECTO.firebaseapp.com",
-    projectId: "TU_PROYECTO",
-    storageBucket: "TU_PROYECTO.firebasestorage.app",
-    messagingSenderId: "TU_ID",
-    appId: "TU_APP_ID"
+    apiKey: "AIzaSyC5r3rA7a5awU2oErPnn2fP2qNZZ6s5qmo",
+    authDomain: "farmacia-cicala.firebaseapp.com",
+    projectId: "farmacia-cicala",
+    storageBucket: "farmacia-cicala.firebasestorage.app",
+    messagingSenderId: "299138749267",
+    appId: "1:299138749267:web:c716a4f57e6e8957a987a6"
   },
 
   // Cloudinary
